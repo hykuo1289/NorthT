@@ -1,0 +1,2720 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>北台灣鐵路營運模擬中心 | Northern Taiwan Rail Operations Model</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif;
+      background-color: #070b14;
+      color: #f1f5f9;
+    }
+    .font-mono-clock {
+      font-family: 'JetBrains Mono', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Leaflet dark customization */
+    #map {
+      width: 100%;
+      height: 100%;
+      background-color: #070d19;
+      z-index: 1;
+    }
+    .leaflet-container {
+      background-color: #070d19 !important;
+      font-family: 'Inter', "Microsoft JhengHei", sans-serif !important;
+    }
+    .leaflet-popup-content-wrapper {
+      background: rgba(15, 23, 42, 0.96) !important;
+      color: #f8fafc !important;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 12px !important;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.7) !important;
+      backdrop-filter: blur(10px);
+      padding: 2px;
+    }
+    .leaflet-popup-tip {
+      background: rgba(15, 23, 42, 0.96) !important;
+    }
+    .leaflet-popup-content {
+      margin: 10px 12px !important;
+      line-height: 1.4 !important;
+    }
+    .leaflet-control-attribution {
+      background: rgba(15, 23, 42, 0.7) !important;
+      color: #64748b !important;
+      font-size: 10px !important;
+      border-radius: 4px 0 0 0;
+    }
+    .leaflet-control-attribution a {
+      color: #94a3b8 !important;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.4);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.5);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.8);
+    }
+
+    /* Station Labels */
+    .station-label {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      color: #e2e8f0;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 1px 5px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      transition: opacity 0.2s ease;
+    }
+    .station-label-hub {
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid rgba(248, 250, 252, 0.55);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1.5px 6px;
+      border-radius: 5px;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.75);
+    }
+
+    /* Train Vehicle Marker */
+    .train-marker-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.1s linear;
+    }
+    .train-marker-wrap:hover {
+      z-index: 9999 !important;
+      transform: scale(1.22);
+    }
+    .train-badge {
+      position: absolute;
+      top: -17px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px;
+      font-weight: 700;
+      padding: 0.5px 4px;
+      border-radius: 3px;
+      white-space: nowrap;
+      color: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.8);
+      border: 1px solid rgba(255,255,255,0.4);
+      pointer-events: none;
+      letter-spacing: 0.02em;
+    }
+    .train-dwell-ring {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-radius: 9999px;
+      animation: pulse-ring 1.3s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+      pointer-events: none;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.75); opacity: 0.9; }
+      100% { transform: scale(1.65); opacity: 0; }
+    }
+
+    /* Custom Draggable Timeline Range Scrubber */
+    #timeScrubber {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 7px;
+      border-radius: 999px;
+      background: linear-gradient(90deg,
+        #1e293b 0%,
+        #0284c7 27%,
+        #f59e0b 33%,
+        #38bdf8 50%,
+        #f59e0b 74%,
+        #6366f1 92%,
+        #1e293b 100%
+      );
+      outline: none;
+      cursor: grab;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
+    }
+    #timeScrubber:active {
+      cursor: grabbing;
+    }
+    #timeScrubber::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fbbf24;
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.9);
+      cursor: grab;
+      transition: transform 0.1s ease;
+    }
+    #timeScrubber::-webkit-slider-thumb:hover,
+    #timeScrubber:active::-webkit-slider-thumb {
+      transform: scale(1.22);
+      background: #fde047;
+    }
+    #timeScrubber::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fbbf24;
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.9);
+      cursor: grab;
+      transition: transform 0.1s ease;
+    }
+
+    /* Map-Only Mode Transition */
+    .ui-chrome {
+      transition: opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1), transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    body.map-only-mode .ui-chrome {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transform: translateY(8px) scale(0.98);
+    }
+    #mapOnlyHud {
+      transition: opacity 0.28s ease, transform 0.28s ease;
+    }
+  </style>
+</head>
+<body class="relative w-full h-full select-none overflow-hidden bg-slate-950">
+
+  <!-- Full-Screen Interactive Map Container -->
+  <div id="map" class="w-full h-full"></div>
+
+  <!-- =========================================================
+       DEDICATED MAP-ONLY HUD (Shown ALWAYS at top-center, and is the ONLY element visible in Map-Only Mode: 保留地圖、時間與拉動時間軸)
+       ========================================================= -->
+  <div id="mapOnlyHud" class="fixed top-3 left-1/2 -translate-x-1/2 z-[1200] flex flex-col gap-1.5 w-[94vw] max-w-[560px] bg-slate-900/92 backdrop-blur-md border border-slate-700/80 px-3.5 py-2.5 rounded-2xl shadow-2xl">
+    <!-- Top Row: Clock, Speed & Map-Only Toggle -->
+    <div class="flex items-center justify-between gap-2">
+      <!-- Live Status Dot & Period Badge -->
+      <div class="flex items-center gap-1.5 min-w-0">
+        <span id="simStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0"></span>
+        <span class="text-[11px] font-semibold text-slate-400 hidden sm:inline flex-shrink-0">營運時間</span>
+        <span id="timePeriodBadge" class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-400/30 truncate">早尖峰 · 藍線最密2'15"</span>
+      </div>
+
+      <!-- Digital Clock -->
+      <div id="clockDisplay" class="font-mono-clock text-lg sm:text-xl font-bold tracking-wider text-amber-300 px-1 flex-shrink-0">
+        08:00:00
+      </div>
+
+      <!-- Compact Speed & Play/Pause Controls -->
+      <div class="flex items-center gap-1 border-l border-slate-700/80 pl-2 flex-shrink-0">
+        <button id="btnPlayPause" title="播放 / 暫停模擬 (Space)" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+          <svg id="iconPause" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
+          <svg id="iconPlay" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <select id="speedSelect" aria-label="模擬倍率" class="bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-sky-300 rounded-lg px-2 py-1.5 border border-slate-700 focus:outline-none cursor-pointer">
+          <option value="1">1x 即時</option>
+          <option value="5">5x 倍速</option>
+          <option value="15" selected>15x 營運</option>
+          <option value="30">30x 快轉</option>
+          <option value="60">60x 極速</option>
+        </select>
+      </div>
+
+      <!-- Dedicated Map-Only Toggle Button (專門顯示地圖功能：保留地圖、時間) -->
+      <button id="btnToggleMapOnly" title="切換純地圖模式（僅保留地圖與時間，快捷鍵 M）" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md transition flex-shrink-0">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+        </svg>
+        <span id="mapOnlyBtnText">純地圖模式</span>
+      </button>
+    </div>
+
+    <!-- Bottom Row: Interactive Draggable Timeline Scrubber (用手拉動時間軸) -->
+    <div class="pt-1 border-t border-slate-800/90 flex flex-col gap-1">
+      <div class="flex items-center gap-2">
+        <button id="btnStepBack15m" title="倒退 15 分鐘" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[10px] font-bold text-slate-300 border border-slate-700 transition flex-shrink-0">
+          -15分
+        </button>
+        <div class="relative flex-1 flex items-center">
+          <input
+            type="range"
+            id="timeScrubber"
+            aria-label="手動拉動調整時間軸"
+            min="0"
+            max="86399"
+            step="1"
+            value="28800"
+          />
+        </div>
+        <button id="btnStepFwd15m" title="快轉 15 分鐘" class="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[10px] font-bold text-slate-300 border border-slate-700 transition flex-shrink-0">
+          +15分
+        </button>
+      </div>
+      <!-- 24-Hour Timeline Scale Ticks -->
+      <div class="flex items-center justify-between px-9 text-[9px] font-mono-clock text-slate-400">
+        <button type="button" data-scrub-hour="0" class="timeline-tick-btn hover:text-sky-300 transition">00:00</button>
+        <button type="button" data-scrub-hour="6" class="timeline-tick-btn hover:text-sky-300 transition">06:00</button>
+        <button type="button" data-scrub-hour="9" class="timeline-tick-btn hover:text-amber-300 transition">09:00</button>
+        <button type="button" data-scrub-hour="12" class="timeline-tick-btn hover:text-sky-300 transition">12:00</button>
+        <button type="button" data-scrub-hour="18" class="timeline-tick-btn hover:text-amber-300 transition">18:00</button>
+        <button type="button" data-scrub-hour="21" class="timeline-tick-btn hover:text-sky-300 transition">21:00</button>
+        <button type="button" data-scrub-hour="23.98" class="timeline-tick-btn hover:text-sky-300 transition">23:59</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       TOP-LEFT BRAND & QUICK TIME PRESETS (Hidden in Map-Only Mode)
+       ========================================================= -->
+  <div class="ui-chrome fixed top-3 left-3 z-[1000] hidden xl:flex flex-col gap-2 max-w-xs">
+    <div class="bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-2xl px-4 py-2.5 shadow-xl">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <h1 class="text-sm font-extrabold tracking-tight text-white flex items-center gap-1.5">
+            <span class="inline-block w-2 h-2 rounded-full bg-sky-400"></span>
+            北台灣鐵路營運模型
+          </h1>
+          <p class="text-[11px] text-slate-400 mt-0.5">台鐵六線(至新竹/內灣/六家)・高鐵・機捷・北捷・輕軌</p>
+        </div>
+        <button id="btnResetCamera" title="重置北台灣全景視角" class="px-2 py-1 text-[11px] font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition">
+          全景視角
+        </button>
+      </div>
+      <!-- Quick Time Presets -->
+      <div class="flex items-center gap-1 mt-2 pt-2 border-t border-slate-800 text-[11px]">
+        <span class="text-slate-400 mr-1">時段:</span>
+        <button data-time="07:30:00" class="time-preset-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition">早尖峰 07:30</button>
+        <button data-time="12:00:00" class="time-preset-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition">離峰 12:00</button>
+        <button data-time="18:15:00" class="time-preset-btn px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 transition">晚尖峰 18:15</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       TOP-RIGHT ACTION BAR (Mobile Drawer Toggle + Dispatch + Map Style)
+       ========================================================= -->
+  <div class="ui-chrome fixed top-3 right-3 z-[1000] flex items-center gap-2">
+    <button id="btnOpenDispatchModal" class="flex items-center gap-1.5 bg-emerald-600/95 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-lg border border-emerald-400/30 transition">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+      </svg>
+      <span class="hidden sm:inline">加開列車</span>
+    </button>
+
+    <button id="btnToggleSidebar" class="flex items-center gap-1.5 bg-slate-900/90 hover:bg-slate-800 text-slate-100 text-xs font-bold px-3 py-2 rounded-xl shadow-lg border border-slate-700 transition">
+      <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+      </svg>
+      <span>路線篩選與圖例</span>
+    </button>
+  </div>
+
+  <!-- =========================================================
+       LEFT / RIGHT CONTROL & FILTER DRAWER (Hidden in Map-Only Mode)
+       ========================================================= -->
+  <aside id="controlPanel" class="ui-chrome fixed top-24 sm:top-20 right-3 bottom-14 z-[1000] w-80 sm:w-96 max-w-[calc(100vw-1.5rem)] bg-slate-900/95 backdrop-blur-xl border border-slate-700/80 rounded-2xl shadow-2xl flex flex-col overflow-hidden transition-transform duration-300">
+    <!-- Panel Tabs -->
+    <div class="flex border-b border-slate-800 bg-slate-950/60 p-1 gap-1">
+      <button data-tab="routes" class="panel-tab-btn flex-1 py-2 text-xs font-bold rounded-xl bg-sky-600 text-white transition">
+        路線篩選
+      </button>
+      <button data-tab="classes" class="panel-tab-btn flex-1 py-2 text-xs font-bold rounded-xl text-slate-400 hover:text-white transition">
+        車種顏色與圖例
+      </button>
+      <button data-tab="trains" class="panel-tab-btn flex-1 py-2 text-xs font-bold rounded-xl text-slate-400 hover:text-white transition">
+        線上列車 (<span id="activeTrainCountTab">0</span>)
+      </button>
+    </div>
+
+    <!-- TAB 1: ROUTE FILTERING (可以篩選要顯示的路線) -->
+    <div id="tab-routes" class="panel-tab-content flex-1 overflow-y-auto p-3.5 space-y-4">
+      <!-- Quick System Presets -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">快速系統篩選</span>
+          <span id="visibleRouteSummary" class="text-[11px] font-semibold text-sky-400">全部路線顯示中</span>
+        </div>
+        <div class="grid grid-cols-4 gap-1.5">
+          <button data-preset="all" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-sky-600/30 border border-sky-500/50 text-sky-200 hover:bg-sky-600/50 transition">全部顯示</button>
+          <button data-preset="tra" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition">僅台鐵</button>
+          <button data-preset="thsr" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-orange-300 hover:bg-slate-700 transition">僅高鐵</button>
+          <button data-preset="tymc" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition">僅機捷</button>
+          <button data-preset="trtc" class="sys-preset-btn col-span-2 px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition">僅台北捷運</button>
+          <button data-preset="lrt" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition">僅輕軌</button>
+          <button data-preset="none" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-rose-300 hover:bg-slate-700 transition">全部隱藏</button>
+        </div>
+      </div>
+
+      <!-- Display Options & Map Base Layer -->
+      <div class="bg-slate-800/50 border border-slate-700/70 rounded-xl p-2.5 space-y-2">
+        <div class="text-xs font-bold text-slate-300">地圖與圖層顯示設定</div>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+            <input type="checkbox" id="chkShowStationNames" checked class="rounded bg-slate-900 border-slate-600 text-sky-500 focus:ring-0" />
+            <span>顯示車站名稱</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+            <input type="checkbox" id="chkShowTrainBadges" checked class="rounded bg-slate-900 border-slate-600 text-sky-500 focus:ring-0" />
+            <span>顯示車次標籤</span>
+          </label>
+        </div>
+        <div class="flex items-center justify-between pt-1 border-t border-slate-700/60">
+          <span class="text-xs text-slate-400">地圖底圖風格</span>
+          <select id="mapTileSelect" aria-label="地圖底圖風格" class="bg-slate-900 text-xs font-semibold text-slate-200 rounded-lg px-2 py-1 border border-slate-700">
+            <option value="dark" selected>深色營運底圖 (Carto Dark)</option>
+            <option value="osm">標準街道地圖 (OSM)</option>
+            <option value="schematic">純黑工程路網底圖</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Dynamic Route Checkboxes Grouped by System -->
+      <div id="routeFilterContainer" class="space-y-3"></div>
+    </div>
+
+    <!-- TAB 2: TRAIN CLASSES & LEGEND (台鐵跟機捷用顏色區分不同等級列車 + 高鐵桃園新竹停靠篩選) -->
+    <div id="tab-classes" class="panel-tab-content hidden flex-1 overflow-y-auto p-3.5 space-y-4">
+      <div class="bg-slate-800/60 border border-slate-700/70 rounded-xl p-3">
+        <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-1">台鐵 (TRA) 列車等級顏色區分</h3>
+        <p class="text-[11px] text-slate-400 mb-2.5">涵蓋縱貫線（基隆—新竹）、宜蘭線（八堵—牡丹）、平溪線、深澳線、內灣線及六家線：</p>
+        <div id="traClassFilterList" class="space-y-2"></div>
+      </div>
+
+      <div class="bg-slate-800/60 border border-slate-700/70 rounded-xl p-3">
+        <h3 class="text-xs font-bold text-orange-400 uppercase tracking-wider mb-1">台灣高鐵 (THSR 南港—竹北)</h3>
+        <p class="text-[11px] text-slate-400 mb-2.5">僅顯示同時停靠「高鐵桃園站」與「高鐵新竹站（竹北）」之班次（如 8xx / 6xx 車次）：</p>
+        <div id="thsrClassFilterList" class="space-y-2"></div>
+      </div>
+
+      <div class="bg-slate-800/60 border border-slate-700/70 rounded-xl p-3">
+        <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider mb-1">桃園機場捷運 (TYMC) 列車等級</h3>
+        <p class="text-[11px] text-slate-400 mb-2.5">直達車與普通車採不同顏色與停靠站設定：</p>
+        <div id="tymcClassFilterList" class="space-y-2"></div>
+      </div>
+
+      <div class="bg-slate-800/60 border border-slate-700/70 rounded-xl p-3">
+        <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">台北捷運 & 新北輕軌列車</h3>
+        <p class="text-[11px] text-slate-400 mb-2.5">依官方尖離峰時刻表與重疊區間動態調整班距（板南線尖峰最密 2分15秒～3分鐘）：</p>
+        <div id="metroClassFilterList" class="space-y-2"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3: ACTIVE TRAINS MONITOR -->
+    <div id="tab-trains" class="panel-tab-content hidden flex-1 flex flex-col overflow-hidden p-3.5">
+      <div class="flex items-center gap-2 mb-2.5">
+        <input type="text" id="trainSearchInput" placeholder="搜尋車次、路線或下一站..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500" />
+      </div>
+      <div id="activeTrainList" class="flex-1 overflow-y-auto space-y-1.5 pr-1"></div>
+    </div>
+  </aside>
+
+  <!-- =========================================================
+       BOTTOM TELEMETRY & QUICK LEGEND BAR (Hidden in Map-Only Mode)
+       ========================================================= -->
+  <footer class="ui-chrome fixed bottom-3 left-3 right-3 z-[1000] flex flex-wrap items-center justify-between gap-2 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-3.5 py-2 rounded-2xl shadow-xl text-xs">
+    <!-- Left: Live counters -->
+    <div class="flex items-center gap-3 sm:gap-4">
+      <div class="flex items-center gap-1.5">
+        <span class="text-slate-400">顯示路線:</span>
+        <span id="statRoutesCount" class="font-bold text-sky-400">16 / 16</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="text-slate-400">營運車站:</span>
+        <span id="statStationsCount" class="font-bold text-emerald-400">0</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="text-slate-400">線上列車:</span>
+        <span id="statTrainsCount" class="font-bold text-amber-300">0</span>
+      </div>
+    </div>
+
+    <!-- Right: Compact Color Key for TRA, THSR & Airport MRT Train Classes -->
+    <div class="hidden md:flex items-center gap-2.5 overflow-x-auto">
+      <span class="text-[11px] font-semibold text-slate-400">列車等級圖示:</span>
+      <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-200">
+        <span class="w-2.5 h-2.5 rounded-sm bg-[#f43f5e] inline-block"></span>台鐵新自強
+      </span>
+      <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-200">
+        <span class="w-2.5 h-2.5 rounded-sm bg-[#f97316] inline-block"></span>台鐵自強號
+      </span>
+      <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-200">
+        <span class="w-2.5 h-2.5 rounded-sm bg-[#eab308] inline-block"></span>台鐵區間快
+      </span>
+      <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-200">
+        <span class="w-2.5 h-2.5 rounded-sm bg-[#38bdf8] inline-block"></span>台鐵區間(含六家)
+      </span>
+      <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-200">
+        <span class="w-2.5 h-2.5 rounded-sm bg-[#10b981] inline-block"></span>平溪/深澳/內灣支線
+      </span>
+      <span class="text-slate-600">|</span>
+      <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-200">
+        <span class="w-2.5 h-2.5 rounded-sm bg-[#ff5722] inline-block"></span>高鐵(停桃・竹)
+      </span>
+      <span class="text-slate-600">|</span>
+      <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-200">
+        <span class="w-2.5 h-2.5 rounded-sm bg-[#a855f7] inline-block"></span>機捷直達車
+      </span>
+      <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-200">
+        <span class="w-2.5 h-2.5 rounded-sm bg-[#3b82f6] inline-block"></span>機捷普通車
+      </span>
+    </div>
+  </footer>
+
+  <!-- =========================================================
+       MANUAL TRAIN DISPATCH MODAL (手動加開列車)
+       ========================================================= -->
+  <div id="dispatchModal" class="fixed inset-0 z-[2000] hidden items-center justify-center bg-slate-950/75 backdrop-blur-sm p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h2 class="text-base font-bold text-white flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+          手動調度加開列車
+        </h2>
+        <button id="btnCloseDispatchModal" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">選擇行駛路線</label>
+          <select id="dispatchRouteSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-sky-500"></select>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">選擇列車等級 (顏色區分)</label>
+          <select id="dispatchClassSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-sky-500"></select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">行駛方向</label>
+            <select id="dispatchDirSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-sky-500">
+              <option value="1">順行 / 南下 / 往終點</option>
+              <option value="-1">逆行 / 北上 / 往起點</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">自訂車次編號</label>
+            <input type="text" id="dispatchTrainNoInput" value="888" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:border-sky-500" />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+        <button id="btnCancelDispatch" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition">取消</button>
+        <button id="btnConfirmDispatch" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg transition">立即發車並追蹤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastBanner" class="fixed bottom-16 left-1/2 -translate-x-1/2 z-[2100] pointer-events-none opacity-0 transition-opacity duration-300 bg-slate-900/95 border border-sky-500/60 text-sky-200 px-4 py-2 rounded-xl shadow-2xl text-xs font-semibold"></div>
+
+  <script>
+    // =========================================================================
+    // 1. COMPREHENSIVE NORTHERN TAIWAN RAILWAY NETWORK DATASET
+    //    Includes:
+    //    - 台鐵縱貫線北段 (基隆—新竹, including 桃園至新竹延伸段與鳳鳴站)
+    //    - 台鐵宜蘭線 (八堵—牡丹)
+    //    - 台鐵平溪線 (整條: 三貂嶺—菁桐)
+    //    - 台鐵深澳線 (八斗子—海科館—宜蘭線瑞芳)
+    //    - 台鐵內灣線 (新竹—竹中—內灣)
+    //    - 台鐵六家線 (新竹—竹中—六家)
+    //    - 台灣高鐵 (南港—竹北[高鐵新竹站]，僅顯示同時停靠桃園與新竹之班次)
+    //    - 桃園機場捷運 (A1 臺北車站—A22 老街溪)
+    //    - 台北捷運 (文湖線、淡水信義線、松山新店線、中和新蘆線、板南線、環狀線，依尖離峰時刻表與重疊區間動態發車)
+    //    - 淡海輕軌 (綠山線、藍海線)
+    //    - 安坑輕軌 (雙城—十四張)
+    // =========================================================================
+
+    const TRAIN_CLASSES = {
+      // 台鐵不同等級列車 (依顏色與停靠站區分)
+      TRA_EMU3000: {
+        id: 'TRA_EMU3000',
+        system: 'TRA',
+        name: '台鐵 新自強號 (EMU3000/普悠瑪)',
+        shortName: '新自強',
+        color: '#f43f5e', // 鮮紅玫瑰色
+        textColor: '#ffffff',
+        speedKmH: 118,
+        dwellSec: 38,
+        desc: '特快對號列車，停靠基隆/八堵、七堵、汐止、南港、松山、臺北、板橋、樹林、桃園、中壢、新竹及瑞芳'
+      },
+      TRA_TZECHIANG: {
+        id: 'TRA_TZECHIANG',
+        system: 'TRA',
+        name: '台鐵 自強號 (PP/一般自強)',
+        shortName: '自強號',
+        color: '#f97316', // 亮橘色
+        textColor: '#ffffff',
+        speedKmH: 102,
+        dwellSec: 40,
+        desc: '主力對號列車，停靠一等與二等大站（增停萬華、鶯歌、楊梅、湖口、竹北、猴硐、牡丹）'
+      },
+      TRA_FAST_LOCAL: {
+        id: 'TRA_FAST_LOCAL',
+        system: 'TRA',
+        name: '台鐵 區間快車 / 莒光號',
+        shortName: '區間快',
+        color: '#eab308', // 琥珀黃
+        textColor: '#0f172a',
+        speedKmH: 88,
+        dwellSec: 32,
+        desc: '停靠中大型通勤站（增停百福、汐科、山佳、鳳鳴、內壢、埔心、富岡、北湖、新豐、北新竹、四腳亭、三貂嶺）'
+      },
+      TRA_LOCAL: {
+        id: 'TRA_LOCAL',
+        system: 'TRA',
+        name: '台鐵 區間車 (含六家線電聯車)',
+        shortName: '區間車',
+        color: '#38bdf8', // 天空藍
+        textColor: '#0f172a',
+        speedKmH: 74,
+        dwellSec: 28,
+        desc: '通勤主力列車，縱貫線（基隆—新竹）、宜蘭線（八堵—牡丹）及六家線（新竹—六家）沿途各站皆停'
+      },
+      TRA_BRANCH_DR1000: {
+        id: 'TRA_BRANCH_DR1000',
+        system: 'TRA',
+        name: '台鐵 支線柴油客車 (DR1000)',
+        shortName: '支線DR',
+        color: '#10b981', // 翠綠色
+        textColor: '#ffffff',
+        speedKmH: 52,
+        dwellSec: 30,
+        desc: '專行駛平溪線（三貂嶺—菁桐）、深澳線（八斗子—瑞芳）與內灣線（新竹/竹中—內灣），每站皆停'
+      },
+
+      // 台灣高鐵 (僅顯示有停靠桃園跟新竹的列車)
+      THSR_TAOYUAN_HSINCHU: {
+        id: 'THSR_TAOYUAN_HSINCHU',
+        system: 'THSR',
+        name: '台灣高鐵 (停靠桃園・新竹班次)',
+        shortName: '高鐵(停桃竹)',
+        color: '#ff5722', // 高鐵標準鮮橘紅
+        textColor: '#ffffff',
+        speedKmH: 235,
+        dwellSec: 42,
+        desc: '700T 高速列車（8xx/6xx/16xx 車次），僅篩選並顯示同時停靠「高鐵桃園站」與「高鐵新竹站（竹北）」之列車'
+      },
+
+      // 桃園機場捷運不同等級列車 (依顏色與停靠站區分)
+      TYMC_EXPRESS: {
+        id: 'TYMC_EXPRESS',
+        system: 'TYMC',
+        name: '機場捷運 直達車 (Express)',
+        shortName: '機捷直達',
+        color: '#a855f7', // 皇家紫
+        textColor: '#ffffff',
+        speedKmH: 98,
+        dwellSec: 35,
+        desc: '紫色車身，僅停靠 A1臺北車站、A3新北產業園區、A8長庚醫院、A12/A13航廈、A18高鐵桃園站、A21環北'
+      },
+      TYMC_COMMUTER: {
+        id: 'TYMC_COMMUTER',
+        system: 'TYMC',
+        name: '機場捷運 普通車 (Commuter)',
+        shortName: '機捷普通',
+        color: '#3b82f6', // 亮藍色
+        textColor: '#ffffff',
+        speedKmH: 76,
+        dwellSec: 26,
+        desc: '藍色車身，A1 臺北車站至 A22 老街溪全線每站皆停'
+      },
+
+      // 台北捷運 & 輕軌
+      TRTC_METRO: {
+        id: 'TRTC_METRO',
+        system: 'TRTC',
+        name: '台北捷運 電聯車 (含區間車/尖峰加班車)',
+        shortName: '北捷列車',
+        color: '#22d3ee',
+        textColor: '#ffffff',
+        speedKmH: 65,
+        dwellSec: 25,
+        desc: '依北捷時刻表運行全程車與重疊區間車（板南線亞東醫院—南港展覽館尖峰約3分、最密2分15秒；淡水信義北投—大安約3分；松山新店台電大樓—松山約3分；中和新蘆大橋頭—南勢角約3分）'
+      },
+      NTMC_LRT: {
+        id: 'NTMC_LRT',
+        system: 'LRT',
+        name: '新北捷運 輕軌列車 (淡海/安坑)',
+        shortName: '輕軌列車',
+        color: '#06b6d4',
+        textColor: '#ffffff',
+        speedKmH: 48,
+        dwellSec: 22,
+        desc: '行駛於淡海輕軌（綠山線/藍海線）與安坑輕軌，每站皆停'
+      }
+    };
+
+    const ROUTES = [
+      // ==================== 台鐵 (TRA) ====================
+      {
+        id: 'tra_west',
+        system: 'TRA',
+        systemName: '臺灣鐵路 (TRA)',
+        name: '台鐵縱貫線北段 (基隆—新竹)',
+        shortName: '縱貫線',
+        color: '#60a5fa',
+        weight: 4.5,
+        dashArray: null,
+        allowedClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+        stations: [
+          { id: 'tra_keelung', name: '基隆', lat: 25.1341, lng: 121.7399, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_sankeng', name: '三坑', lat: 25.1232, lng: 121.7321, hub: false, stopClasses: ['TRA_LOCAL'] },
+          { id: 'tra_badu', name: '八堵', lat: 25.1084, lng: 121.7290, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_qidu', name: '七堵', lat: 25.0928, lng: 121.7142, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_baifu', name: '百福', lat: 25.0778, lng: 121.6934, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_wudu', name: '五堵', lat: 25.0779, lng: 121.6675, hub: false, stopClasses: ['TRA_LOCAL'] },
+          { id: 'tra_xizhi', name: '汐止', lat: 25.0689, lng: 121.6612, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_xike', name: '汐科', lat: 25.0623, lng: 121.6462, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_nangang', name: '南港', lat: 25.0531, lng: 121.6071, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_songshan', name: '松山', lat: 25.0494, lng: 121.5783, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_taipei', name: '臺北', lat: 25.0478, lng: 121.5171, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_wanhua', name: '萬華', lat: 25.0334, lng: 121.5005, hub: false, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_banqiao', name: '板橋', lat: 25.0142, lng: 121.4637, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_fuzhou', name: '浮洲', lat: 24.9993, lng: 121.4447, hub: false, stopClasses: ['TRA_LOCAL'] },
+          { id: 'tra_shulin', name: '樹林', lat: 24.9912, lng: 121.4245, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_south_shulin', name: '南樹林', lat: 24.9803, lng: 121.4089, hub: false, stopClasses: ['TRA_LOCAL'] },
+          { id: 'tra_shanjia', name: '山佳', lat: 24.9725, lng: 121.3926, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_yingge', name: '鶯歌', lat: 24.9546, lng: 121.3551, hub: true, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_fengming', name: '鳳鳴', lat: 24.9708, lng: 121.3323, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_taoyuan', name: '桃園', lat: 24.9892, lng: 121.3135, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_neili', name: '內壢', lat: 24.9728, lng: 121.2582, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_zhongli', name: '中壢', lat: 24.9537, lng: 121.2256, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_puxin', name: '埔心', lat: 24.9197, lng: 121.1837, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_yangmei', name: '楊梅', lat: 24.9142, lng: 121.1460, hub: false, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_fugang', name: '富岡', lat: 24.9344, lng: 121.0831, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_xinfu', name: '新富', lat: 24.9312, lng: 121.0673, hub: false, stopClasses: ['TRA_LOCAL'] },
+          { id: 'tra_beihu', name: '北湖', lat: 24.9225, lng: 121.0556, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_hukou', name: '湖口', lat: 24.9029, lng: 121.0439, hub: true, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_xinfeng', name: '新豐', lat: 24.8696, lng: 120.9967, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_zhubei', name: '竹北', lat: 24.8396, lng: 121.0094, hub: true, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_north_hsinchu', name: '北新竹', lat: 24.8087, lng: 120.9839, hub: true, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_hsinchu', name: '新竹', lat: 24.8016, lng: 120.9716, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] }
+        ]
+      },
+      {
+        id: 'tra_yilan',
+        system: 'TRA',
+        systemName: '臺灣鐵路 (TRA)',
+        name: '台鐵宜蘭線 (八堵—牡丹)',
+        shortName: '宜蘭線',
+        color: '#34d399',
+        weight: 4.5,
+        dashArray: null,
+        allowedClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+        stations: [
+          { id: 'tra_badu', name: '八堵', lat: 25.1084, lng: 121.7290, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_nuannuan', name: '暖暖', lat: 25.1023, lng: 121.7405, hub: false, stopClasses: ['TRA_LOCAL'] },
+          { id: 'tra_sijiaoting', name: '四腳亭', lat: 25.1027, lng: 121.7621, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_ruifang', name: '瑞芳', lat: 25.1089, lng: 121.8062, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_houtong', name: '猴硐', lat: 25.0870, lng: 121.8271, hub: false, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_sandiaoling', name: '三貂嶺', lat: 25.0658, lng: 121.8226, hub: true, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_mudan', name: '牡丹', lat: 25.0583, lng: 121.8520, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] }
+        ]
+      },
+      {
+        id: 'tra_pingxi',
+        system: 'TRA',
+        systemName: '臺灣鐵路 (TRA)',
+        name: '台鐵平溪線 (三貂嶺—菁桐)',
+        shortName: '平溪線',
+        color: '#10b981',
+        weight: 3.8,
+        dashArray: '6, 4',
+        allowedClasses: ['TRA_BRANCH_DR1000'],
+        stations: [
+          { id: 'tra_sandiaoling', name: '三貂嶺', lat: 25.0658, lng: 121.8226, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_dahua', name: '大華', lat: 25.0573, lng: 121.8035, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_shifen', name: '十分', lat: 25.0416, lng: 121.7766, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_wanggu', name: '望古', lat: 25.0350, lng: 121.7623, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_lingjiao', name: '嶺腳', lat: 25.0303, lng: 121.7485, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_pingxi', name: '平溪', lat: 25.0257, lng: 121.7397, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_jingtong', name: '菁桐', lat: 25.0235, lng: 121.7235, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] }
+        ]
+      },
+      {
+        id: 'tra_shenao',
+        system: 'TRA',
+        systemName: '臺灣鐵路 (TRA)',
+        name: '台鐵深澳線 (八斗子—宜蘭線瑞芳)',
+        shortName: '深澳線',
+        color: '#14b8a6',
+        weight: 3.8,
+        dashArray: '6, 4',
+        allowedClasses: ['TRA_BRANCH_DR1000'],
+        stations: [
+          { id: 'tra_badouzi', name: '八斗子', lat: 25.1353, lng: 121.8028, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_haikeguan', name: '海科館', lat: 25.1388, lng: 121.7989, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_ruifang', name: '瑞芳', lat: 25.1089, lng: 121.8062, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] }
+        ]
+      },
+      {
+        id: 'tra_neiwan',
+        system: 'TRA',
+        systemName: '臺灣鐵路 (TRA)',
+        name: '台鐵內灣線 (新竹—竹中—內灣)',
+        shortName: '內灣線',
+        color: '#22c55e',
+        weight: 3.8,
+        dashArray: '6, 4',
+        allowedClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'],
+        stations: [
+          { id: 'tra_hsinchu', name: '新竹', lat: 24.8016, lng: 120.9716, hub: true, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'] },
+          { id: 'tra_north_hsinchu', name: '北新竹', lat: 24.8087, lng: 120.9839, hub: true, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'] },
+          { id: 'tra_qianjia', name: '千甲', lat: 24.8066, lng: 121.0031, hub: false, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'] },
+          { id: 'tra_xinzhuang_hc', name: '新莊(竹)', lat: 24.7882, lng: 121.0221, hub: false, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'] },
+          { id: 'tra_zhuzhong', name: '竹中', lat: 24.7815, lng: 121.0312, hub: true, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'] },
+          { id: 'tra_shangyuan', name: '上員', lat: 24.7779, lng: 121.0558, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_ronghua', name: '榮華', lat: 24.7483, lng: 121.0832, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_zhudong', name: '竹東', lat: 24.7381, lng: 121.0947, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_hengshan_nw', name: '橫山(竹)', lat: 24.7206, lng: 121.1165, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_jiuzantou', name: '九讚頭', lat: 24.7207, lng: 121.1361, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_hexing', name: '合興', lat: 24.7169, lng: 121.1544, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_fugui', name: '富貴', lat: 24.7155, lng: 121.1672, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_neiwan', name: '內灣', lat: 24.7055, lng: 121.1823, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] }
+        ]
+      },
+      {
+        id: 'tra_liujia',
+        system: 'TRA',
+        systemName: '臺灣鐵路 (TRA)',
+        name: '台鐵六家線 (新竹—竹中—六家)',
+        shortName: '六家線',
+        color: '#38bdf8',
+        weight: 3.8,
+        dashArray: '4, 3',
+        allowedClasses: ['TRA_LOCAL'],
+        stations: [
+          { id: 'tra_hsinchu', name: '新竹', lat: 24.8016, lng: 120.9716, hub: true, stopClasses: ['TRA_LOCAL'] },
+          { id: 'tra_north_hsinchu', name: '北新竹', lat: 24.8087, lng: 120.9839, hub: true, stopClasses: ['TRA_LOCAL'] },
+          { id: 'tra_qianjia', name: '千甲', lat: 24.8066, lng: 121.0031, hub: false, stopClasses: ['TRA_LOCAL'] },
+          { id: 'tra_xinzhuang_hc', name: '新莊(竹)', lat: 24.7882, lng: 121.0221, hub: false, stopClasses: ['TRA_LOCAL'] },
+          { id: 'tra_zhuzhong', name: '竹中', lat: 24.7815, lng: 121.0312, hub: true, stopClasses: ['TRA_LOCAL'] },
+          { id: 'tra_liujia', name: '六家', lat: 24.8077, lng: 121.0394, hub: true, stopClasses: ['TRA_LOCAL'] }
+        ]
+      },
+
+      // ==================== 台灣高鐵 (THSR 南港—竹北) ====================
+      {
+        id: 'thsr_north',
+        system: 'THSR',
+        systemName: '台灣高鐵 (THSR)',
+        name: '台灣高鐵北段 (南港—竹北[高鐵新竹站])',
+        shortName: '台灣高鐵',
+        color: '#ff5722',
+        weight: 4.8,
+        dashArray: '10, 4',
+        allowedClasses: ['THSR_TAOYUAN_HSINCHU'],
+        stations: [
+          { id: 'thsr_nangang', name: '高鐵南港', lat: 25.0531, lng: 121.6071, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'] },
+          { id: 'thsr_taipei', name: '高鐵台北', lat: 25.0478, lng: 121.5171, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'] },
+          { id: 'thsr_banqiao', name: '高鐵板橋', lat: 25.0142, lng: 121.4637, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'] },
+          { id: 'thsr_taoyuan', name: '高鐵桃園', lat: 25.0135, lng: 121.2145, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'] },
+          { id: 'thsr_hsinchu', name: '高鐵新竹(竹北)', lat: 24.8077, lng: 121.0402, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'] }
+        ]
+      },
+
+      // ==================== 桃園機場捷運 (TYMC) ====================
+      {
+        id: 'tymc_main',
+        system: 'TYMC',
+        systemName: '桃園機場捷運 (TYMC)',
+        name: '桃園機場捷運 (A1臺北車站—A22老街溪)',
+        shortName: '機場捷運',
+        color: '#a855f7',
+        weight: 4.2,
+        dashArray: null,
+        allowedClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'],
+        stations: [
+          { id: 'tymc_a1', name: 'A1 臺北車站', lat: 25.0493, lng: 121.5122, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
+          { id: 'tymc_a2', name: 'A2 三重', lat: 25.0554, lng: 121.4832, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a3', name: 'A3 新北產業園區', lat: 25.0615, lng: 121.4599, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
+          { id: 'tymc_a4', name: 'A4 新莊副都心', lat: 25.0591, lng: 121.4455, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a5', name: 'A5 泰山', lat: 25.0531, lng: 121.4322, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a6', name: 'A6 泰山貴和', lat: 25.0332, lng: 121.4228, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a7', name: 'A7 體育大學', lat: 25.0409, lng: 121.3853, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a8', name: 'A8 長庚醫院', lat: 25.0605, lng: 121.3682, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
+          { id: 'tymc_a9', name: 'A9 林口', lat: 25.0659, lng: 121.3522, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a10', name: 'A10 山鼻', lat: 25.0811, lng: 121.2862, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a11', name: 'A11 坑口', lat: 25.0864, lng: 121.2665, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a12', name: 'A12 機場第一航廈', lat: 25.0815, lng: 121.2371, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
+          { id: 'tymc_a13', name: 'A13 機場第二航廈', lat: 25.0772, lng: 121.2322, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
+          { id: 'tymc_a14a', name: 'A14a 機場旅館', lat: 25.0695, lng: 121.2225, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a15', name: 'A15 大園', lat: 25.0563, lng: 121.2061, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a16', name: 'A16 橫山', lat: 25.0398, lng: 121.2155, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a17', name: 'A17 領航', lat: 25.0203, lng: 121.2191, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a18', name: 'A18 高鐵桃園站', lat: 25.0135, lng: 121.2145, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
+          { id: 'tymc_a19', name: 'A19 桃園體育園區', lat: 25.0018, lng: 121.2036, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a20', name: 'A20 興南', lat: 24.9803, lng: 121.2144, hub: false, stopClasses: ['TYMC_COMMUTER'] },
+          { id: 'tymc_a21', name: 'A21 環北', lat: 24.9672, lng: 121.2202, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
+          { id: 'tymc_a22', name: 'A22 老街溪', lat: 24.9585, lng: 121.2195, hub: true, stopClasses: ['TYMC_COMMUTER'] }
+        ]
+      },
+
+      // ==================== 台北捷運 (TRTC) ====================
+      {
+        id: 'trtc_r',
+        system: 'TRTC',
+        systemName: '台北捷運 (TRTC)',
+        name: '淡水信義線 (淡水—象山 / 北投—大安)',
+        shortName: '淡水信義線',
+        color: '#ef4444',
+        weight: 3.6,
+        dashArray: null,
+        allowedClasses: ['TRTC_METRO'],
+        stations: [
+          { id: 'r28', name: '淡水', lat: 25.1678, lng: 121.4455, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'r27', name: '紅樹林', lat: 25.1541, lng: 121.4589, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'r26', name: '竹圍', lat: 25.1369, lng: 121.4595, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r25', name: '關渡', lat: 25.1256, lng: 121.4670, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r24', name: '忠義', lat: 25.1310, lng: 121.4733, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r23', name: '復興崗', lat: 25.1375, lng: 121.4854, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r22', name: '北投', lat: 25.1318, lng: 121.4986, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'r21', name: '奇岩', lat: 25.1255, lng: 121.5011, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r20', name: '唭哩岸', lat: 25.1209, lng: 121.5063, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r19', name: '石牌', lat: 25.1145, lng: 121.5156, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r18', name: '明德', lat: 25.1098, lng: 121.5188, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r17', name: '芝山', lat: 25.1027, lng: 121.5225, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r16', name: '士林', lat: 25.0935, lng: 121.5262, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r15', name: '劍潭', lat: 25.0848, lng: 121.5250, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r14', name: '圓山', lat: 25.0714, lng: 121.5201, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r13', name: '民權西路', lat: 25.0629, lng: 121.5193, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'r12', name: '雙連', lat: 25.0578, lng: 121.5207, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r11', name: '中山', lat: 25.0527, lng: 121.5204, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'r10', name: '臺北車站(捷)', lat: 25.0463, lng: 121.5175, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'r09', name: '台大醫院', lat: 25.0413, lng: 121.5160, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r08', name: '中正紀念堂', lat: 25.0327, lng: 121.5183, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'r07', name: '東門', lat: 25.0338, lng: 121.5287, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'r06', name: '大安森林公園', lat: 25.0334, lng: 121.5359, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r05', name: '大安', lat: 25.0330, lng: 121.5435, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'r04', name: '信義安和', lat: 25.0331, lng: 121.5531, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r03', name: '台北101/世貿', lat: 25.0330, lng: 121.5637, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'r02', name: '象山', lat: 25.0328, lng: 121.5707, hub: true, stopClasses: ['TRTC_METRO'] }
+        ]
+      },
+      {
+        id: 'trtc_bl',
+        system: 'TRTC',
+        systemName: '台北捷運 (TRTC)',
+        name: '板南線 (頂埔/亞東醫院—南港展覽館)',
+        shortName: '板南線',
+        color: '#2563eb',
+        weight: 3.8,
+        dashArray: null,
+        allowedClasses: ['TRTC_METRO'],
+        stations: [
+          { id: 'bl01', name: '頂埔', lat: 24.9593, lng: 121.4205, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl02', name: '永寧', lat: 24.9667, lng: 121.4361, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl03', name: '土城', lat: 24.9731, lng: 121.4443, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl04', name: '海山', lat: 24.9853, lng: 121.4488, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl05', name: '亞東醫院', lat: 24.9983, lng: 121.4525, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl06', name: '府中', lat: 25.0085, lng: 121.4594, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl07', name: '板橋(捷)', lat: 25.0138, lng: 121.4628, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl08', name: '新埔', lat: 25.0237, lng: 121.4684, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl09', name: '江子翠', lat: 25.0303, lng: 121.4724, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl10', name: '龍山寺', lat: 25.0353, lng: 121.4998, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl11', name: '西門', lat: 25.0421, lng: 121.5083, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'r10', name: '臺北車站(捷)', lat: 25.0463, lng: 121.5175, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl13', name: '善導寺', lat: 25.0448, lng: 121.5232, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl14', name: '忠孝新生', lat: 25.0424, lng: 121.5329, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl15', name: '忠孝復興', lat: 25.0416, lng: 121.5438, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl16', name: '忠孝敦化', lat: 25.0415, lng: 121.5511, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl17', name: '國父紀念館', lat: 25.0413, lng: 121.5578, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl18', name: '市政府', lat: 25.0412, lng: 121.5652, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl19', name: '永春', lat: 25.0408, lng: 121.5763, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl20', name: '後山埤', lat: 25.0445, lng: 121.5825, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl21', name: '昆陽', lat: 25.0505, lng: 121.5932, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl22', name: '南港(捷)', lat: 25.0521, lng: 121.6068, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl23', name: '南港展覽館', lat: 25.0553, lng: 121.6175, hub: true, stopClasses: ['TRTC_METRO'] }
+        ]
+      },
+      {
+        id: 'trtc_g',
+        system: 'TRTC',
+        systemName: '台北捷運 (TRTC)',
+        name: '松山新店線 (松山—新店 / 台電大樓)',
+        shortName: '松山新店線',
+        color: '#16a34a',
+        weight: 3.6,
+        dashArray: null,
+        allowedClasses: ['TRTC_METRO'],
+        stations: [
+          { id: 'g19', name: '松山(捷)', lat: 25.0501, lng: 121.5777, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'g18', name: '南京三民', lat: 25.0515, lng: 121.5647, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'g17', name: '台北小巨蛋', lat: 25.0517, lng: 121.5515, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'g16', name: '南京復興', lat: 25.0523, lng: 121.5440, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'g15', name: '松江南京', lat: 25.0520, lng: 121.5330, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'r11', name: '中山', lat: 25.0527, lng: 121.5204, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'g13', name: '北門', lat: 25.0495, lng: 121.5102, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl11', name: '西門', lat: 25.0421, lng: 121.5083, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'g11', name: '小南門', lat: 25.0355, lng: 121.5108, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r08', name: '中正紀念堂', lat: 25.0327, lng: 121.5183, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'g09', name: '古亭', lat: 25.0264, lng: 121.5229, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'g08', name: '台電大樓', lat: 25.0207, lng: 121.5282, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'g07', name: '公館', lat: 25.0149, lng: 121.5342, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'g06', name: '萬隆', lat: 25.0019, lng: 121.5391, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'g05', name: '景美', lat: 24.9929, lng: 121.5407, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'g04', name: '大坪林', lat: 24.9829, lng: 121.5413, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'g03', name: '七張', lat: 24.9752, lng: 121.5434, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'g02', name: '新店區公所', lat: 24.9674, lng: 121.5413, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'g01', name: '新店', lat: 24.9579, lng: 121.5376, hub: true, stopClasses: ['TRTC_METRO'] }
+        ]
+      },
+      {
+        id: 'trtc_o',
+        system: 'TRTC',
+        systemName: '台北捷運 (TRTC)',
+        name: '中和新蘆線 (南勢角—迴龍/蘆洲)',
+        shortName: '中和新蘆線',
+        color: '#f59e0b',
+        weight: 3.6,
+        dashArray: null,
+        allowedClasses: ['TRTC_METRO'],
+        stations: [
+          { id: 'o01', name: '南勢角', lat: 24.9904, lng: 121.5091, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'o02', name: '景安', lat: 24.9939, lng: 121.5050, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'o03', name: '永安市場', lat: 25.0026, lng: 121.5112, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'o04', name: '頂溪', lat: 25.0138, lng: 121.5155, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'g09', name: '古亭', lat: 25.0264, lng: 121.5229, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'r07', name: '東門', lat: 25.0338, lng: 121.5287, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl14', name: '忠孝新生', lat: 25.0424, lng: 121.5329, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'g15', name: '松江南京', lat: 25.0520, lng: 121.5330, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'o09', name: '行天宮', lat: 25.0597, lng: 121.5332, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'o10', name: '中山國小', lat: 25.0627, lng: 121.5264, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r13', name: '民權西路', lat: 25.0629, lng: 121.5193, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'o12', name: '大橋頭', lat: 25.0632, lng: 121.5127, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'o13', name: '台北橋', lat: 25.0632, lng: 121.5003, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'o14', name: '菜寮', lat: 25.0603, lng: 121.4911, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'o15', name: '三重(捷)', lat: 25.0558, lng: 121.4841, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'o16', name: '先嗇宮', lat: 25.0465, lng: 121.4719, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'o17', name: '頭前庄', lat: 25.0397, lng: 121.4617, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'o18', name: '新莊', lat: 25.0361, lng: 121.4524, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'o19', name: '輔大', lat: 25.0327, lng: 121.4352, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'o20', name: '丹鳳', lat: 25.0289, lng: 121.4227, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'o21', name: '迴龍', lat: 25.0218, lng: 121.4116, hub: true, stopClasses: ['TRTC_METRO'] }
+        ],
+        // 蘆洲支線段額外軌道繪製與列車支援
+        extraBranches: [
+          [
+            { id: 'o12', name: '大橋頭', lat: 25.0632, lng: 121.5127, hub: true, stopClasses: ['TRTC_METRO'] },
+            { id: 'o50', name: '三重國小', lat: 25.0703, lng: 121.4969, hub: false, stopClasses: ['TRTC_METRO'] },
+            { id: 'o51', name: '三和國中', lat: 25.0768, lng: 121.4864, hub: false, stopClasses: ['TRTC_METRO'] },
+            { id: 'o52', name: '徐匯中學', lat: 25.0807, lng: 121.4796, hub: false, stopClasses: ['TRTC_METRO'] },
+            { id: 'o53', name: '三民高中', lat: 25.0855, lng: 121.4734, hub: false, stopClasses: ['TRTC_METRO'] },
+            { id: 'o54', name: '蘆洲', lat: 25.0916, lng: 121.4644, hub: true, stopClasses: ['TRTC_METRO'] }
+          ]
+        ]
+      },
+      {
+        id: 'trtc_br',
+        system: 'TRTC',
+        systemName: '台北捷運 (TRTC)',
+        name: '文湖線 (動物園—南港展覽館)',
+        shortName: '文湖線',
+        color: '#b45309',
+        weight: 3.4,
+        dashArray: null,
+        allowedClasses: ['TRTC_METRO'],
+        stations: [
+          { id: 'br01', name: '動物園', lat: 24.9983, lng: 121.5794, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'br02', name: '木柵', lat: 24.9982, lng: 121.5731, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br03', name: '萬芳社區', lat: 24.9986, lng: 121.5681, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br04', name: '萬芳醫院', lat: 24.9994, lng: 121.5581, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br05', name: '辛亥', lat: 25.0055, lng: 121.5571, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br06', name: '麟光', lat: 25.0185, lng: 121.5588, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br07', name: '六張犁', lat: 25.0237, lng: 121.5531, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br08', name: '科技大樓', lat: 25.0261, lng: 121.5435, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r05', name: '大安', lat: 25.0330, lng: 121.5435, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl15', name: '忠孝復興', lat: 25.0416, lng: 121.5438, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'g16', name: '南京復興', lat: 25.0523, lng: 121.5440, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'br12', name: '中山國中', lat: 25.0608, lng: 121.5442, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br13', name: '松山機場', lat: 25.0630, lng: 121.5519, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'br14', name: '大直', lat: 25.0794, lng: 121.5469, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br15', name: '劍南路', lat: 25.0849, lng: 121.5556, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br16', name: '西湖', lat: 25.0821, lng: 121.5672, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br17', name: '港墘', lat: 25.0800, lng: 121.5751, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br18', name: '文德', lat: 25.0785, lng: 121.5848, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br19', name: '內湖', lat: 25.0837, lng: 121.5944, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br20', name: '大湖公園', lat: 25.0838, lng: 121.6022, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br21', name: '葫洲', lat: 25.0727, lng: 121.6072, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br22', name: '東湖', lat: 25.0672, lng: 121.6115, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'br23', name: '南港軟體園區', lat: 25.0599, lng: 121.6159, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl23', name: '南港展覽館', lat: 25.0553, lng: 121.6175, hub: true, stopClasses: ['TRTC_METRO'] }
+        ]
+      },
+      {
+        id: 'trtc_y',
+        system: 'TRTC',
+        systemName: '台北捷運 (TRTC)',
+        name: '環狀線 (大坪林—新北產業園區)',
+        shortName: '環狀線',
+        color: '#eab308',
+        weight: 3.5,
+        dashArray: null,
+        allowedClasses: ['TRTC_METRO'],
+        stations: [
+          { id: 'g04', name: '大坪林', lat: 24.9829, lng: 121.5413, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'y08', name: '十四張', lat: 24.9844, lng: 121.5284, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'y09', name: '秀朗橋', lat: 24.9905, lng: 121.5227, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'y10', name: '景平', lat: 24.9920, lng: 121.5131, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'o02', name: '景安', lat: 24.9939, lng: 121.5050, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'y12', name: '中和', lat: 25.0019, lng: 121.4961, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'y13', name: '橋和', lat: 25.0044, lng: 121.4905, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'y14', name: '中原', lat: 25.0084, lng: 121.4842, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'y15', name: '板新', lat: 25.0145, lng: 121.4722, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl07', name: '板橋(捷)', lat: 25.0138, lng: 121.4628, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'y17', name: '新埔民生', lat: 25.0261, lng: 121.4668, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'o17', name: '頭前庄', lat: 25.0397, lng: 121.4617, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'y19', name: '幸福', lat: 25.0498, lng: 121.4602, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'tymc_a3', name: '新北產業園區', lat: 25.0615, lng: 121.4599, hub: true, stopClasses: ['TRTC_METRO'] }
+        ]
+      },
+
+      // ==================== 新北捷運輕軌 (LRT) ====================
+      {
+        id: 'lrt_danhai',
+        system: 'LRT',
+        systemName: '新北捷運輕軌 (LRT)',
+        name: '淡海輕軌 (綠山線 V01-V11 & 藍海線 V26)',
+        shortName: '淡海輕軌',
+        color: '#06b6d4',
+        weight: 3.4,
+        dashArray: '5, 3',
+        allowedClasses: ['NTMC_LRT'],
+        stations: [
+          { id: 'r27', name: '紅樹林(輕軌)', lat: 25.1545, lng: 121.4593, hub: true, stopClasses: ['NTMC_LRT'] },
+          { id: 'v02', name: '竿蓁林', lat: 25.1617, lng: 121.4567, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'v03', name: '淡金鄧公', lat: 25.1687, lng: 121.4608, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'v04', name: '淡江大學', lat: 25.1763, lng: 121.4581, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'v05', name: '淡金北新', lat: 25.1820, lng: 121.4542, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'v06', name: '新市一路', lat: 25.1869, lng: 121.4488, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'v07', name: '淡水行政中心', lat: 25.1892, lng: 121.4426, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'v08', name: '濱海義山', lat: 25.1950, lng: 121.4375, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'v09', name: '濱海沙崙', lat: 25.1953, lng: 121.4309, hub: true, stopClasses: ['NTMC_LRT'] },
+          { id: 'v10', name: '淡海新市鎮', lat: 25.2007, lng: 121.4310, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'v11', name: '崁頂', lat: 25.2063, lng: 121.4312, hub: true, stopClasses: ['NTMC_LRT'] }
+        ],
+        extraBranches: [
+          [
+            { id: 'v09', name: '濱海沙崙', lat: 25.1953, lng: 121.4309, hub: true },
+            { id: 'v28', name: '台北海洋大學', lat: 25.1945, lng: 121.4222, hub: false },
+            { id: 'v27', name: '沙崙', lat: 25.1895, lng: 121.4162, hub: false },
+            { id: 'v26', name: '淡水漁人碼頭', lat: 25.1826, lng: 121.4148, hub: true }
+          ]
+        ]
+      },
+      {
+        id: 'lrt_ankeng',
+        system: 'LRT',
+        systemName: '新北捷運輕軌 (LRT)',
+        name: '安坑輕軌 (雙城 K01—十四張 K09)',
+        shortName: '安坑輕軌',
+        color: '#d97706',
+        weight: 3.4,
+        dashArray: '5, 3',
+        allowedClasses: ['NTMC_LRT'],
+        stations: [
+          { id: 'k01', name: '雙城', lat: 24.9497, lng: 121.4882, hub: true, stopClasses: ['NTMC_LRT'] },
+          { id: 'k02', name: '玫瑰中國城', lat: 24.9532, lng: 121.4940, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'k03', name: '台北小城', lat: 24.9565, lng: 121.4998, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'k04', name: '耕莘安康院區', lat: 24.9592, lng: 121.5065, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'k05', name: '景文科大', lat: 24.9612, lng: 121.5122, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'k06', name: '安康', lat: 24.9634, lng: 121.5171, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'k07', name: '陽光運動公園', lat: 24.9702, lng: 121.5218, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'k08', name: '新和國小', lat: 24.9793, lng: 121.5256, hub: false, stopClasses: ['NTMC_LRT'] },
+          { id: 'y08', name: '十四張', lat: 24.9844, lng: 121.5284, hub: true, stopClasses: ['NTMC_LRT'] }
+        ]
+      }
+    ];
+
+    // =========================================================================
+    // 2. APPLICATION STATE & MAP INITIALIZATION
+    // =========================================================================
+
+    const state = {
+      simSeconds: 8 * 3600, // Starts at 08:00:00 (Morning Peak!)
+      isPaused: false,
+      isScrubbing: false,
+      speedMultiplier: 15,
+      mapOnlyMode: false,
+      showStationNames: true,
+      showTrainBadges: true,
+      visibleRoutes: new Set(ROUTES.map(r => r.id)),
+      visibleClasses: new Set(Object.keys(TRAIN_CLASSES)),
+      trains: [],
+      followedTrainId: null
+    };
+
+    const map = L.map('map', {
+      center: [25.035, 121.515],
+      zoom: 12,
+      minZoom: 9,
+      maxZoom: 16,
+      zoomControl: false
+    });
+
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    const tileLayers = {
+      dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 19
+      }),
+      osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+      }),
+      schematic: L.layerGroup()
+    };
+
+    tileLayers.dark.addTo(map);
+
+    // Add subtle geographical grid & river/coastline guide on schematic layer covering Keelung down to Hsinchu/Neiwan
+    function buildSchematicGrid() {
+      const gridLines = [];
+      for (let lat = 24.65; lat <= 25.25; lat += 0.05) {
+        gridLines.push([[lat, 120.90], [lat, 121.90]]);
+      }
+      for (let lng = 120.90; lng <= 121.90; lng += 0.05) {
+        gridLines.push([[24.65, lng], [25.25, lng]]);
+      }
+      gridLines.forEach(line => {
+        L.polyline(line, { color: '#1e293b', weight: 1, opacity: 0.45, interactive: false }).addTo(tileLayers.schematic);
+      });
+    }
+    buildSchematicGrid();
+
+    // Layer storage per route
+    const routeLayerMap = {};
+    const stationLabelElements = [];
+
+    function haversineKm(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    // Precompute segment distances for each route
+    ROUTES.forEach(route => {
+      route.segmentKm = [];
+      route.totalKm = 0;
+      for (let i = 0; i < route.stations.length - 1; i++) {
+        const s1 = route.stations[i];
+        const s2 = route.stations[i + 1];
+        const d = Math.max(0.35, haversineKm(s1.lat, s1.lng, s2.lat, s2.lng));
+        route.segmentKm.push(d);
+        route.totalKm += d;
+      }
+    });
+
+    // =========================================================================
+    // 3. RENDER ROUTES & STATIONS ON MAP
+    // =========================================================================
+
+    function renderNetworkOnMap() {
+      ROUTES.forEach(route => {
+        const group = L.layerGroup().addTo(map);
+        routeLayerMap[route.id] = group;
+
+        const latlngs = route.stations.map(s => [s.lat, s.lng]);
+
+        // Outer casing glow line
+        L.polyline(latlngs, {
+          color: '#020617',
+          weight: route.weight + 3,
+          opacity: 0.85,
+          interactive: false
+        }).addTo(group);
+
+        // Main track line
+        const poly = L.polyline(latlngs, {
+          color: route.color,
+          weight: route.weight,
+          opacity: 0.92,
+          dashArray: route.dashArray
+        }).addTo(group);
+
+        poly.bindTooltip(`<b>${route.name}</b><br/><span class="text-xs">全程約 ${route.totalKm.toFixed(1)} km · 共 ${route.stations.length} 站</span>`, {
+          sticky: true
+        });
+
+        // Render extra branches if any (e.g., Luzhou branch, Fisherman's Wharf branch)
+        if (route.extraBranches) {
+          route.extraBranches.forEach(branch => {
+            const bCoords = branch.map(s => [s.lat, s.lng]);
+            L.polyline(bCoords, { color: '#020617', weight: route.weight + 2.5, opacity: 0.85, interactive: false }).addTo(group);
+            L.polyline(bCoords, { color: route.color, weight: route.weight, opacity: 0.9, dashArray: route.dashArray }).addTo(group);
+            branch.forEach((st, idx) => {
+              if (idx === 0) return; // skip junction already drawn
+              createStationMarker(st, route, group);
+            });
+          });
+        }
+
+        // Render station nodes
+        route.stations.forEach(st => {
+          createStationMarker(st, route, group);
+        });
+      });
+    }
+
+    function createStationMarker(st, route, group) {
+      const radius = st.hub ? 5.5 : 3.6;
+      const circle = L.circleMarker([st.lat, st.lng], {
+        radius: radius,
+        fillColor: st.hub ? '#ffffff' : '#0f172a',
+        color: route.color,
+        weight: st.hub ? 3 : 2.2,
+        opacity: 1,
+        fillOpacity: 1
+      }).addTo(group);
+
+      // Build stopping class badges for popup
+      const classBadges = (st.stopClasses || route.allowedClasses).map(cid => {
+        const tc = TRAIN_CLASSES[cid];
+        if (!tc) return '';
+        const color = cid === 'TRTC_METRO' || cid === 'NTMC_LRT' ? route.color : tc.color;
+        return `<span style="background:${color};color:#fff;" class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded mr-1 mb-1">${tc.shortName}</span>`;
+      }).join('');
+
+      circle.bindPopup(`
+        <div class="min-w-[180px]">
+          <div class="flex items-center justify-between gap-2 border-b border-slate-700 pb-1.5 mb-1.5">
+            <span class="text-sm font-extrabold text-white">${st.name}</span>
+            <span style="background:${route.color}22;color:${route.color};border:1px solid ${route.color}66" class="text-[10px] font-bold px-1.5 py-0.5 rounded">${route.shortName}</span>
+          </div>
+          <div class="text-[11px] text-slate-300 mb-1">座標: <span class="font-mono-clock text-slate-400">${st.lat.toFixed(4)}, ${st.lng.toFixed(4)}</span></div>
+          <div class="text-[11px] text-slate-400 mb-1">停靠列車等級:</div>
+          <div class="flex flex-wrap">${classBadges}</div>
+        </div>
+      `);
+
+      // Station Name Label
+      const labelClass = st.hub ? 'station-label-hub' : 'station-label';
+      const labelIcon = L.divIcon({
+        className: 'bg-transparent border-0',
+        html: `<div class="${labelClass} st-name-tag" data-hub="${st.hub ? '1' : '0'}">${st.name}</div>`,
+        iconSize: [0, 0],
+        iconAnchor: [-8, 6]
+      });
+      const labelMarker = L.marker([st.lat, st.lng], {
+        icon: labelIcon,
+        interactive: false,
+        zIndexOffset: st.hub ? 200 : 50
+      }).addTo(group);
+
+      stationLabelElements.push({ marker: labelMarker, isHub: st.hub, routeId: route.id });
+    }
+
+    // =========================================================================
+    // 4. TRAIN VEHICLE ICON & BIDIRECTIONAL TIMELINE SIMULATION ENGINE
+    //    Supports continuous playback, manual timeline dragging, and
+    //    authentic Taipei Metro peak/off-peak/late-night headway density!
+    // =========================================================================
+
+    function getTrainEffectiveColor(train) {
+      if (train.classId === 'TRTC_METRO' || train.classId === 'NTMC_LRT') {
+        return train.route.color;
+      }
+      return TRAIN_CLASSES[train.classId].color;
+    }
+
+    // Check if a train is in service at the current simulation time
+    // - 'ALL_DAY': runs all day (including late night 23:00-06:00 full-route service)
+    // - 'DAYTIME': runs 06:00 - 23:00 (e.g. overlapping short-turn trains like 亞東醫院-南港展覽館, 北投-大安, 松山-台電大樓)
+    // - 'PEAK_ONLY': runs during weekday morning peak (06:30 - 09:30) and evening peak (16:30 - 20:00)
+    function isTrainInServiceAtTime(train, simSec) {
+      const hr = (((simSec % 86400) + 86400) % 86400) / 3600;
+      if (!train.serviceWindow || train.serviceWindow === 'ALL_DAY') return true;
+      if (train.serviceWindow === 'DAYTIME') {
+        return hr >= 6.0 && hr < 23.0;
+      }
+      if (train.serviceWindow === 'PEAK_ONLY') {
+        return (hr >= 6.5 && hr <= 9.5) || (hr >= 16.5 && hr <= 20.0);
+      }
+      return true;
+    }
+
+    // Generates an unmistakable SVG rail vehicle icon with headlights, windshield, directional arrow, and class color
+    function buildTrainSvgIcon(train) {
+      const color = getTrainEffectiveColor(train);
+      const tc = TRAIN_CLASSES[train.classId];
+      const badgeVis = state.showTrainBadges ? 'block' : 'none';
+      const dirArrow = train.direction === 1 ? '▶' : '◀';
+      const statusRing = train.status === 'STOPPED'
+        ? `<div class="train-dwell-ring" style="border: 2px solid ${color};"></div>`
+        : '';
+
+      // Distinct silhouette for High-Speed / Express vs MRT/LRT
+      const isHighSpeed = train.classId === 'THSR_TAOYUAN_HSINCHU';
+      const isExpress = isHighSpeed || train.classId === 'TRA_EMU3000' || train.classId === 'TRA_TZECHIANG' || train.classId === 'TYMC_EXPRESS';
+      const borderStroke = isHighSpeed ? '#fef08a' : (isExpress ? '#ffffff' : '#e2e8f0');
+      const shortBadgeText = train.badgeSubLabel || tc.shortName;
+
+      return L.divIcon({
+        className: 'bg-transparent border-0',
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
+        html: `
+          <div class="train-marker-wrap" title="${train.trainNo} (${train.serviceLabel || tc.shortName})">
+            ${statusRing}
+            <div class="train-badge" style="display:${badgeVis}; background:${color};">
+              ${train.trainNo} ${shortBadgeText}${dirArrow}
+            </div>
+            <svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 3px 6px rgba(0,0,0,0.85));">
+              <!-- Outer Halo -->
+              <rect x="4" y="3" width="24" height="24" rx="${isHighSpeed ? '10' : (isExpress ? '8' : '6')}" fill="${color}" stroke="${borderStroke}" stroke-width="2.2"/>
+              <!-- Roof Pantograph / Aerodynamic Stripe -->
+              <path d="M11 3 L16 0.8 L21 3" stroke="${borderStroke}" stroke-width="1.6" stroke-linecap="round"/>
+              <!-- Windshield -->
+              <rect x="7.5" y="7" width="17" height="7.5" rx="2.5" fill="#0f172a" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+              <!-- Windshield Reflection -->
+              <path d="M9.5 9.5 L14 9.5" stroke="#38bdf8" stroke-width="1.4" stroke-linecap="round"/>
+              <!-- Headlights -->
+              <circle cx="9.5" cy="19.5" r="2.1" fill="#fef08a"/>
+              <circle cx="22.5" cy="19.5" r="2.1" fill="#fef08a"/>
+              <!-- Center Class Indicator Grill -->
+              <rect x="13" y="18.2" width="6" height="2.6" rx="1" fill="rgba(15,23,42,0.65)"/>
+              <!-- Rail Wheels / Bogie Base -->
+              <path d="M8 27 L6 30.5 M24 27 L26 30.5" stroke="#cbd5e1" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        `
+      });
+    }
+
+    function doesTrainStopAt(train, stationIndex) {
+      const st = train.stations[stationIndex];
+      if (!st) return true;
+      // Always stop at origin and terminal of the train's run
+      if (stationIndex === 0 || stationIndex === train.stations.length - 1) return true;
+      if (!st.stopClasses) return true;
+      return st.stopClasses.includes(train.classId);
+    }
+
+    // Strict check for THSR requirement: 高鐵只顯示有停靠桃園跟新竹的列車
+    function stopsAtBothTaoyuanAndHsinchu(train) {
+      if (train.routeId !== 'thsr_north') return true;
+      const taoyuanIdx = train.stations.findIndex(s => s.id === 'thsr_taoyuan');
+      const hsinchuIdx = train.stations.findIndex(s => s.id === 'thsr_hsinchu');
+      return taoyuanIdx !== -1 && hsinchuIdx !== -1 &&
+             doesTrainStopAt(train, taoyuanIdx) && doesTrainStopAt(train, hsinchuIdx);
+    }
+
+    // Build a complete round-trip timeline for a train so that scrubbing the timeline slider
+    // forward or backward to any second of the 24-hour day computes the exact train position!
+    function buildTrainRoundTripTimeline(train, initialPhaseRatio = null) {
+      const tc = TRAIN_CLASSES[train.classId];
+      const n = train.stations.length;
+      const steps = [];
+      let cursor = 0;
+
+      // Compute segment distances specifically for this train's station list (supports short-turn & branches)
+      train.segmentKm = [];
+      for (let i = 0; i < n - 1; i++) {
+        const s1 = train.stations[i];
+        const s2 = train.stations[i + 1];
+        train.segmentKm.push(Math.max(0.35, haversineKm(s1.lat, s1.lng, s2.lat, s2.lng)));
+      }
+
+      // Forward pass: station 0 -> station n-1
+      for (let seg = 0; seg < n - 1; seg++) {
+        const segKm = train.segmentKm[seg] || 1.1;
+        const moveDur = Math.max(18, (segKm / tc.speedKmH) * 3600);
+        steps.push({
+          status: 'MOVING',
+          direction: 1,
+          segIndex: seg,
+          startSec: cursor,
+          duration: moveDur,
+          endSec: cursor + moveDur
+        });
+        cursor += moveDur;
+
+        const arrivedIdx = seg + 1;
+        const isTerminal = arrivedIdx === n - 1;
+        if (isTerminal) {
+          const dwellDur = tc.dwellSec * 1.4;
+          steps.push({
+            status: 'STOPPED',
+            direction: -1,
+            segIndex: n - 2,
+            segProgress: 0,
+            startSec: cursor,
+            duration: dwellDur,
+            endSec: cursor + dwellDur
+          });
+          cursor += dwellDur;
+        } else if (doesTrainStopAt(train, arrivedIdx)) {
+          const st = train.stations[arrivedIdx];
+          const dwellDur = st.hub ? tc.dwellSec * 1.2 : tc.dwellSec;
+          steps.push({
+            status: 'STOPPED',
+            direction: 1,
+            segIndex: seg + 1,
+            segProgress: 0,
+            startSec: cursor,
+            duration: dwellDur,
+            endSec: cursor + dwellDur
+          });
+          cursor += dwellDur;
+        }
+      }
+
+      // Backward pass: station n-1 -> station 0
+      for (let seg = n - 2; seg >= 0; seg--) {
+        const segKm = train.segmentKm[seg] || 1.1;
+        const moveDur = Math.max(18, (segKm / tc.speedKmH) * 3600);
+        steps.push({
+          status: 'MOVING',
+          direction: -1,
+          segIndex: seg,
+          startSec: cursor,
+          duration: moveDur,
+          endSec: cursor + moveDur
+        });
+        cursor += moveDur;
+
+        const arrivedIdx = seg;
+        const isTerminal = arrivedIdx === 0;
+        if (isTerminal) {
+          const dwellDur = tc.dwellSec * 1.4;
+          steps.push({
+            status: 'STOPPED',
+            direction: 1,
+            segIndex: 0,
+            segProgress: 0,
+            startSec: cursor,
+            duration: dwellDur,
+            endSec: cursor + dwellDur
+          });
+          cursor += dwellDur;
+        } else if (doesTrainStopAt(train, arrivedIdx)) {
+          const st = train.stations[arrivedIdx];
+          const dwellDur = st.hub ? tc.dwellSec * 1.2 : tc.dwellSec;
+          steps.push({
+            status: 'STOPPED',
+            direction: -1,
+            segIndex: seg - 1,
+            segProgress: 0,
+            startSec: cursor,
+            duration: dwellDur,
+            endSec: cursor + dwellDur
+          });
+          cursor += dwellDur;
+        }
+      }
+
+      train.loopSteps = steps;
+      train.loopPeriodSec = Math.max(60, cursor);
+
+      if (typeof initialPhaseRatio === 'number') {
+        train.anchorSimSec = state.simSeconds;
+        train.anchorCycleSec = ((initialPhaseRatio % 1) + 1) % 1 * train.loopPeriodSec;
+      } else {
+        // Find the cycle time matching the train's initial direction, segIndex, and segProgress
+        let matchedCycleSec = 0;
+        for (const step of steps) {
+          if (step.status === 'MOVING' && step.direction === train.direction && step.segIndex === train.segIndex) {
+            matchedCycleSec = step.startSec + step.duration * train.segProgress;
+            break;
+          }
+        }
+        train.anchorSimSec = state.simSeconds;
+        train.anchorCycleSec = matchedCycleSec;
+      }
+    }
+
+    function syncTrainStateToTime(train, simSec) {
+      if (!train.loopSteps || !train.loopPeriodSec) return;
+      const elapsed = simSec - train.anchorSimSec;
+      const cyclePos = (((train.anchorCycleSec + elapsed) % train.loopPeriodSec) + train.loopPeriodSec) % train.loopPeriodSec;
+
+      const prevStatus = train.status;
+      const prevDir = train.direction;
+
+      // Locate step in loopSteps
+      let activeStep = train.loopSteps[0];
+      for (let i = 0; i < train.loopSteps.length; i++) {
+        const s = train.loopSteps[i];
+        if (cyclePos >= s.startSec && cyclePos < s.endSec) {
+          activeStep = s;
+          break;
+        }
+      }
+
+      train.direction = activeStep.direction;
+      train.segIndex = activeStep.segIndex;
+      train.status = activeStep.status;
+
+      if (activeStep.status === 'MOVING') {
+        train.segProgress = Math.max(0, Math.min(1, (cyclePos - activeStep.startSec) / activeStep.duration));
+        train.dwellRemaining = 0;
+      } else {
+        train.segProgress = activeStep.segProgress || 0;
+        train.dwellRemaining = Math.max(1, activeStep.endSec - cyclePos);
+      }
+
+      if (train.marker) {
+        if (prevStatus !== train.status || prevDir !== train.direction) {
+          train.marker.setIcon(buildTrainSvgIcon(train));
+        }
+        train.marker.setLatLng(getTrainCoordinates(train));
+        if (state.followedTrainId === train.id && train.marker.isPopupOpen()) {
+          openTrainPopup(train);
+        }
+      }
+    }
+
+    function createTrainInstance({
+      trainNo,
+      routeId,
+      classId,
+      direction = 1,
+      startStationIndex = 0,
+      initialProgress = 0,
+      initialPhaseRatio = null,
+      customStations = null,
+      serviceWindow = 'ALL_DAY',
+      serviceLabel = null,
+      badgeSubLabel = null
+    }) {
+      const route = ROUTES.find(r => r.id === routeId);
+      if (!route) return null;
+      const stations = customStations || route.stations;
+      const idx = Math.max(0, Math.min(stations.length - 2, startStationIndex));
+
+      const train = {
+        id: 'train_' + Math.random().toString(36).substring(2, 9) + '_' + trainNo,
+        trainNo: String(trainNo),
+        routeId: route.id,
+        route: route,
+        classId: classId,
+        stations: stations,
+        serviceWindow: serviceWindow,
+        serviceLabel: serviceLabel || `${stations[0].name}↔${stations[stations.length - 1].name}`,
+        badgeSubLabel: badgeSubLabel,
+        direction: direction,
+        segIndex: idx,
+        segProgress: initialProgress,
+        status: initialProgress === 0 ? 'STOPPED' : 'MOVING',
+        dwellRemaining: initialProgress === 0 ? 15 : 0,
+        marker: null
+      };
+
+      // Enforce THSR filter rule: only allow THSR trains that stop at BOTH Taoyuan and Hsinchu
+      if (!stopsAtBothTaoyuanAndHsinchu(train)) {
+        return null;
+      }
+
+      buildTrainRoundTripTimeline(train, initialPhaseRatio);
+      syncTrainStateToTime(train, state.simSeconds);
+
+      const pos = getTrainCoordinates(train);
+      const marker = L.marker(pos, {
+        icon: buildTrainSvgIcon(train),
+        zIndexOffset: 600
+      });
+
+      marker.on('click', () => {
+        state.followedTrainId = train.id;
+        openTrainPopup(train);
+      });
+
+      train.marker = marker;
+      syncTrainVisibility(train);
+      state.trains.push(train);
+      return train;
+    }
+
+    function getTrainCoordinates(train) {
+      const sA = train.direction === 1 ? train.stations[train.segIndex] : train.stations[train.segIndex + 1];
+      const sB = train.direction === 1 ? train.stations[train.segIndex + 1] : train.stations[train.segIndex];
+      const p = Math.max(0, Math.min(1, train.segProgress));
+      const lat = sA.lat + (sB.lat - sA.lat) * p;
+      const lng = sA.lng + (sB.lng - sA.lng) * p;
+
+      // Slight perpendicular offset so opposite-direction trains stay visually distinct on double tracks
+      const dLat = sB.lat - sA.lat;
+      const dLng = sB.lng - sA.lng;
+      const len = Math.hypot(dLat, dLng) || 1;
+      const offsetDeg = 0.00045;
+      const nLat = (-dLng / len) * offsetDeg;
+      const nLng = (dLat / len) * offsetDeg;
+
+      return [lat + nLat, lng + nLng];
+    }
+
+    function getTrainStatusInfo(train) {
+      const fromSt = train.direction === 1 ? train.stations[train.segIndex] : train.stations[train.segIndex + 1];
+      const toSt = train.direction === 1 ? train.stations[train.segIndex + 1] : train.stations[train.segIndex];
+      const destSt = train.direction === 1 ? train.stations[train.stations.length - 1] : train.stations[0];
+
+      // Find next scheduled stop
+      let nextStopSt = toSt;
+      if (train.direction === 1) {
+        for (let i = train.segIndex + 1; i < train.stations.length; i++) {
+          if (doesTrainStopAt(train, i)) {
+            nextStopSt = train.stations[i];
+            break;
+          }
+        }
+      } else {
+        for (let i = train.segIndex; i >= 0; i--) {
+          if (doesTrainStopAt(train, i)) {
+            nextStopSt = train.stations[i];
+            break;
+          }
+        }
+      }
+
+      return { fromSt, toSt, destSt, nextStopSt };
+    }
+
+    function openTrainPopup(train) {
+      const tc = TRAIN_CLASSES[train.classId];
+      const color = getTrainEffectiveColor(train);
+      const { fromSt, toSt, destSt, nextStopSt } = getTrainStatusInfo(train);
+      const statusBadge = train.status === 'STOPPED'
+        ? `<span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-400/40 text-[10px] font-bold">停靠 ${fromSt.name} (${Math.ceil(train.dwellRemaining)}s)</span>`
+        : `<span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[10px] font-bold">行駛中 (${tc.speedKmH} km/h)</span>`;
+
+      const stopListHtml = train.stations
+        .filter((_, idx) => doesTrainStopAt(train, idx))
+        .map(s => s.name)
+        .join(' → ');
+
+      const windowLabel = train.serviceWindow === 'PEAK_ONLY'
+        ? '尖峰加密班次 (06:30-09:30 / 16:30-20:00)'
+        : (train.serviceWindow === 'DAYTIME' ? '日間重疊區間班次 (06:00-23:00)' : '全日基本班次');
+
+      const html = `
+        <div class="min-w-[235px] max-w-[280px]">
+          <div class="flex items-center justify-between gap-2 border-b border-slate-700 pb-1.5 mb-2">
+            <div class="flex items-center gap-1.5">
+              <span style="background:${color};" class="px-2 py-0.5 rounded text-xs font-extrabold text-white">${train.trainNo}</span>
+              <span class="text-xs font-bold text-white">${train.serviceLabel || tc.shortName}</span>
+            </div>
+            ${statusBadge}
+          </div>
+          <div class="space-y-1 text-[11px] text-slate-300">
+            <div><span class="text-slate-400">行駛路線：</span><span class="font-semibold text-white">${train.route.name}</span></div>
+            <div><span class="text-slate-400">營運模式：</span><span class="font-semibold text-amber-200">${windowLabel}</span></div>
+            <div><span class="text-slate-400">行駛方向：</span><span class="font-semibold text-sky-300">往 ${destSt.name}</span></div>
+            <div><span class="text-slate-400">目前區間：</span><span>${fromSt.name} ➔ ${toSt.name} (${Math.round(train.segProgress * 100)}%)</span></div>
+            <div><span class="text-slate-400">下一停靠：</span><span class="font-bold text-amber-300">${nextStopSt.name}</span></div>
+            <div class="pt-1 border-t border-slate-800">
+              <div class="text-[10px] text-slate-400 mb-0.5">本班次沿途停靠站：</div>
+              <div class="text-[10px] text-slate-300 leading-relaxed max-h-20 overflow-y-auto">${stopListHtml}</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      train.marker.bindPopup(html, { autoPan: false }).openPopup();
+    }
+
+    // Helper to spawn evenly spaced trains along a station list with exact headway density
+    function spawnCadencedFleet({
+      routeId,
+      classId,
+      prefix,
+      startNum,
+      count,
+      phaseOffset = 0,
+      customStations = null,
+      serviceWindow = 'ALL_DAY',
+      serviceLabel = null,
+      badgeSubLabel = null
+    }) {
+      for (let i = 0; i < count; i++) {
+        const phase = (i / count + phaseOffset) % 1;
+        const tNo = `${prefix}${String(startNum + i).padStart(3, '0')}`;
+        createTrainInstance({
+          trainNo: tNo,
+          routeId: routeId,
+          classId: classId,
+          initialPhaseRatio: phase,
+          customStations: customStations,
+          serviceWindow: serviceWindow,
+          serviceLabel: serviceLabel,
+          badgeSubLabel: badgeSubLabel
+        });
+      }
+    }
+
+    // Seed initial realistic fleet across all Northern Taiwan lines
+    function seedInitialFleet() {
+      // 1. 台鐵縱貫線 (基隆—新竹): 新自強、自強號、區間快、區間車
+      const traWestSeeds = [
+        { trainNo: '111', classId: 'TRA_EMU3000', dir: 1, seg: 2, prog: 0.35 },
+        { trainNo: '117', classId: 'TRA_EMU3000', dir: 1, seg: 20, prog: 0.45 },
+        { trainNo: '116', classId: 'TRA_EMU3000', dir: -1, seg: 14, prog: 0.2 },
+        { trainNo: '122', classId: 'TRA_EMU3000', dir: -1, seg: 28, prog: 0.6 },
+        { trainNo: '272', classId: 'TRA_TZECHIANG', dir: -1, seg: 8, prog: 0.6 },
+        { trainNo: '115', classId: 'TRA_TZECHIANG', dir: 1, seg: 11, prog: 0.0 },
+        { trainNo: '121', classId: 'TRA_TZECHIANG', dir: 1, seg: 23, prog: 0.5 },
+        { trainNo: '128', classId: 'TRA_TZECHIANG', dir: -1, seg: 29, prog: 0.3 },
+        { trainNo: '4018', classId: 'TRA_FAST_LOCAL', dir: 1, seg: 6, prog: 0.5 },
+        { trainNo: '4021', classId: 'TRA_FAST_LOCAL', dir: -1, seg: 16, prog: 0.4 },
+        { trainNo: '2017', classId: 'TRA_FAST_LOCAL', dir: 1, seg: 25, prog: 0.3 },
+        { trainNo: '2022', classId: 'TRA_FAST_LOCAL', dir: -1, seg: 22, prog: 0.7 },
+        { trainNo: '1137', classId: 'TRA_LOCAL', dir: 1, seg: 0, prog: 0.7 },
+        { trainNo: '1141', classId: 'TRA_LOCAL', dir: 1, seg: 5, prog: 0.1 },
+        { trainNo: '1145', classId: 'TRA_LOCAL', dir: 1, seg: 10, prog: 0.0 },
+        { trainNo: '1151', classId: 'TRA_LOCAL', dir: 1, seg: 15, prog: 0.65 },
+        { trainNo: '1157', classId: 'TRA_LOCAL', dir: 1, seg: 21, prog: 0.35 },
+        { trainNo: '1163', classId: 'TRA_LOCAL', dir: 1, seg: 27, prog: 0.55 },
+        { trainNo: '1132', classId: 'TRA_LOCAL', dir: -1, seg: 3, prog: 0.45 },
+        { trainNo: '1138', classId: 'TRA_LOCAL', dir: -1, seg: 9, prog: 0.8 },
+        { trainNo: '1144', classId: 'TRA_LOCAL', dir: -1, seg: 13, prog: 0.2 },
+        { trainNo: '1148', classId: 'TRA_LOCAL', dir: -1, seg: 18, prog: 0.5 },
+        { trainNo: '1154', classId: 'TRA_LOCAL', dir: -1, seg: 24, prog: 0.4 },
+        { trainNo: '1160', classId: 'TRA_LOCAL', dir: -1, seg: 30, prog: 0.25 }
+      ];
+      traWestSeeds.forEach(s => createTrainInstance({
+        trainNo: s.trainNo, routeId: 'tra_west', classId: s.classId, direction: s.dir, startStationIndex: s.seg, initialProgress: s.prog
+      }));
+
+      // 2. 台鐵宜蘭線 (八堵—牡丹): 新自強、自強號、區間快、區間車
+      const traYilanSeeds = [
+        { trainNo: '410', classId: 'TRA_EMU3000', dir: 1, seg: 1, prog: 0.4 },
+        { trainNo: '417', classId: 'TRA_EMU3000', dir: -1, seg: 4, prog: 0.6 },
+        { trainNo: '212', classId: 'TRA_TZECHIANG', dir: 1, seg: 3, prog: 0.0 },
+        { trainNo: '4026', classId: 'TRA_FAST_LOCAL', dir: -1, seg: 2, prog: 0.5 },
+        { trainNo: '4148', classId: 'TRA_LOCAL', dir: 1, seg: 0, prog: 0.3 },
+        { trainNo: '4152', classId: 'TRA_LOCAL', dir: 1, seg: 4, prog: 0.7 },
+        { trainNo: '4143', classId: 'TRA_LOCAL', dir: -1, seg: 5, prog: 0.2 }
+      ];
+      traYilanSeeds.forEach(s => createTrainInstance({
+        trainNo: s.trainNo, routeId: 'tra_yilan', classId: s.classId, direction: s.dir, startStationIndex: s.seg, initialProgress: s.prog
+      }));
+
+      // 3. 台鐵平溪線 (三貂嶺—菁桐) & 深澳線 (八斗子—瑞芳)
+      const pingxiSeeds = [
+        { trainNo: '4712', classId: 'TRA_BRANCH_DR1000', dir: 1, seg: 1, prog: 0.45 },
+        { trainNo: '4715', classId: 'TRA_BRANCH_DR1000', dir: -1, seg: 4, prog: 0.25 },
+        { trainNo: '4718', classId: 'TRA_BRANCH_DR1000', dir: 1, seg: 5, prog: 0.0 }
+      ];
+      pingxiSeeds.forEach(s => createTrainInstance({
+        trainNo: s.trainNo, routeId: 'tra_pingxi', classId: s.classId, direction: s.dir, startStationIndex: s.seg, initialProgress: s.prog
+      }));
+
+      const shenaoSeeds = [
+        { trainNo: '4811', classId: 'TRA_BRANCH_DR1000', dir: 1, seg: 0, prog: 0.55 },
+        { trainNo: '4814', classId: 'TRA_BRANCH_DR1000', dir: -1, seg: 1, prog: 0.3 }
+      ];
+      shenaoSeeds.forEach(s => createTrainInstance({
+        trainNo: s.trainNo, routeId: 'tra_shenao', classId: s.classId, direction: s.dir, startStationIndex: s.seg, initialProgress: s.prog
+      }));
+
+      // 4. 台鐵內灣線 (新竹—竹中—內灣) & 台鐵六家線 (新竹—竹中—六家)
+      const neiwanSeeds = [
+        { trainNo: '1812', classId: 'TRA_BRANCH_DR1000', dir: 1, seg: 4, prog: 0.35 },
+        { trainNo: '1815', classId: 'TRA_BRANCH_DR1000', dir: -1, seg: 8, prog: 0.5 },
+        { trainNo: '1818', classId: 'TRA_BRANCH_DR1000', dir: 1, seg: 10, prog: 0.2 }
+      ];
+      neiwanSeeds.forEach(s => createTrainInstance({
+        trainNo: s.trainNo, routeId: 'tra_neiwan', classId: s.classId, direction: s.dir, startStationIndex: s.seg, initialProgress: s.prog
+      }));
+
+      const liujiaSeeds = [
+        { trainNo: '1862', classId: 'TRA_LOCAL', dir: 1, seg: 1, prog: 0.4 },
+        { trainNo: '1865', classId: 'TRA_LOCAL', dir: -1, seg: 3, prog: 0.6 },
+        { trainNo: '1868', classId: 'TRA_LOCAL', dir: 1, seg: 4, prog: 0.15 }
+      ];
+      liujiaSeeds.forEach(s => createTrainInstance({
+        trainNo: s.trainNo, routeId: 'tra_liujia', classId: s.classId, direction: s.dir, startStationIndex: s.seg, initialProgress: s.prog
+      }));
+
+      // 5. 台灣高鐵 (南港—竹北[高鐵新竹站]，僅顯示同時停靠桃園與新竹之 8xx/6xx/16xx 列車)
+      const thsrSeeds = [
+        { trainNo: '0809', classId: 'THSR_TAOYUAN_HSINCHU', dir: 1, seg: 0, prog: 0.45 },
+        { trainNo: '0615', classId: 'THSR_TAOYUAN_HSINCHU', dir: 1, seg: 2, prog: 0.55 },
+        { trainNo: '0813', classId: 'THSR_TAOYUAN_HSINCHU', dir: 1, seg: 3, prog: 0.3 },
+        { trainNo: '0806', classId: 'THSR_TAOYUAN_HSINCHU', dir: -1, seg: 1, prog: 0.6 },
+        { trainNo: '0612', classId: 'THSR_TAOYUAN_HSINCHU', dir: -1, seg: 2, prog: 0.25 },
+        { trainNo: '1618', classId: 'THSR_TAOYUAN_HSINCHU', dir: -1, seg: 3, prog: 0.7 }
+      ];
+      thsrSeeds.forEach(s => createTrainInstance({
+        trainNo: s.trainNo, routeId: 'thsr_north', classId: s.classId, direction: s.dir, startStationIndex: s.seg, initialProgress: s.prog
+      }));
+
+      // 6. 桃園機場捷運 (直達車紫色 vs 普通車藍色)
+      const tymcSeeds = [
+        { trainNo: 'E101', classId: 'TYMC_EXPRESS', dir: 1, seg: 0, prog: 0.4 },
+        { trainNo: 'E105', classId: 'TYMC_EXPRESS', dir: 1, seg: 7, prog: 0.6 },
+        { trainNo: 'E102', classId: 'TYMC_EXPRESS', dir: -1, seg: 11, prog: 0.1 },
+        { trainNo: 'E106', classId: 'TYMC_EXPRESS', dir: -1, seg: 3, prog: 0.7 },
+        { trainNo: 'C501', classId: 'TYMC_COMMUTER', dir: 1, seg: 2, prog: 0.2 },
+        { trainNo: 'C503', classId: 'TYMC_COMMUTER', dir: 1, seg: 9, prog: 0.5 },
+        { trainNo: 'C505', classId: 'TYMC_COMMUTER', dir: 1, seg: 16, prog: 0.8 },
+        { trainNo: 'C502', classId: 'TYMC_COMMUTER', dir: -1, seg: 5, prog: 0.3 },
+        { trainNo: 'C504', classId: 'TYMC_COMMUTER', dir: -1, seg: 13, prog: 0.4 },
+        { trainNo: 'C506', classId: 'TYMC_COMMUTER', dir: -1, seg: 19, prog: 0.6 }
+      ];
+      tymcSeeds.forEach(s => createTrainInstance({
+        trainNo: s.trainNo, routeId: 'tymc_main', classId: s.classId, direction: s.dir, startStationIndex: s.seg, initialProgress: s.prog
+      }));
+
+      // =====================================================================
+      // 7. 台北捷運 (TRTC) 依據官方時刻表、重疊區間與尖離峰班距配置車隊
+      // =====================================================================
+
+      // (A) BL 板南線：
+      // - 全程車【頂埔 BL01 ↔ 南港展覽館 BL23】(單程約51分)：全日基本盤 12 列 + 尖峰增開 6 列 = 18 列（全程區間尖峰 6 分鐘一班）
+      // - 區間車【亞東醫院 BL05 ↔ 南港展覽館 BL23】(單程約40分)：日間重疊區間 10 列 + 尖峰增開 4 列 = 14 列（使重疊區間達 3 分鐘一班）
+      // - 尖峰加密車【江子翠 BL09 ↔ 昆陽 BL21】：尖峰專屬 6 列（使龍山寺—昆陽早晚尖峰最密達 2 分 15 秒一班！）
+      const blRoute = ROUTES.find(r => r.id === 'trtc_bl');
+      const blYadongStations = blRoute.stations.slice(4); // BL05 亞東醫院 -> BL23 南港展覽館
+      const blPeakCoreStations = blRoute.stations.slice(8, 21); // BL09 江子翠 -> BL21 昆陽
+
+      spawnCadencedFleet({
+        routeId: 'trtc_bl', classId: 'TRTC_METRO', prefix: 'BL', startNum: 101, count: 12,
+        phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
+        serviceLabel: '板南全程車 (頂埔↔南港展覽館)', badgeSubLabel: '全程'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_bl', classId: 'TRTC_METRO', prefix: 'BL', startNum: 151, count: 6,
+        phaseOffset: 0.04, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '板南尖峰全程車 (頂埔↔南港展覽館)', badgeSubLabel: '全程'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_bl', classId: 'TRTC_METRO', prefix: 'BL', startNum: 201, count: 10,
+        phaseOffset: 0.02, customStations: blYadongStations, serviceWindow: 'DAYTIME',
+        serviceLabel: '板南區間車 (亞東醫院↔南港展覽館)', badgeSubLabel: '亞東區間'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_bl', classId: 'TRTC_METRO', prefix: 'BL', startNum: 251, count: 4,
+        phaseOffset: 0.06, customStations: blYadongStations, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '板南尖峰區間車 (亞東醫院↔南港展覽館)', badgeSubLabel: '亞東區間'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_bl', classId: 'TRTC_METRO', prefix: 'BL', startNum: 301, count: 6,
+        phaseOffset: 0.015, customStations: blPeakCoreStations, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '板南尖峰加班車 (江子翠↔昆陽 2分15秒加密)', badgeSubLabel: '尖峰加班'
+      });
+
+      // (B) R 淡水信義線：
+      // - 全程車【淡水 R28 ↔ 象山 R02】(單程約61分)：全日 12 列 + 尖峰 6 列
+      // - 區間車【北投 R22 ↔ 大安 R05】(單程約33分)：日間 8 列 + 尖峰 4 列（重疊區間尖峰約 3 分鐘一班）
+      const rRoute = ROUTES.find(r => r.id === 'trtc_r');
+      const rBeitouDaanStations = rRoute.stations.slice(6, 24); // R22 北投 -> R05 大安
+      spawnCadencedFleet({
+        routeId: 'trtc_r', classId: 'TRTC_METRO', prefix: 'R', startNum: 101, count: 12,
+        phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
+        serviceLabel: '淡水信義全程車 (淡水↔象山)', badgeSubLabel: '全程'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_r', classId: 'TRTC_METRO', prefix: 'R', startNum: 151, count: 6,
+        phaseOffset: 0.04, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '淡水信義尖峰車 (淡水↔象山)', badgeSubLabel: '全程'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_r', classId: 'TRTC_METRO', prefix: 'R', startNum: 201, count: 8,
+        phaseOffset: 0.02, customStations: rBeitouDaanStations, serviceWindow: 'DAYTIME',
+        serviceLabel: '淡水信義區間車 (北投↔大安)', badgeSubLabel: '北投大安'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_r', classId: 'TRTC_METRO', prefix: 'R', startNum: 251, count: 4,
+        phaseOffset: 0.05, customStations: rBeitouDaanStations, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '淡水信義尖峰區間車 (北投↔大安)', badgeSubLabel: '北投大安'
+      });
+
+      // (C) G 松山新店線：
+      // - 全程車【松山 G19 ↔ 新店 G01】：全日 10 列 + 尖峰 4 列
+      // - 區間車【松山 G19 ↔ 台電大樓 G08】：日間 5 列 + 尖峰 3 列（重疊區間尖峰約 3 分鐘一班）
+      const gRoute = ROUTES.find(r => r.id === 'trtc_g');
+      const gTaipowerStations = gRoute.stations.slice(0, 12); // G19 松山 -> G08 台電大樓
+      spawnCadencedFleet({
+        routeId: 'trtc_g', classId: 'TRTC_METRO', prefix: 'G', startNum: 101, count: 10,
+        phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
+        serviceLabel: '松山新店全程車 (松山↔新店)', badgeSubLabel: '全程'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_g', classId: 'TRTC_METRO', prefix: 'G', startNum: 151, count: 4,
+        phaseOffset: 0.04, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '松山新店尖峰車 (松山↔新店)', badgeSubLabel: '全程'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_g', classId: 'TRTC_METRO', prefix: 'G', startNum: 201, count: 5,
+        phaseOffset: 0.025, customStations: gTaipowerStations, serviceWindow: 'DAYTIME',
+        serviceLabel: '松山新店區間車 (松山↔台電大樓)', badgeSubLabel: '台電區間'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_g', classId: 'TRTC_METRO', prefix: 'G', startNum: 251, count: 3,
+        phaseOffset: 0.06, customStations: gTaipowerStations, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '松山新店尖峰區間車 (松山↔台電大樓)', badgeSubLabel: '台電區間'
+      });
+
+      // (D) O 中和新蘆線：
+      // - 迴龍線【南勢角 O01 ↔ 大橋頭 O12 ↔ 迴龍 O21】(單程約49分)：全日 9 列 + 尖峰 5 列
+      // - 蘆洲線【南勢角 O01 ↔ 大橋頭 O12 ↔ 蘆洲 O54】(單程約38分)：全日 8 列 + 尖峰 4 列
+      // 兩線於「南勢角—大橋頭」重疊區間交錯運行，尖峰重疊區間約 3 分鐘一班！
+      const oRoute = ROUTES.find(r => r.id === 'trtc_o');
+      const oLuzhouStations = oRoute.stations.slice(0, 12).concat(oRoute.extraBranches[0].slice(1));
+      spawnCadencedFleet({
+        routeId: 'trtc_o', classId: 'TRTC_METRO', prefix: 'O', startNum: 101, count: 9,
+        phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
+        serviceLabel: '中和新蘆線 (南勢角↔迴龍)', badgeSubLabel: '迴龍線'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_o', classId: 'TRTC_METRO', prefix: 'O', startNum: 151, count: 5,
+        phaseOffset: 0.03, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '中和新蘆尖峰車 (南勢角↔迴龍)', badgeSubLabel: '迴龍線'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_o', classId: 'TRTC_METRO', prefix: 'O', startNum: 201, count: 8,
+        phaseOffset: 0.02, customStations: oLuzhouStations, serviceWindow: 'ALL_DAY',
+        serviceLabel: '中和新蘆線 (南勢角↔蘆洲)', badgeSubLabel: '蘆洲線'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_o', classId: 'TRTC_METRO', prefix: 'O', startNum: 251, count: 4,
+        phaseOffset: 0.05, customStations: oLuzhouStations, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '中和新蘆尖峰車 (南勢角↔蘆洲)', badgeSubLabel: '蘆洲線'
+      });
+
+      // (E) BR 文湖線 (動物園 ↔ 南港展覽館，尖峰約 2~3 分鐘超密集班距)：
+      spawnCadencedFleet({
+        routeId: 'trtc_br', classId: 'TRTC_METRO', prefix: 'BR', startNum: 101, count: 16,
+        phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
+        serviceLabel: '文湖線電聯車 (動物園↔南港展覽館)', badgeSubLabel: '文湖線'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_br', classId: 'TRTC_METRO', prefix: 'BR', startNum: 151, count: 12,
+        phaseOffset: 0.025, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '文湖線尖峰加密車 (動物園↔南港展覽館)', badgeSubLabel: '尖峰加密'
+      });
+
+      // (F) Y 環狀線 (大坪林 ↔ 新北產業園區，尖峰約 4~5 分鐘班距)：
+      spawnCadencedFleet({
+        routeId: 'trtc_y', classId: 'TRTC_METRO', prefix: 'Y', startNum: 101, count: 8,
+        phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
+        serviceLabel: '環狀線電聯車 (大坪林↔新北產業園區)', badgeSubLabel: '環狀線'
+      });
+      spawnCadencedFleet({
+        routeId: 'trtc_y', classId: 'TRTC_METRO', prefix: 'Y', startNum: 151, count: 6,
+        phaseOffset: 0.04, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '環狀線尖峰加密車 (大坪林↔新北產業園區)', badgeSubLabel: '尖峰加密'
+      });
+
+      // (G) 淡海輕軌 & 安坑輕軌
+      const danhaiRoute = ROUTES.find(r => r.id === 'lrt_danhai');
+      const danhaiBlueStations = danhaiRoute.stations.slice(0, 9).concat(danhaiRoute.extraBranches[0].slice(1));
+      spawnCadencedFleet({
+        routeId: 'lrt_danhai', classId: 'NTMC_LRT', prefix: 'V', startNum: 101, count: 4,
+        phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
+        serviceLabel: '淡海輕軌綠山線 (紅樹林↔崁頂)', badgeSubLabel: '綠山線'
+      });
+      spawnCadencedFleet({
+        routeId: 'lrt_danhai', classId: 'NTMC_LRT', prefix: 'V', startNum: 201, count: 3,
+        phaseOffset: 0.15, customStations: danhaiBlueStations, serviceWindow: 'DAYTIME',
+        serviceLabel: '淡海輕軌藍海線 (紅樹林↔漁人碼頭)', badgeSubLabel: '藍海線'
+      });
+
+      spawnCadencedFleet({
+        routeId: 'lrt_ankeng', classId: 'NTMC_LRT', prefix: 'K', startNum: 101, count: 4,
+        phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
+        serviceLabel: '安坑輕軌 (雙城↔十四張)', badgeSubLabel: '安坑線'
+      });
+    }
+
+    // =========================================================================
+    // 5. SIMULATION LOOP & MANUAL TIMELINE SCRUBBING (60 FPS smooth interpolation)
+    // =========================================================================
+
+    let lastTimestamp = performance.now();
+    let uiRefreshAccumulator = 0;
+    let lastServiceWindowBucket = '';
+
+    function getServiceBucketKey(simSec) {
+      const hr = (((simSec % 86400) + 86400) % 86400) / 3600;
+      if ((hr >= 6.5 && hr <= 9.5) || (hr >= 16.5 && hr <= 20.0)) return 'PEAK';
+      if (hr >= 6.0 && hr < 23.0) return 'DAYTIME';
+      return 'NIGHT';
+    }
+
+    function applySimulationTime(newSimSec) {
+      state.simSeconds = ((newSimSec % 86400) + 86400) % 86400;
+      const bucket = getServiceBucketKey(state.simSeconds);
+      const bucketChanged = bucket !== lastServiceWindowBucket;
+      if (bucketChanged) {
+        lastServiceWindowBucket = bucket;
+      }
+
+      state.trains.forEach(train => {
+        if (bucketChanged) {
+          syncTrainVisibility(train);
+        }
+        if (isTrainVisible(train)) {
+          syncTrainStateToTime(train, state.simSeconds);
+        }
+      });
+
+      if (bucketChanged) {
+        updateTelemetryCounters();
+      }
+      updateClockUI();
+    }
+
+    function stepSimulation(now) {
+      const dtRealSec = Math.min(0.1, (now - lastTimestamp) / 1000);
+      lastTimestamp = now;
+
+      if (!state.isPaused && !state.isScrubbing) {
+        const dtSimSec = dtRealSec * state.speedMultiplier;
+        applySimulationTime(state.simSeconds + dtSimSec);
+      }
+
+      uiRefreshAccumulator += dtRealSec;
+      if (uiRefreshAccumulator >= 0.8) {
+        uiRefreshAccumulator = 0;
+        renderActiveTrainList();
+      }
+
+      requestAnimationFrame(stepSimulation);
+    }
+
+    function formatSimTime(sec) {
+      const s = Math.floor(((sec % 86400) + 86400) % 86400);
+      const hh = String(Math.floor(s / 3600)).padStart(2, '0');
+      const mm = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+      const ss = String(s % 60).padStart(2, '0');
+      return `${hh}:${mm}:${ss}`;
+    }
+
+    function getTimePeriodLabel(sec) {
+      const hr = (sec % 86400) / 3600;
+      if (hr >= 6.5 && hr <= 9.5) return { text: '早尖峰 · 藍線最密2\'15"', cls: 'bg-amber-500/20 text-amber-300 border-amber-400/30' };
+      if (hr >= 16.5 && hr <= 20.0) return { text: '晚尖峰 · 藍線重疊3\'00"', cls: 'bg-amber-500/20 text-amber-300 border-amber-400/30' };
+      if (hr >= 23 || hr < 6.0) return { text: '深夜 · 僅行駛全程車', cls: 'bg-indigo-500/20 text-indigo-300 border-indigo-400/30' };
+      return { text: '離峰 · 重疊區間3.5~4.5分', cls: 'bg-sky-500/20 text-sky-300 border-sky-400/30' };
+    }
+
+    function updateClockUI() {
+      document.getElementById('clockDisplay').textContent = formatSimTime(state.simSeconds);
+      const scrubber = document.getElementById('timeScrubber');
+      if (scrubber && !state.isScrubbing) {
+        scrubber.value = Math.floor(state.simSeconds);
+      }
+      const badge = document.getElementById('timePeriodBadge');
+      if (badge) {
+        const info = getTimePeriodLabel(state.simSeconds);
+        badge.textContent = info.text;
+        badge.className = `text-[10px] font-bold px-1.5 py-0.5 rounded border truncate ${info.cls}`;
+      }
+    }
+
+    // =========================================================================
+    // 6. FILTERING, VISIBILITY & DEDICATED MAP-ONLY MODE
+    // =========================================================================
+
+    function isTrainVisible(train) {
+      return state.visibleRoutes.has(train.routeId) &&
+             state.visibleClasses.has(train.classId) &&
+             isTrainInServiceAtTime(train, state.simSeconds);
+    }
+
+    function syncTrainVisibility(train) {
+      if (isTrainVisible(train)) {
+        if (!map.hasLayer(train.marker)) {
+          train.marker.addTo(map);
+        }
+        train.marker.setIcon(buildTrainSvgIcon(train));
+      } else {
+        if (map.hasLayer(train.marker)) {
+          map.removeLayer(train.marker);
+        }
+      }
+    }
+
+    function syncAllVisibility() {
+      // 1. Routes & stations
+      ROUTES.forEach(route => {
+        const group = routeLayerMap[route.id];
+        if (!group) return;
+        if (state.visibleRoutes.has(route.id)) {
+          if (!map.hasLayer(group)) group.addTo(map);
+        } else {
+          if (map.hasLayer(group)) map.removeLayer(group);
+        }
+      });
+
+      // 2. Station name labels based on zoom & toggle
+      syncStationLabelsVisibility();
+
+      // 3. Trains
+      state.trains.forEach(t => {
+        syncTrainVisibility(t);
+        if (isTrainVisible(t)) {
+          syncTrainStateToTime(t, state.simSeconds);
+        }
+      });
+
+      // 4. Update counters
+      updateTelemetryCounters();
+      renderActiveTrainList();
+    }
+
+    function syncStationLabelsVisibility() {
+      const zoom = map.getZoom();
+      document.querySelectorAll('.st-name-tag').forEach(el => {
+        if (!state.showStationNames) {
+          el.style.display = 'none';
+          return;
+        }
+        const isHub = el.getAttribute('data-hub') === '1';
+        if (zoom < 11 && !isHub) {
+          el.style.display = 'none';
+        } else {
+          el.style.display = 'block';
+        }
+      });
+    }
+
+    map.on('zoomend', syncStationLabelsVisibility);
+
+    function updateTelemetryCounters() {
+      const visibleRouteList = ROUTES.filter(r => state.visibleRoutes.has(r.id));
+      document.getElementById('statRoutesCount').textContent = `${visibleRouteList.length} / ${ROUTES.length}`;
+
+      const stationSet = new Set();
+      visibleRouteList.forEach(r => {
+        r.stations.forEach(s => stationSet.add(s.name));
+        if (r.extraBranches) {
+          r.extraBranches.forEach(b => b.forEach(s => stationSet.add(s.name)));
+        }
+      });
+      document.getElementById('statStationsCount').textContent = stationSet.size;
+
+      const visTrains = state.trains.filter(isTrainVisible).length;
+      document.getElementById('statTrainsCount').textContent = visTrains;
+      document.getElementById('activeTrainCountTab').textContent = visTrains;
+
+      const summaryEl = document.getElementById('visibleRouteSummary');
+      if (visibleRouteList.length === ROUTES.length) {
+        summaryEl.textContent = '全部路線顯示中';
+      } else if (visibleRouteList.length === 0) {
+        summaryEl.textContent = '已隱藏所有路線';
+      } else {
+        summaryEl.textContent = `已顯示 ${visibleRouteList.length} 條路線`;
+      }
+    }
+
+    // Dedicated Map-Only Mode (專門顯示地圖功能：保留地圖、時間)
+    function toggleMapOnlyMode(forceState) {
+      state.mapOnlyMode = typeof forceState === 'boolean' ? forceState : !state.mapOnlyMode;
+      document.body.classList.toggle('map-only-mode', state.mapOnlyMode);
+
+      const btn = document.getElementById('btnToggleMapOnly');
+      const txt = document.getElementById('mapOnlyBtnText');
+      if (state.mapOnlyMode) {
+        txt.textContent = '退出純地圖';
+        btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-500');
+        btn.classList.add('bg-rose-600', 'hover:bg-rose-500');
+        showToast('已開啟「純地圖模式」：僅保留地圖與時間軸控制器（按 M 或點擊按鈕可返回）');
+      } else {
+        txt.textContent = '純地圖模式';
+        btn.classList.remove('bg-rose-600', 'hover:bg-rose-500');
+        btn.classList.add('bg-indigo-600', 'hover:bg-indigo-500');
+      }
+    }
+
+    // =========================================================================
+    // 7. BUILD UI FILTER LISTS & CONTROLS
+    // =========================================================================
+
+    function buildRouteFilterUI() {
+      const container = document.getElementById('routeFilterContainer');
+      container.innerHTML = '';
+
+      const systems = [
+        { code: 'TRA', title: '臺灣鐵路 (TRA 六大路線：基隆—新竹、宜蘭、平溪、深澳、內灣、六家)' },
+        { code: 'THSR', title: '台灣高鐵 (南港—竹北，僅顯示停靠桃園與新竹列車)' },
+        { code: 'TYMC', title: '桃園機場捷運 (TYMC)' },
+        { code: 'TRTC', title: '台北捷運 (TRTC 六大路線 · 含尖離峰重疊區間加密)' },
+        { code: 'LRT', title: '新北捷運輕軌 (淡海 / 安坑)' }
+      ];
+
+      systems.forEach(sys => {
+        const sysRoutes = ROUTES.filter(r => r.system === sys.code);
+        const card = document.createElement('div');
+        card.className = 'bg-slate-800/50 border border-slate-700/70 rounded-xl p-2.5';
+
+        const header = document.createElement('div');
+        header.className = 'flex items-center justify-between mb-2 pb-1 border-b border-slate-700/60';
+        header.innerHTML = `
+          <span class="text-xs font-bold text-slate-200">${sys.title}</span>
+          <button data-sys-toggle="${sys.code}" class="text-[11px] font-semibold text-sky-400 hover:text-sky-300 flex-shrink-0 ml-2">全選/切換</button>
+        `;
+        card.appendChild(header);
+
+        const list = document.createElement('div');
+        list.className = 'space-y-1.5';
+
+        sysRoutes.forEach(route => {
+          const row = document.createElement('div');
+          row.className = 'flex items-center justify-between gap-2 py-1 px-1.5 rounded-lg hover:bg-slate-800 transition';
+          row.innerHTML = `
+            <label class="flex items-center gap-2 cursor-pointer flex-1 min-w-0">
+              <input type="checkbox" data-route-id="${route.id}" ${state.visibleRoutes.has(route.id) ? 'checked' : ''} class="route-chk rounded bg-slate-900 border-slate-600 text-sky-500 focus:ring-0" />
+              <span class="w-3 h-3 rounded-sm flex-shrink-0" style="background:${route.color}"></span>
+              <span class="text-xs font-medium text-slate-200 truncate">${route.name}</span>
+            </label>
+            <button data-focus-route="${route.id}" title="縮放至此路線" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-900 hover:bg-slate-700 text-slate-400 hover:text-white flex-shrink-0">
+              定位
+            </button>
+          `;
+          list.appendChild(row);
+        });
+
+        card.appendChild(list);
+        container.appendChild(card);
+      });
+
+      // Attach listeners
+      container.querySelectorAll('.route-chk').forEach(chk => {
+        chk.addEventListener('change', e => {
+          const rid = e.target.getAttribute('data-route-id');
+          if (e.target.checked) state.visibleRoutes.add(rid);
+          else state.visibleRoutes.delete(rid);
+          syncAllVisibility();
+        });
+      });
+
+      container.querySelectorAll('[data-sys-toggle]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sysCode = btn.getAttribute('data-sys-toggle');
+          const sysRoutes = ROUTES.filter(r => r.system === sysCode);
+          const allChecked = sysRoutes.every(r => state.visibleRoutes.has(r.id));
+          sysRoutes.forEach(r => {
+            if (allChecked) state.visibleRoutes.delete(r.id);
+            else state.visibleRoutes.add(r.id);
+          });
+          syncCheckboxStates();
+          syncAllVisibility();
+        });
+      });
+
+      container.querySelectorAll('[data-focus-route]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const rid = btn.getAttribute('data-focus-route');
+          const route = ROUTES.find(r => r.id === rid);
+          if (!route) return;
+          state.visibleRoutes.add(rid);
+          syncCheckboxStates();
+          syncAllVisibility();
+          const bounds = L.latLngBounds(route.stations.map(s => [s.lat, s.lng]));
+          map.fitBounds(bounds.pad(0.15));
+        });
+      });
+    }
+
+    function syncCheckboxStates() {
+      document.querySelectorAll('.route-chk').forEach(chk => {
+        const rid = chk.getAttribute('data-route-id');
+        chk.checked = state.visibleRoutes.has(rid);
+      });
+      document.querySelectorAll('.class-chk').forEach(chk => {
+        const cid = chk.getAttribute('data-class-id');
+        chk.checked = state.visibleClasses.has(cid);
+      });
+    }
+
+    function buildTrainClassFilterUI() {
+      const traContainer = document.getElementById('traClassFilterList');
+      const thsrContainer = document.getElementById('thsrClassFilterList');
+      const tymcContainer = document.getElementById('tymcClassFilterList');
+      const metroContainer = document.getElementById('metroClassFilterList');
+
+      traContainer.innerHTML = '';
+      thsrContainer.innerHTML = '';
+      tymcContainer.innerHTML = '';
+      metroContainer.innerHTML = '';
+
+      Object.values(TRAIN_CLASSES).forEach(tc => {
+        const item = document.createElement('label');
+        item.className = 'flex items-start gap-2.5 p-2 rounded-xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 cursor-pointer transition';
+        item.innerHTML = `
+          <input type="checkbox" data-class-id="${tc.id}" ${state.visibleClasses.has(tc.id) ? 'checked' : ''} class="class-chk mt-0.5 rounded bg-slate-950 border-slate-600 text-sky-500 focus:ring-0" />
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-white flex items-center gap-1.5">
+                <span class="w-3 h-3 rounded-sm inline-block" style="background:${tc.color}"></span>
+                ${tc.name}
+              </span>
+              <span class="text-[10px] font-mono-clock text-slate-400">${tc.speedKmH} km/h</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-0.5 leading-snug">${tc.desc}</p>
+          </div>
+        `;
+
+        if (tc.system === 'TRA') traContainer.appendChild(item);
+        else if (tc.system === 'THSR') thsrContainer.appendChild(item);
+        else if (tc.system === 'TYMC') tymcContainer.appendChild(item);
+        else metroContainer.appendChild(item);
+      });
+
+      document.querySelectorAll('.class-chk').forEach(chk => {
+        chk.addEventListener('change', e => {
+          const cid = e.target.getAttribute('data-class-id');
+          if (e.target.checked) state.visibleClasses.add(cid);
+          else state.visibleClasses.delete(cid);
+          syncAllVisibility();
+        });
+      });
+    }
+
+    function renderActiveTrainList() {
+      const listEl = document.getElementById('activeTrainList');
+      if (!listEl) return;
+      const query = (document.getElementById('trainSearchInput')?.value || '').trim().toLowerCase();
+
+      const visTrains = state.trains.filter(t => {
+        if (!isTrainVisible(t)) return false;
+        if (!query) return true;
+        const tc = TRAIN_CLASSES[t.classId];
+        const { fromSt, toSt, nextStopSt } = getTrainStatusInfo(t);
+        const hay = `${t.trainNo} ${t.serviceLabel || ''} ${tc.name} ${t.route.name} ${fromSt.name} ${toSt.name} ${nextStopSt.name}`.toLowerCase();
+        return hay.includes(query);
+      });
+
+      listEl.innerHTML = visTrains.map(t => {
+        const tc = TRAIN_CLASSES[t.classId];
+        const color = getTrainEffectiveColor(t);
+        const { fromSt, destSt, nextStopSt } = getTrainStatusInfo(t);
+        const statusText = t.status === 'STOPPED' ? `停靠 ${fromSt.name}` : `下一站: ${nextStopSt.name}`;
+        return `
+          <div data-locate-train="${t.id}" class="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-950/70 hover:bg-slate-800 border border-slate-800 cursor-pointer transition">
+            <div class="flex items-center gap-2 min-w-0">
+              <span style="background:${color};" class="px-1.5 py-0.5 rounded text-[11px] font-extrabold text-white flex-shrink-0">${t.trainNo}</span>
+              <div class="min-w-0">
+                <div class="text-xs font-bold text-slate-100 truncate">${t.serviceLabel || tc.shortName} · 往${destSt.name}</div>
+                <div class="text-[11px] text-slate-400 truncate">${t.route.shortName} | ${statusText}</div>
+              </div>
+            </div>
+            <span class="text-[10px] font-semibold px-2 py-1 rounded bg-slate-800 text-sky-400 flex-shrink-0">追蹤</span>
+          </div>
+        `;
+      }).join('');
+
+      listEl.querySelectorAll('[data-locate-train]').forEach(row => {
+        row.addEventListener('click', () => {
+          const tid = row.getAttribute('data-locate-train');
+          const train = state.trains.find(x => x.id === tid);
+          if (!train) return;
+          state.followedTrainId = train.id;
+          map.flyTo(train.marker.getLatLng(), Math.max(map.getZoom(), 13), { duration: 0.6 });
+          openTrainPopup(train);
+        });
+      });
+    }
+
+    function showToast(msg) {
+      const banner = document.getElementById('toastBanner');
+      banner.textContent = msg;
+      banner.style.opacity = '1';
+      clearTimeout(banner._timer);
+      banner._timer = setTimeout(() => {
+        banner.style.opacity = '0';
+      }, 2800);
+    }
+
+    // =========================================================================
+    // 8. EVENT LISTENERS & INTERACTIVE CONTROLS
+    // =========================================================================
+
+    function setupControls() {
+      // Play / Pause
+      document.getElementById('btnPlayPause').addEventListener('click', () => {
+        state.isPaused = !state.isPaused;
+        document.getElementById('iconPause').classList.toggle('hidden', state.isPaused);
+        document.getElementById('iconPlay').classList.toggle('hidden', !state.isPaused);
+        const dot = document.getElementById('simStatusDot');
+        dot.classList.toggle('bg-emerald-400', !state.isPaused);
+        dot.classList.toggle('bg-amber-400', state.isPaused);
+      });
+
+      // Speed Multiplier
+      document.getElementById('speedSelect').addEventListener('change', e => {
+        state.speedMultiplier = Number(e.target.value) || 15;
+      });
+
+      // Interactive Draggable Timeline Scrubber (用手拉動時間軸)
+      const scrubber = document.getElementById('timeScrubber');
+      scrubber.addEventListener('pointerdown', () => {
+        state.isScrubbing = true;
+      });
+      scrubber.addEventListener('input', e => {
+        state.isScrubbing = true;
+        const targetSec = Number(e.target.value) || 0;
+        applySimulationTime(targetSec);
+      });
+      scrubber.addEventListener('change', e => {
+        const targetSec = Number(e.target.value) || 0;
+        state.isScrubbing = false;
+        applySimulationTime(targetSec);
+        renderActiveTrainList();
+      });
+      window.addEventListener('pointerup', () => {
+        if (state.isScrubbing) {
+          state.isScrubbing = false;
+          renderActiveTrainList();
+        }
+      });
+
+      // -15m / +15m Quick Step Buttons
+      document.getElementById('btnStepBack15m').addEventListener('click', () => {
+        applySimulationTime(state.simSeconds - 15 * 60);
+        renderActiveTrainList();
+      });
+      document.getElementById('btnStepFwd15m').addEventListener('click', () => {
+        applySimulationTime(state.simSeconds + 15 * 60);
+        renderActiveTrainList();
+      });
+
+      // Timeline Scale Hour Tick Buttons
+      document.querySelectorAll('.timeline-tick-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const hr = Number(btn.getAttribute('data-scrub-hour')) || 0;
+          applySimulationTime(Math.floor(hr * 3600));
+          renderActiveTrainList();
+        });
+      });
+
+      // Map-Only Mode Button & Keyboard Shortcut 'M'
+      document.getElementById('btnToggleMapOnly').addEventListener('click', () => {
+        toggleMapOnlyMode();
+      });
+
+      window.addEventListener('keydown', e => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+        if (e.key === 'm' || e.key === 'M') {
+          e.preventDefault();
+          toggleMapOnlyMode();
+        } else if (e.code === 'Space') {
+          e.preventDefault();
+          document.getElementById('btnPlayPause').click();
+        }
+      });
+
+      // Quick Time Presets
+      document.querySelectorAll('.time-preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const parts = btn.getAttribute('data-time').split(':').map(Number);
+          const targetSec = parts[0] * 3600 + parts[1] * 60 + (parts[2] || 0);
+          applySimulationTime(targetSec);
+          renderActiveTrainList();
+          showToast(`已切換模擬時間至 ${btn.getAttribute('data-time')}`);
+        });
+      });
+
+      // Reset Camera
+      document.getElementById('btnResetCamera').addEventListener('click', () => {
+        map.flyTo([24.985, 121.38], 10, { duration: 0.7 });
+      });
+
+      // Sidebar Drawer Toggle
+      const controlPanel = document.getElementById('controlPanel');
+      document.getElementById('btnToggleSidebar').addEventListener('click', () => {
+        controlPanel.classList.toggle('translate-x-[110%]');
+      });
+
+      // Panel Tabs
+      document.querySelectorAll('.panel-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const target = btn.getAttribute('data-tab');
+          document.querySelectorAll('.panel-tab-btn').forEach(b => {
+            b.classList.remove('bg-sky-600', 'text-white');
+            b.classList.add('text-slate-400');
+          });
+          btn.classList.add('bg-sky-600', 'text-white');
+          btn.classList.remove('text-slate-400');
+
+          document.querySelectorAll('.panel-tab-content').forEach(c => c.classList.add('hidden'));
+          document.getElementById(`tab-${target}`).classList.remove('hidden');
+        });
+      });
+
+      // Quick System Presets
+      document.querySelectorAll('.sys-preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const preset = btn.getAttribute('data-preset');
+          state.visibleRoutes.clear();
+          if (preset === 'all') {
+            ROUTES.forEach(r => state.visibleRoutes.add(r.id));
+          } else if (preset === 'tra') {
+            ROUTES.filter(r => r.system === 'TRA').forEach(r => state.visibleRoutes.add(r.id));
+          } else if (preset === 'thsr') {
+            ROUTES.filter(r => r.system === 'THSR').forEach(r => state.visibleRoutes.add(r.id));
+          } else if (preset === 'tymc') {
+            ROUTES.filter(r => r.system === 'TYMC').forEach(r => state.visibleRoutes.add(r.id));
+          } else if (preset === 'trtc') {
+            ROUTES.filter(r => r.system === 'TRTC').forEach(r => state.visibleRoutes.add(r.id));
+          } else if (preset === 'lrt') {
+            ROUTES.filter(r => r.system === 'LRT').forEach(r => state.visibleRoutes.add(r.id));
+          }
+          syncCheckboxStates();
+          syncAllVisibility();
+        });
+      });
+
+      // Station Names & Train Badges Checkboxes
+      document.getElementById('chkShowStationNames').addEventListener('change', e => {
+        state.showStationNames = e.target.checked;
+        syncStationLabelsVisibility();
+      });
+
+      document.getElementById('chkShowTrainBadges').addEventListener('change', e => {
+        state.showTrainBadges = e.target.checked;
+        state.trains.forEach(t => t.marker.setIcon(buildTrainSvgIcon(t)));
+      });
+
+      // Map Base Tile Style Switcher
+      document.getElementById('mapTileSelect').addEventListener('change', e => {
+        const val = e.target.value;
+        Object.values(tileLayers).forEach(layer => {
+          if (map.hasLayer(layer)) map.removeLayer(layer);
+        });
+        if (tileLayers[val]) {
+          tileLayers[val].addTo(map);
+        }
+      });
+
+      // Search Input in Train Monitor
+      document.getElementById('trainSearchInput').addEventListener('input', () => {
+        renderActiveTrainList();
+      });
+
+      // Manual Train Dispatch Modal
+      const modal = document.getElementById('dispatchModal');
+      const routeSel = document.getElementById('dispatchRouteSelect');
+      const classSel = document.getElementById('dispatchClassSelect');
+
+      ROUTES.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.id;
+        opt.textContent = r.name;
+        routeSel.appendChild(opt);
+      });
+
+      function populateAllowedClasses() {
+        const route = ROUTES.find(r => r.id === routeSel.value) || ROUTES[0];
+        classSel.innerHTML = '';
+        route.allowedClasses.forEach(cid => {
+          const tc = TRAIN_CLASSES[cid];
+          const opt = document.createElement('option');
+          opt.value = cid;
+          opt.textContent = `${tc.name} (${tc.speedKmH} km/h)`;
+          classSel.appendChild(opt);
+        });
+      }
+      routeSel.addEventListener('change', populateAllowedClasses);
+      populateAllowedClasses();
+
+      function closeDispatchModal() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+
+      document.getElementById('btnOpenDispatchModal').addEventListener('click', () => {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      });
+      document.getElementById('btnCloseDispatchModal').addEventListener('click', closeDispatchModal);
+      document.getElementById('btnCancelDispatch').addEventListener('click', closeDispatchModal);
+
+      document.getElementById('btnConfirmDispatch').addEventListener('click', () => {
+        const routeId = routeSel.value;
+        const classId = classSel.value;
+        const dir = Number(document.getElementById('dispatchDirSelect').value) || 1;
+        const trainNo = (document.getElementById('dispatchTrainNoInput').value || '999').trim();
+        const route = ROUTES.find(r => r.id === routeId);
+        if (!route) return;
+
+        state.visibleRoutes.add(routeId);
+        state.visibleClasses.add(classId);
+        syncCheckboxStates();
+
+        const startSeg = dir === 1 ? 0 : route.stations.length - 2;
+        const newTrain = createTrainInstance({
+          trainNo,
+          routeId,
+          classId,
+          direction: dir,
+          startStationIndex: startSeg,
+          initialProgress: 0.02,
+          serviceWindow: 'ALL_DAY'
+        });
+
+        syncAllVisibility();
+        closeDispatchModal();
+
+        if (newTrain) {
+          state.followedTrainId = newTrain.id;
+          map.flyTo(newTrain.marker.getLatLng(), 13, { duration: 0.7 });
+          openTrainPopup(newTrain);
+          showToast(`已成功加開 ${trainNo} 次 (${TRAIN_CLASSES[classId].shortName}) 於 ${route.shortName}！`);
+        }
+      });
+    }
+
+    // =========================================================================
+    // 9. BOOTSTRAP APPLICATION
+    // =========================================================================
+
+    window.addEventListener('load', () => {
+      renderNetworkOnMap();
+      seedInitialFleet();
+      buildRouteFilterUI();
+      buildTrainClassFilterUI();
+      setupControls();
+      lastServiceWindowBucket = getServiceBucketKey(state.simSeconds);
+      syncAllVisibility();
+      updateClockUI();
+      requestAnimationFrame(stepSimulation);
+    });
+  </script>
+</body>
+</html>
