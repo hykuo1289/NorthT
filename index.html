@@ -21,7 +21,7 @@
       height: 100%;
       overflow: hidden;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif;
-      background-color: #070b14;
+      background-color: #e5e3df;
       color: #f1f5f9;
     }
     .font-mono-clock {
@@ -29,15 +29,15 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* Leaflet dark customization */
+    /* Google Maps container customization */
     #map {
       width: 100%;
       height: 100%;
-      background-color: #070d19;
+      background-color: #e5e3df;
       z-index: 1;
     }
     .leaflet-container {
-      background-color: #070d19 !important;
+      background-color: #e5e3df !important;
       font-family: 'Inter', "Microsoft JhengHei", sans-serif !important;
     }
     .leaflet-popup-content-wrapper {
@@ -57,13 +57,13 @@
       line-height: 1.4 !important;
     }
     .leaflet-control-attribution {
-      background: rgba(15, 23, 42, 0.7) !important;
-      color: #64748b !important;
+      background: rgba(255, 255, 255, 0.85) !important;
+      color: #334155 !important;
       font-size: 10px !important;
       border-radius: 4px 0 0 0;
     }
     .leaflet-control-attribution a {
-      color: #94a3b8 !important;
+      color: #0f172a !important;
     }
 
     /* Custom Scrollbars */
@@ -84,28 +84,28 @@
 
     /* Station Labels */
     .station-label {
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      color: #e2e8f0;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #f8fafc;
       font-size: 10px;
       font-weight: 600;
       padding: 1px 5px;
       border-radius: 4px;
       white-space: nowrap;
       pointer-events: none;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.45);
       transition: opacity 0.2s ease;
     }
     .station-label-hub {
-      background: rgba(30, 41, 59, 0.95);
-      border: 1px solid rgba(248, 250, 252, 0.55);
+      background: rgba(15, 23, 42, 0.95);
+      border: 1.5px solid #fbbf24;
       color: #ffffff;
       font-size: 11px;
       font-weight: 700;
       padding: 1.5px 6px;
       border-radius: 5px;
       white-space: nowrap;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.75);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.65);
     }
 
     /* Train Vehicle Marker */
@@ -132,8 +132,8 @@
       border-radius: 3px;
       white-space: nowrap;
       color: #fff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.8);
-      border: 1px solid rgba(255,255,255,0.4);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.85);
+      border: 1px solid rgba(255,255,255,0.6);
       pointer-events: none;
       letter-spacing: 0.02em;
     }
@@ -307,7 +307,7 @@
             <span class="inline-block w-2 h-2 rounded-full bg-sky-400"></span>
             北台灣鐵路營運模型
           </h1>
-          <p class="text-[11px] text-slate-400 mt-0.5">台鐵六線(至新竹/內灣/六家)・高鐵・機捷・北捷・輕軌</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Google 地圖路網・地下捷運沿街道運行・貓纜</p>
         </div>
         <button id="btnResetCamera" title="重置北台灣全景視角" class="px-2 py-1 text-[11px] font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700 transition">
           全景視角
@@ -372,8 +372,10 @@
           <button data-preset="tra" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition">僅台鐵</button>
           <button data-preset="thsr" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-orange-300 hover:bg-slate-700 transition">僅高鐵</button>
           <button data-preset="tymc" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition">僅機捷</button>
-          <button data-preset="trtc" class="sys-preset-btn col-span-2 px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition">僅台北捷運</button>
+          <button data-preset="trtc" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition">僅台北捷運</button>
+          <button data-preset="gondola" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-pink-300 hover:bg-slate-700 transition">木柵纜車</button>
           <button data-preset="lrt" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition">僅輕軌</button>
+          <button data-preset="ferry" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-cyan-300 hover:bg-slate-700 transition">淡水八里渡船</button>
           <button data-preset="none" class="sys-preset-btn px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-rose-300 hover:bg-slate-700 transition">全部隱藏</button>
         </div>
       </div>
@@ -394,7 +396,9 @@
         <div class="flex items-center justify-between pt-1 border-t border-slate-700/60">
           <span class="text-xs text-slate-400">地圖底圖風格</span>
           <select id="mapTileSelect" aria-label="地圖底圖風格" class="bg-slate-900 text-xs font-semibold text-slate-200 rounded-lg px-2 py-1 border border-slate-700">
-            <option value="dark" selected>深色營運底圖 (Carto Dark)</option>
+            <option value="google" selected>Google 地圖 (標準路線圖)</option>
+            <option value="google_hybrid">Google 衛星混合地圖</option>
+            <option value="dark">深色營運底圖 (Carto Dark)</option>
             <option value="osm">標準街道地圖 (OSM)</option>
             <option value="schematic">純黑工程路網底圖</option>
           </select>
@@ -405,29 +409,29 @@
       <div id="routeFilterContainer" class="space-y-3"></div>
     </div>
 
-    <!-- TAB 2: TRAIN CLASSES & LEGEND (台鐵跟機捷用顏色區分不同等級列車 + 高鐵桃園新竹停靠篩選) -->
+    <!-- TAB 2: TRAIN CLASSES & LEGEND -->
     <div id="tab-classes" class="panel-tab-content hidden flex-1 overflow-y-auto p-3.5 space-y-4">
       <div class="bg-slate-800/60 border border-slate-700/70 rounded-xl p-3">
         <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-1">台鐵 (TRA) 列車等級顏色區分</h3>
-        <p class="text-[11px] text-slate-400 mb-2.5">涵蓋縱貫線（基隆—新竹）、宜蘭線（八堵—牡丹）、平溪線、深澳線、內灣線及六家線：</p>
+        <p class="text-[11px] text-slate-400 mb-2.5">涵蓋縱貫線（基隆—新竹）、宜蘭線（八堵—牡丹）、平溪線、深澳線、內灣線及六家線，沿 Google 地圖台鐵軌道曲線運行：</p>
         <div id="traClassFilterList" class="space-y-2"></div>
       </div>
 
       <div class="bg-slate-800/60 border border-slate-700/70 rounded-xl p-3">
         <h3 class="text-xs font-bold text-orange-400 uppercase tracking-wider mb-1">台灣高鐵 (THSR 南港—竹北)</h3>
-        <p class="text-[11px] text-slate-400 mb-2.5">僅顯示同時停靠「高鐵桃園站」與「高鐵新竹站（竹北）」之班次（如 8xx / 6xx 車次）：</p>
+        <p class="text-[11px] text-slate-400 mb-2.5">沿 Google 地圖高鐵路廊行駛，僅顯示同時停靠「高鐵桃園站」與「高鐵新竹站（竹北）」之班次：</p>
         <div id="thsrClassFilterList" class="space-y-2"></div>
       </div>
 
       <div class="bg-slate-800/60 border border-slate-700/70 rounded-xl p-3">
         <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider mb-1">桃園機場捷運 (TYMC) 列車等級</h3>
-        <p class="text-[11px] text-slate-400 mb-2.5">直達車與普通車採不同顏色與停靠站設定：</p>
+        <p class="text-[11px] text-slate-400 mb-2.5">直達車與普通車沿 Google 地圖機捷高架與青山路彎道行駛：</p>
         <div id="tymcClassFilterList" class="space-y-2"></div>
       </div>
 
       <div class="bg-slate-800/60 border border-slate-700/70 rounded-xl p-3">
-        <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">台北捷運 & 新北輕軌列車</h3>
-        <p class="text-[11px] text-slate-400 mb-2.5">依官方尖離峰時刻表與重疊區間動態調整班距（板南線尖峰最密 2分15秒～3分鐘）：</p>
+        <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-1">台北捷運、新北輕軌 & 木柵貓空纜車</h3>
+        <p class="text-[11px] text-slate-400 mb-2.5">地下段捷運沿正上方街道（忠孝東西路、信義路、南京東西路、羅斯福路、松江路、民權東西路、重新路等）移動，輕軌與貓纜沿地圖路線移動：</p>
         <div id="metroClassFilterList" class="space-y-2"></div>
       </div>
     </div>
@@ -449,21 +453,21 @@
     <div class="flex items-center gap-3 sm:gap-4">
       <div class="flex items-center gap-1.5">
         <span class="text-slate-400">顯示路線:</span>
-        <span id="statRoutesCount" class="font-bold text-sky-400">16 / 16</span>
+        <span id="statRoutesCount" class="font-bold text-sky-400">17 / 17</span>
       </div>
       <div class="flex items-center gap-1.5">
         <span class="text-slate-400">營運車站:</span>
         <span id="statStationsCount" class="font-bold text-emerald-400">0</span>
       </div>
       <div class="flex items-center gap-1.5">
-        <span class="text-slate-400">線上列車:</span>
+        <span class="text-slate-400">線上列車/纜車:</span>
         <span id="statTrainsCount" class="font-bold text-amber-300">0</span>
       </div>
     </div>
 
-    <!-- Right: Compact Color Key for TRA, THSR & Airport MRT Train Classes -->
+    <!-- Right: Compact Color Key for TRA, THSR, Airport MRT & Gondola -->
     <div class="hidden md:flex items-center gap-2.5 overflow-x-auto">
-      <span class="text-[11px] font-semibold text-slate-400">列車等級圖示:</span>
+      <span class="text-[11px] font-semibold text-slate-400">圖示顏色:</span>
       <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-200">
         <span class="w-2.5 h-2.5 rounded-sm bg-[#f43f5e] inline-block"></span>台鐵新自強
       </span>
@@ -485,10 +489,18 @@
       </span>
       <span class="text-slate-600">|</span>
       <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-200">
-        <span class="w-2.5 h-2.5 rounded-sm bg-[#a855f7] inline-block"></span>機捷直達車
+        <span class="w-2.5 h-2.5 rounded-sm bg-[#a855f7] inline-block"></span>機捷直達
       </span>
       <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-200">
-        <span class="w-2.5 h-2.5 rounded-sm bg-[#3b82f6] inline-block"></span>機捷普通車
+        <span class="w-2.5 h-2.5 rounded-sm bg-[#3b82f6] inline-block"></span>機捷普通
+      </span>
+      <span class="text-slate-600">|</span>
+      <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-200">
+        <span class="w-2.5 h-2.5 rounded-sm bg-[#84cc16] inline-block"></span>木柵貓空纜車
+      </span>
+      <span class="text-slate-600">|</span>
+      <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-slate-200">
+        <span class="w-2.5 h-2.5 rounded-sm bg-[#0284c7] inline-block"></span>淡水八里渡船(過河10分·15km/h)
       </span>
     </div>
   </footer>
@@ -501,7 +513,7 @@
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h2 class="text-base font-bold text-white flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-          手動調度加開列車
+          手動調度加開列車 / 纜車
         </h2>
         <button id="btnCloseDispatchModal" class="text-slate-400 hover:text-white p-1 rounded-lg">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -546,40 +558,32 @@
 
   <script>
     // =========================================================================
-    // 1. COMPREHENSIVE NORTHERN TAIWAN RAILWAY NETWORK DATASET
-    //    Includes:
-    //    - 台鐵縱貫線北段 (基隆—新竹, including 桃園至新竹延伸段與鳳鳴站)
-    //    - 台鐵宜蘭線 (八堵—牡丹)
-    //    - 台鐵平溪線 (整條: 三貂嶺—菁桐)
-    //    - 台鐵深澳線 (八斗子—海科館—宜蘭線瑞芳)
-    //    - 台鐵內灣線 (新竹—竹中—內灣)
-    //    - 台鐵六家線 (新竹—竹中—六家)
-    //    - 台灣高鐵 (南港—竹北[高鐵新竹站]，僅顯示同時停靠桃園與新竹之班次)
-    //    - 桃園機場捷運 (A1 臺北車站—A22 老街溪)
-    //    - 台北捷運 (文湖線、淡水信義線、松山新店線、中和新蘆線、板南線、環狀線，依尖離峰時刻表與重疊區間動態發車)
-    //    - 淡海輕軌 (綠山線、藍海線)
-    //    - 安坑輕軌 (雙城—十四張)
+    // 1. HIGH-PRECISION GOOGLE MAPS RAILWAY & STREET ALIGNMENT GEOMETRY
+    //    - TRA, THSR, Airport MRT, Light Rail, and Maokong Gondola follow
+    //      the exact curved track corridors on Google Maps.
+    //    - Underground Taipei Metro lines follow the exact surface streets
+    //      (Zhongxiao E./W. Rd, Xinyi Rd, Nanjing E./W. Rd, Roosevelt Rd,
+    //       Songjiang Rd, Minquan E./W. Rd, Zhonghua Rd, Chongxin Rd, Sanhe Rd, etc.).
     // =========================================================================
 
     const TRAIN_CLASSES = {
-      // 台鐵不同等級列車 (依顏色與停靠站區分)
       TRA_EMU3000: {
         id: 'TRA_EMU3000',
         system: 'TRA',
         name: '台鐵 新自強號 (EMU3000/普悠瑪)',
         shortName: '新自強',
-        color: '#f43f5e', // 鮮紅玫瑰色
+        color: '#f43f5e',
         textColor: '#ffffff',
         speedKmH: 118,
         dwellSec: 38,
-        desc: '特快對號列車，停靠基隆/八堵、七堵、汐止、南港、松山、臺北、板橋、樹林、桃園、中壢、新竹及瑞芳'
+        desc: '特快對號列車，沿 Google 地圖台鐵軌道曲線行駛，停靠基隆/八堵、七堵、汐止、南港、松山、臺北、板橋、樹林、桃園、中壢、新竹及瑞芳'
       },
       TRA_TZECHIANG: {
         id: 'TRA_TZECHIANG',
         system: 'TRA',
         name: '台鐵 自強號 (PP/一般自強)',
         shortName: '自強號',
-        color: '#f97316', // 亮橘色
+        color: '#f97316',
         textColor: '#ffffff',
         speedKmH: 102,
         dwellSec: 40,
@@ -590,7 +594,7 @@
         system: 'TRA',
         name: '台鐵 區間快車 / 莒光號',
         shortName: '區間快',
-        color: '#eab308', // 琥珀黃
+        color: '#eab308',
         textColor: '#0f172a',
         speedKmH: 88,
         dwellSec: 32,
@@ -601,7 +605,7 @@
         system: 'TRA',
         name: '台鐵 區間車 (含六家線電聯車)',
         shortName: '區間車',
-        color: '#38bdf8', // 天空藍
+        color: '#38bdf8',
         textColor: '#0f172a',
         speedKmH: 74,
         dwellSec: 28,
@@ -612,61 +616,55 @@
         system: 'TRA',
         name: '台鐵 支線柴油客車 (DR1000)',
         shortName: '支線DR',
-        color: '#10b981', // 翠綠色
+        color: '#10b981',
         textColor: '#ffffff',
         speedKmH: 52,
         dwellSec: 30,
-        desc: '專行駛平溪線（三貂嶺—菁桐）、深澳線（八斗子—瑞芳）與內灣線（新竹/竹中—內灣），每站皆停'
+        desc: '專行駛平溪線（三貂嶺—菁桐）、深澳線（八斗子—瑞芳）與內灣線（新竹/竹中—內灣），沿河谷鐵道曲線每站皆停'
       },
-
-      // 台灣高鐵 (僅顯示有停靠桃園跟新竹的列車)
       THSR_TAOYUAN_HSINCHU: {
         id: 'THSR_TAOYUAN_HSINCHU',
         system: 'THSR',
         name: '台灣高鐵 (停靠桃園・新竹班次)',
         shortName: '高鐵(停桃竹)',
-        color: '#ff5722', // 高鐵標準鮮橘紅
+        color: '#ff5722',
         textColor: '#ffffff',
         speedKmH: 235,
         dwellSec: 42,
-        desc: '700T 高速列車（8xx/6xx/16xx 車次），僅篩選並顯示同時停靠「高鐵桃園站」與「高鐵新竹站（竹北）」之列車'
+        desc: '700T 高速列車（8xx/6xx/16xx 車次），沿 Google 地圖高鐵專用路廊行駛，僅顯示同時停靠桃園與新竹（竹北）之列車'
       },
-
-      // 桃園機場捷運不同等級列車 (依顏色與停靠站區分)
       TYMC_EXPRESS: {
         id: 'TYMC_EXPRESS',
         system: 'TYMC',
         name: '機場捷運 直達車 (Express)',
         shortName: '機捷直達',
-        color: '#a855f7', // 皇家紫
+        color: '#a855f7',
         textColor: '#ffffff',
         speedKmH: 98,
         dwellSec: 35,
-        desc: '紫色車身，僅停靠 A1臺北車站、A3新北產業園區、A8長庚醫院、A12/A13航廈、A18高鐵桃園站、A21環北'
+        desc: '紫色車身，沿機捷高架與林口青山路彎道行駛，僅停靠 A1臺北車站、A3新北產業園區、A8長庚醫院、A12/A13航廈、A18高鐵桃園站、A21環北'
       },
       TYMC_COMMUTER: {
         id: 'TYMC_COMMUTER',
         system: 'TYMC',
         name: '機場捷運 普通車 (Commuter)',
         shortName: '機捷普通',
-        color: '#3b82f6', // 亮藍色
+        color: '#3b82f6',
         textColor: '#ffffff',
         speedKmH: 76,
         dwellSec: 26,
-        desc: '藍色車身，A1 臺北車站至 A22 老街溪全線每站皆停'
+        desc: '藍色車身，沿 Google 地圖機捷路線由 A1 臺北車站至 A22 老街溪全線每站皆停'
       },
-
-      // 台北捷運 & 輕軌
       TRTC_METRO: {
         id: 'TRTC_METRO',
         system: 'TRTC',
-        name: '台北捷運 電聯車 (含區間車/尖峰加班車)',
+        name: '台北捷運 電聯車 (地下段沿街道移動)',
         shortName: '北捷列車',
         color: '#22d3ee',
         textColor: '#ffffff',
         speedKmH: 65,
         dwellSec: 25,
-        desc: '依北捷時刻表運行全程車與重疊區間車（板南線亞東醫院—南港展覽館尖峰約3分、最密2分15秒；淡水信義北投—大安約3分；松山新店台電大樓—松山約3分；中和新蘆大橋頭—南勢角約3分）'
+        desc: '依北捷時刻表運行全程車與重疊區間車；地下路段嚴格沿著正上方街道（忠孝東西路、信義路、南京東西路、羅斯福路、松江路、重新路等）轉彎與移動'
       },
       NTMC_LRT: {
         id: 'NTMC_LRT',
@@ -677,54 +675,142 @@
         textColor: '#ffffff',
         speedKmH: 48,
         dwellSec: 22,
-        desc: '行駛於淡海輕軌（綠山線/藍海線）與安坑輕軌，每站皆停'
+        desc: '沿 Google 地圖淡海輕軌（淡金路、濱海路、沙崙路）與安坑輕軌（安一路、安和路）路線行駛'
+      },
+      TRTC_GONDOLA: {
+        id: 'TRTC_GONDOLA',
+        system: 'GONDOLA',
+        name: '木柵貓空纜車 (循環式高空纜車車廂)',
+        shortName: '貓空纜車',
+        color: '#65a30d',
+        textColor: '#ffffff',
+        speedKmH: 22,
+        dwellSec: 16,
+        desc: '沿 Google 地圖黃綠色貓空纜車索道行駛（纜車動物園站—轉角一站—動物園南站—轉角二站—指南宮站—貓空站），於轉角一/二站折線轉向不停客'
+      },
+      FERRY_BOAT: {
+        id: 'FERRY_BOAT',
+        system: 'FERRY',
+        name: '淡水↔八里 藍色公路渡船 (順風航業・過河10分鐘)',
+        shortName: '淡水八里渡船',
+        color: '#0284c7',
+        textColor: '#ffffff',
+        speedKmH: 15,
+        dwellSec: 40,
+        desc: '單程過河時間固定為 10 分鐘（600 秒）、船隻時速 15 km/h，沿 Google 地圖淡水河航線往返「淡水渡船碼頭」與「八里渡船碼頭」（每日 07:00–20:00，平日 10–15 分/班、假日 3–5 分/班）'
       }
     };
 
     const ROUTES = [
-      // ==================== 台鐵 (TRA) ====================
+      // ==================== 台鐵 (TRA) - 完全貼合 Google Maps 台鐵鐵道曲線 ====================
       {
         id: 'tra_west',
         system: 'TRA',
         systemName: '臺灣鐵路 (TRA)',
         name: '台鐵縱貫線北段 (基隆—新竹)',
         shortName: '縱貫線',
-        color: '#60a5fa',
-        weight: 4.5,
+        color: '#2563eb',
+        weight: 4.2,
         dashArray: null,
         allowedClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
         stations: [
-          { id: 'tra_keelung', name: '基隆', lat: 25.1341, lng: 121.7399, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_sankeng', name: '三坑', lat: 25.1232, lng: 121.7321, hub: false, stopClasses: ['TRA_LOCAL'] },
-          { id: 'tra_badu', name: '八堵', lat: 25.1084, lng: 121.7290, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_qidu', name: '七堵', lat: 25.0928, lng: 121.7142, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_baifu', name: '百福', lat: 25.0778, lng: 121.6934, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_wudu', name: '五堵', lat: 25.0779, lng: 121.6675, hub: false, stopClasses: ['TRA_LOCAL'] },
-          { id: 'tra_xizhi', name: '汐止', lat: 25.0689, lng: 121.6612, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_xike', name: '汐科', lat: 25.0623, lng: 121.6462, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_nangang', name: '南港', lat: 25.0531, lng: 121.6071, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_songshan', name: '松山', lat: 25.0494, lng: 121.5783, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_taipei', name: '臺北', lat: 25.0478, lng: 121.5171, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_wanhua', name: '萬華', lat: 25.0334, lng: 121.5005, hub: false, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_banqiao', name: '板橋', lat: 25.0142, lng: 121.4637, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_fuzhou', name: '浮洲', lat: 24.9993, lng: 121.4447, hub: false, stopClasses: ['TRA_LOCAL'] },
-          { id: 'tra_shulin', name: '樹林', lat: 24.9912, lng: 121.4245, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_south_shulin', name: '南樹林', lat: 24.9803, lng: 121.4089, hub: false, stopClasses: ['TRA_LOCAL'] },
-          { id: 'tra_shanjia', name: '山佳', lat: 24.9725, lng: 121.3926, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_yingge', name: '鶯歌', lat: 24.9546, lng: 121.3551, hub: true, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_fengming', name: '鳳鳴', lat: 24.9708, lng: 121.3323, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_taoyuan', name: '桃園', lat: 24.9892, lng: 121.3135, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_neili', name: '內壢', lat: 24.9728, lng: 121.2582, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_zhongli', name: '中壢', lat: 24.9537, lng: 121.2256, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_puxin', name: '埔心', lat: 24.9197, lng: 121.1837, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_yangmei', name: '楊梅', lat: 24.9142, lng: 121.1460, hub: false, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_fugang', name: '富岡', lat: 24.9344, lng: 121.0831, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_xinfu', name: '新富', lat: 24.9312, lng: 121.0673, hub: false, stopClasses: ['TRA_LOCAL'] },
-          { id: 'tra_beihu', name: '北湖', lat: 24.9225, lng: 121.0556, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_hukou', name: '湖口', lat: 24.9029, lng: 121.0439, hub: true, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_xinfeng', name: '新豐', lat: 24.8696, lng: 120.9967, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_zhubei', name: '竹北', lat: 24.8396, lng: 121.0094, hub: true, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_north_hsinchu', name: '北新竹', lat: 24.8087, lng: 120.9839, hub: true, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
+          { id: 'tra_keelung', name: '基隆', lat: 25.13242, lng: 121.73940, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [
+              [25.13080, 121.73955],
+              [25.12920, 121.73980],
+              [25.12760, 121.74030],
+              [25.12591, 121.74105],
+              [25.12450, 121.74155]
+            ] },
+          { id: 'tra_sankeng', name: '三坑', lat: 25.12305, lng: 121.74202, hub: true, stopClasses: ['TRA_LOCAL'],
+            timetableNote: '台鐵縱貫線三坑車站（基隆市仁愛區龍安街，緊鄰南榮路）｜南下穿過竹仔嶺隧道與八堵鐵橋前往八堵站',
+            via: [
+              [25.12140, 121.74285],
+              [25.11980, 121.74345],
+              [25.11825, 121.74345],
+              [25.11620, 121.74110],
+              [25.11420, 121.73880],
+              [25.11280, 121.73710],
+              [25.11125, 121.73460],
+              [25.11038, 121.73291],
+              [25.10940, 121.73110]
+            ] },
+          { id: 'tra_badu', name: '八堵', lat: 25.10834, lng: 121.72907, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[25.10520, 121.72620], [25.10150, 121.72280], [25.09750, 121.71880], [25.09500, 121.71600]] },
+          { id: 'tra_qidu', name: '七堵', lat: 25.09306, lng: 121.71393, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[25.0898, 121.7112], [25.0858, 121.7072], [25.0825, 121.7032], [25.0798, 121.6982]] },
+          { id: 'tra_baifu', name: '百福', lat: 25.0778, lng: 121.6934, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[25.0755, 121.6880], [25.0752, 121.6825], [25.0775, 121.6775], [25.0790, 121.6725]] },
+          { id: 'tra_wudu', name: '五堵', lat: 25.0779, lng: 121.6675, hub: false, stopClasses: ['TRA_LOCAL'],
+            via: [[25.0752, 121.6655], [25.0720, 121.6635]] },
+          { id: 'tra_xizhi', name: '汐止', lat: 25.0689, lng: 121.6612, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[25.0665, 121.6568], [25.0642, 121.6515]] },
+          { id: 'tra_xike', name: '汐科', lat: 25.0623, lng: 121.6462, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[25.0598, 121.6408], [25.0568, 121.6355], [25.0550, 121.6295], [25.0545, 121.6225], [25.0552, 121.6165], [25.0542, 121.6115]] },
+          { id: 'tra_nangang', name: '南港', lat: 25.0531, lng: 121.6071, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[25.0522, 121.5995], [25.0515, 121.5920], [25.0504, 121.5845]] },
+          { id: 'tra_songshan', name: '松山', lat: 25.0494, lng: 121.5783, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[25.0482, 121.5705], [25.0468, 121.5640], [25.0455, 121.5555], [25.0450, 121.5438], [25.0452, 121.5330], [25.0462, 121.5250], [25.0472, 121.5205]] },
+          { id: 'tra_taipei', name: '臺北', lat: 25.0478, lng: 121.5171, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[25.0472, 121.5115], [25.0452, 121.5082], [25.0410, 121.5070], [25.0365, 121.5055], [25.0342, 121.5038]] },
+          { id: 'tra_wanhua', name: '萬華', lat: 25.03340, lng: 121.50050, hub: true, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[25.03150, 121.49600], [25.02820, 121.48880], [25.02450, 121.48050], [25.02050, 121.47300], [25.01680, 121.46750]] },
+          { id: 'tra_banqiao', name: '板橋', lat: 25.01405, lng: 121.46375, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [
+              [25.01260, 121.46120],
+              [25.00980, 121.45780],
+              [25.00740, 121.45450],
+              [25.00665, 121.45120],
+              [25.00625, 121.44880],
+              [25.00560, 121.44650]
+            ] },
+          { id: 'tra_fuzhou', name: '浮洲', lat: 25.00419, lng: 121.44474, hub: true, stopClasses: ['TRA_LOCAL'],
+            timetableNote: '台鐵縱貫線浮洲車站（板橋區僑中二街156號，緊鄰國立臺灣藝術大學與華僑高中）｜區間車雙向停靠',
+            via: [
+              [25.00180, 121.44340],
+              [24.99920, 121.44180],
+              [24.99680, 121.43960],
+              [24.99550, 121.43680],
+              [24.99450, 121.43320],
+              [24.99360, 121.42980],
+              [24.99310, 121.42820],
+              [24.99275, 121.42680],
+              [24.99215, 121.42560]
+            ] },
+          { id: 'tra_shulin', name: '樹林', lat: 24.99140, lng: 121.42443, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.98880, 121.42120], [24.98580, 121.41720], [24.98280, 121.41260]] },
+          { id: 'tra_south_shulin', name: '南樹林', lat: 24.98020, lng: 121.40870, hub: true, stopClasses: ['TRA_LOCAL'],
+            via: [[24.97760, 121.40420], [24.97520, 121.39880]] },
+          { id: 'tra_shanjia', name: '山佳', lat: 24.97273, lng: 121.39254, hub: true, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.97020, 121.38720], [24.96550, 121.38120], [24.95920, 121.37520], [24.95400, 121.36850], [24.95220, 121.36180]] },
+          { id: 'tra_yingge', name: '鶯歌', lat: 24.95456, lng: 121.35511, hub: true, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.95620, 121.35020], [24.96050, 121.34520], [24.96650, 121.34080]] },
+          { id: 'tra_fengming', name: '鳳鳴', lat: 24.97269, lng: 121.33656, hub: true, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.97780, 121.33120], [24.98320, 121.32450], [24.98680, 121.31900]] },
+          { id: 'tra_taoyuan', name: '桃園', lat: 24.98892, lng: 121.31444, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.9882, 121.3015], [24.9845, 121.2875], [24.9788, 121.2730]] },
+          { id: 'tra_neili', name: '內壢', lat: 24.9728, lng: 121.2582, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.9672, 121.2475], [24.9605, 121.2365]] },
+          { id: 'tra_zhongli', name: '中壢', lat: 24.9537, lng: 121.2256, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.9450, 121.2150], [24.9345, 121.2020], [24.9255, 121.1910]] },
+          { id: 'tra_puxin', name: '埔心', lat: 24.9197, lng: 121.1837, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.9165, 121.1710], [24.9145, 121.1580]] },
+          { id: 'tra_yangmei', name: '楊梅', lat: 24.9142, lng: 121.1460, hub: false, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.9155, 121.1320], [24.9205, 121.1165], [24.9278, 121.1005]] },
+          { id: 'tra_fugang', name: '富岡', lat: 24.9344, lng: 121.0831, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.9332, 121.0750]] },
+          { id: 'tra_xinfu', name: '新富', lat: 24.9312, lng: 121.0673, hub: false, stopClasses: ['TRA_LOCAL'],
+            via: [[24.9270, 121.0615]] },
+          { id: 'tra_beihu', name: '北湖', lat: 24.9225, lng: 121.0556, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.9130, 121.0498]] },
+          { id: 'tra_hukou', name: '湖口', lat: 24.9029, lng: 121.0439, hub: true, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.8925, 121.0295], [24.8815, 121.0135]] },
+          { id: 'tra_xinfeng', name: '新豐', lat: 24.8696, lng: 120.9967, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.8605, 120.9968], [24.8520, 121.0032], [24.8452, 121.0075]] },
+          { id: 'tra_zhubei', name: '竹北', lat: 24.8396, lng: 121.0094, hub: true, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.8315, 121.0055], [24.8225, 120.9985], [24.8145, 120.9905]] },
+          { id: 'tra_north_hsinchu', name: '北新竹', lat: 24.8087, lng: 120.9839, hub: true, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [[24.8055, 120.9778]] },
           { id: 'tra_hsinchu', name: '新竹', lat: 24.8016, lng: 120.9716, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] }
         ]
       },
@@ -734,18 +820,73 @@
         systemName: '臺灣鐵路 (TRA)',
         name: '台鐵宜蘭線 (八堵—牡丹)',
         shortName: '宜蘭線',
-        color: '#34d399',
-        weight: 4.5,
+        color: '#059669',
+        weight: 4.2,
         dashArray: null,
         allowedClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
         stations: [
-          { id: 'tra_badu', name: '八堵', lat: 25.1084, lng: 121.7290, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_nuannuan', name: '暖暖', lat: 25.1023, lng: 121.7405, hub: false, stopClasses: ['TRA_LOCAL'] },
-          { id: 'tra_sijiaoting', name: '四腳亭', lat: 25.1027, lng: 121.7621, hub: false, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_ruifang', name: '瑞芳', lat: 25.1089, lng: 121.8062, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_houtong', name: '猴硐', lat: 25.0870, lng: 121.8271, hub: false, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_sandiaoling', name: '三貂嶺', lat: 25.0658, lng: 121.8226, hub: true, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'] },
-          { id: 'tra_mudan', name: '牡丹', lat: 25.0583, lng: 121.8520, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] }
+          { id: 'tra_badu', name: '八堵', lat: 25.10834, lng: 121.72907, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [
+              [25.10935, 121.73110],
+              [25.10985, 121.73320],
+              [25.10960, 121.73520],
+              [25.10820, 121.73680],
+              [25.10580, 121.73780],
+              [25.10360, 121.73880]
+            ] },
+          { id: 'tra_nuannuan', name: '暖暖', lat: 25.10229, lng: 121.74032, hub: true, stopClasses: ['TRA_LOCAL'],
+            via: [
+              [25.10185, 121.74350],
+              [25.10122, 121.74709],
+              [25.10065, 121.75020],
+              [25.10015, 121.75350],
+              [25.09985, 121.75680],
+              [25.10015, 121.75950],
+              [25.10110, 121.76125]
+            ] },
+          { id: 'tra_sijiaoting', name: '四腳亭', lat: 25.10276, lng: 121.76191, hub: true, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [
+              [25.10350, 121.76420],
+              [25.10465, 121.76820],
+              [25.10520, 121.77150],
+              [25.10420, 121.77520],
+              [25.10320, 121.77780],
+              [25.10240, 121.78120],
+              [25.10220, 121.78480],
+              [25.10420, 121.78620],
+              [25.10620, 121.78750],
+              [25.10850, 121.78980],
+              [25.11035, 121.79330],
+              [25.11020, 121.79680],
+              [25.10950, 121.80050],
+              [25.10885, 121.80380]
+            ] },
+          { id: 'tra_ruifang', name: '瑞芳', lat: 25.10874, lng: 121.80597, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [
+              [25.10835, 121.81220],
+              [25.10760, 121.81550],
+              [25.10720, 121.81950],
+              [25.10660, 121.82300],
+              [25.10350, 121.82650],
+              [25.09850, 121.82950],
+              [25.09150, 121.83050],
+              [25.08900, 121.82880]
+            ] },
+          { id: 'tra_houtong', name: '猴硐', lat: 25.08701, lng: 121.82742, hub: true, stopClasses: ['TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [
+              [25.08515, 121.82780],
+              [25.08060, 121.82420],
+              [25.07550, 121.82350],
+              [25.07050, 121.82320]
+            ] },
+          { id: 'tra_sandiaoling', name: '三貂嶺', lat: 25.06580, lng: 121.82260, hub: true, stopClasses: ['TRA_FAST_LOCAL', 'TRA_LOCAL'],
+            via: [
+              [25.06420, 121.82315],
+              [25.06080, 121.83450],
+              [25.05820, 121.84350],
+              [25.05835, 121.84820]
+            ] },
+          { id: 'tra_mudan', name: '牡丹', lat: 25.05877, lng: 121.85193, hub: true, stopClasses: ['TRA_EMU3000', 'TRA_TZECHIANG', 'TRA_FAST_LOCAL', 'TRA_LOCAL'] }
         ]
       },
       {
@@ -759,12 +900,18 @@
         dashArray: '6, 4',
         allowedClasses: ['TRA_BRANCH_DR1000'],
         stations: [
-          { id: 'tra_sandiaoling', name: '三貂嶺', lat: 25.0658, lng: 121.8226, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] },
-          { id: 'tra_dahua', name: '大華', lat: 25.0573, lng: 121.8035, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
-          { id: 'tra_shifen', name: '十分', lat: 25.0416, lng: 121.7766, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] },
-          { id: 'tra_wanggu', name: '望古', lat: 25.0350, lng: 121.7623, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
-          { id: 'tra_lingjiao', name: '嶺腳', lat: 25.0303, lng: 121.7485, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
-          { id: 'tra_pingxi', name: '平溪', lat: 25.0257, lng: 121.7397, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_sandiaoling', name: '三貂嶺', lat: 25.0658, lng: 121.8226, hub: true, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[25.0622, 121.8165], [25.0595, 121.8100]] },
+          { id: 'tra_dahua', name: '大華', lat: 25.0573, lng: 121.8035, hub: false, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[25.0535, 121.7950], [25.0485, 121.7865], [25.0445, 121.7810]] },
+          { id: 'tra_shifen', name: '十分', lat: 25.0416, lng: 121.7766, hub: true, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[25.0382, 121.7705], [25.0365, 121.7662]] },
+          { id: 'tra_wanggu', name: '望古', lat: 25.0350, lng: 121.7623, hub: false, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[25.0328, 121.7555]] },
+          { id: 'tra_lingjiao', name: '嶺腳', lat: 25.0303, lng: 121.7485, hub: false, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[25.0278, 121.7440]] },
+          { id: 'tra_pingxi', name: '平溪', lat: 25.0257, lng: 121.7397, hub: false, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[25.0245, 121.7315]] },
           { id: 'tra_jingtong', name: '菁桐', lat: 25.0235, lng: 121.7235, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] }
         ]
       },
@@ -774,14 +921,16 @@
         systemName: '臺灣鐵路 (TRA)',
         name: '台鐵深澳線 (八斗子—宜蘭線瑞芳)',
         shortName: '深澳線',
-        color: '#14b8a6',
+        color: '#0d9488',
         weight: 3.8,
         dashArray: '6, 4',
         allowedClasses: ['TRA_BRANCH_DR1000'],
         stations: [
-          { id: 'tra_badouzi', name: '八斗子', lat: 25.1353, lng: 121.8028, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] },
-          { id: 'tra_haikeguan', name: '海科館', lat: 25.1388, lng: 121.7989, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
-          { id: 'tra_ruifang', name: '瑞芳', lat: 25.1089, lng: 121.8062, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] }
+          { id: 'tra_badouzi', name: '八斗子', lat: 25.1353, lng: 121.8028, hub: true, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[25.1372, 121.8005]] },
+          { id: 'tra_haikeguan', name: '海科館', lat: 25.1388, lng: 121.7989, hub: false, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[25.1335, 121.7965], [25.1255, 121.7982], [25.1175, 121.8015], [25.1125, 121.8042]] },
+          { id: 'tra_ruifang', name: '瑞芳', lat: 25.10874, lng: 121.80597, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] }
         ]
       },
       {
@@ -790,23 +939,35 @@
         systemName: '臺灣鐵路 (TRA)',
         name: '台鐵內灣線 (新竹—竹中—內灣)',
         shortName: '內灣線',
-        color: '#22c55e',
+        color: '#16a34a',
         weight: 3.8,
         dashArray: '6, 4',
         allowedClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'],
         stations: [
-          { id: 'tra_hsinchu', name: '新竹', lat: 24.8016, lng: 120.9716, hub: true, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'] },
-          { id: 'tra_north_hsinchu', name: '北新竹', lat: 24.8087, lng: 120.9839, hub: true, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'] },
-          { id: 'tra_qianjia', name: '千甲', lat: 24.8066, lng: 121.0031, hub: false, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'] },
-          { id: 'tra_xinzhuang_hc', name: '新莊(竹)', lat: 24.7882, lng: 121.0221, hub: false, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'] },
-          { id: 'tra_zhuzhong', name: '竹中', lat: 24.7815, lng: 121.0312, hub: true, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'] },
-          { id: 'tra_shangyuan', name: '上員', lat: 24.7779, lng: 121.0558, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
-          { id: 'tra_ronghua', name: '榮華', lat: 24.7483, lng: 121.0832, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
-          { id: 'tra_zhudong', name: '竹東', lat: 24.7381, lng: 121.0947, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] },
-          { id: 'tra_hengshan_nw', name: '橫山(竹)', lat: 24.7206, lng: 121.1165, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
-          { id: 'tra_jiuzantou', name: '九讚頭', lat: 24.7207, lng: 121.1361, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
-          { id: 'tra_hexing', name: '合興', lat: 24.7169, lng: 121.1544, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
-          { id: 'tra_fugui', name: '富貴', lat: 24.7155, lng: 121.1672, hub: false, stopClasses: ['TRA_BRANCH_DR1000'] },
+          { id: 'tra_hsinchu', name: '新竹', lat: 24.8016, lng: 120.9716, hub: true, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'],
+            via: [[24.8055, 120.9778]] },
+          { id: 'tra_north_hsinchu', name: '北新竹', lat: 24.8087, lng: 120.9839, hub: true, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'],
+            via: [[24.8125, 120.9915], [24.8098, 120.9980]] },
+          { id: 'tra_qianjia', name: '千甲', lat: 24.8066, lng: 121.0031, hub: false, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'],
+            via: [[24.7985, 121.0125]] },
+          { id: 'tra_xinzhuang_hc', name: '新莊(竹)', lat: 24.7882, lng: 121.0221, hub: false, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'],
+            via: [[24.7845, 121.0268]] },
+          { id: 'tra_zhuzhong', name: '竹中', lat: 24.7815, lng: 121.0312, hub: true, stopClasses: ['TRA_BRANCH_DR1000', 'TRA_LOCAL'],
+            via: [[24.7802, 121.0435]] },
+          { id: 'tra_shangyuan', name: '上員', lat: 24.7779, lng: 121.0558, hub: false, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[24.7635, 121.0695]] },
+          { id: 'tra_ronghua', name: '榮華', lat: 24.7483, lng: 121.0832, hub: false, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[24.7432, 121.0890]] },
+          { id: 'tra_zhudong', name: '竹東', lat: 24.7381, lng: 121.0947, hub: true, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[24.7285, 121.1055]] },
+          { id: 'tra_hengshan_nw', name: '橫山(竹)', lat: 24.7206, lng: 121.1165, hub: false, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[24.7205, 121.1265]] },
+          { id: 'tra_jiuzantou', name: '九讚頭', lat: 24.7207, lng: 121.1361, hub: false, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[24.7185, 121.1455]] },
+          { id: 'tra_hexing', name: '合興', lat: 24.7169, lng: 121.1544, hub: false, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[24.7162, 121.1610]] },
+          { id: 'tra_fugui', name: '富貴', lat: 24.7155, lng: 121.1672, hub: false, stopClasses: ['TRA_BRANCH_DR1000'],
+            via: [[24.7105, 121.1750]] },
           { id: 'tra_neiwan', name: '內灣', lat: 24.7055, lng: 121.1823, hub: true, stopClasses: ['TRA_BRANCH_DR1000'] }
         ]
       },
@@ -816,116 +977,350 @@
         systemName: '臺灣鐵路 (TRA)',
         name: '台鐵六家線 (新竹—竹中—六家)',
         shortName: '六家線',
-        color: '#38bdf8',
+        color: '#0284c7',
         weight: 3.8,
         dashArray: '4, 3',
         allowedClasses: ['TRA_LOCAL'],
         stations: [
-          { id: 'tra_hsinchu', name: '新竹', lat: 24.8016, lng: 120.9716, hub: true, stopClasses: ['TRA_LOCAL'] },
-          { id: 'tra_north_hsinchu', name: '北新竹', lat: 24.8087, lng: 120.9839, hub: true, stopClasses: ['TRA_LOCAL'] },
-          { id: 'tra_qianjia', name: '千甲', lat: 24.8066, lng: 121.0031, hub: false, stopClasses: ['TRA_LOCAL'] },
-          { id: 'tra_xinzhuang_hc', name: '新莊(竹)', lat: 24.7882, lng: 121.0221, hub: false, stopClasses: ['TRA_LOCAL'] },
-          { id: 'tra_zhuzhong', name: '竹中', lat: 24.7815, lng: 121.0312, hub: true, stopClasses: ['TRA_LOCAL'] },
+          { id: 'tra_hsinchu', name: '新竹', lat: 24.8016, lng: 120.9716, hub: true, stopClasses: ['TRA_LOCAL'],
+            via: [[24.8055, 120.9778]] },
+          { id: 'tra_north_hsinchu', name: '北新竹', lat: 24.8087, lng: 120.9839, hub: true, stopClasses: ['TRA_LOCAL'],
+            via: [[24.8125, 120.9915], [24.8098, 120.9980]] },
+          { id: 'tra_qianjia', name: '千甲', lat: 24.8066, lng: 121.0031, hub: false, stopClasses: ['TRA_LOCAL'],
+            via: [[24.7985, 121.0125]] },
+          { id: 'tra_xinzhuang_hc', name: '新莊(竹)', lat: 24.7882, lng: 121.0221, hub: false, stopClasses: ['TRA_LOCAL'],
+            via: [[24.7845, 121.0268]] },
+          { id: 'tra_zhuzhong', name: '竹中', lat: 24.7815, lng: 121.0312, hub: true, stopClasses: ['TRA_LOCAL'],
+            via: [[24.7850, 121.0372], [24.7925, 121.0388], [24.8005, 121.0392]] },
           { id: 'tra_liujia', name: '六家', lat: 24.8077, lng: 121.0394, hub: true, stopClasses: ['TRA_LOCAL'] }
         ]
       },
 
-      // ==================== 台灣高鐵 (THSR 南港—竹北) ====================
+      // ==================== 台灣高鐵 (THSR 南港—竹北) - 貼合 Google Maps 高鐵路線 ====================
       {
         id: 'thsr_north',
         system: 'THSR',
         systemName: '台灣高鐵 (THSR)',
         name: '台灣高鐵北段 (南港—竹北[高鐵新竹站])',
         shortName: '台灣高鐵',
-        color: '#ff5722',
-        weight: 4.8,
+        color: '#ea580c',
+        weight: 4.6,
         dashArray: '10, 4',
         allowedClasses: ['THSR_TAOYUAN_HSINCHU'],
         stations: [
-          { id: 'thsr_nangang', name: '高鐵南港', lat: 25.0531, lng: 121.6071, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'] },
-          { id: 'thsr_taipei', name: '高鐵台北', lat: 25.0478, lng: 121.5171, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'] },
-          { id: 'thsr_banqiao', name: '高鐵板橋', lat: 25.0142, lng: 121.4637, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'] },
-          { id: 'thsr_taoyuan', name: '高鐵桃園', lat: 25.0135, lng: 121.2145, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'] },
-          { id: 'thsr_hsinchu', name: '高鐵新竹(竹北)', lat: 24.8077, lng: 121.0402, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'] }
+          {
+            id: 'thsr_nangang', name: '高鐵南港', lat: 25.05290, lng: 121.60700, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'],
+            via: [
+              [25.0522, 121.5995], [25.0515, 121.5920], [25.0493, 121.5780],
+              [25.0468, 121.5640], [25.0450, 121.5438], [25.0452, 121.5330], [25.0462, 121.5250]
+            ]
+          },
+          {
+            id: 'thsr_taipei', name: '高鐵台北', lat: 25.04778, lng: 121.51722, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'],
+            via: [
+              [25.0472, 121.5115], [25.0452, 121.5082], [25.0365, 121.5055],
+              [25.0334, 121.5005], [25.0278, 121.4875], [25.0205, 121.4728]
+            ]
+          },
+          {
+            id: 'thsr_banqiao', name: '高鐵板橋', lat: 25.01405, lng: 121.46375, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'],
+            via: [
+              // 板橋出站與台鐵平行經縣民大道、大觀橋出土、臺藝大與華僑高中北側至浮洲站北側
+              [25.01260, 121.46120],
+              [25.00980, 121.45780],
+              [25.00740, 121.45450],
+              [25.00660, 121.45120],
+              [25.00615, 121.44880],
+              [25.00555, 121.44650],
+              [25.00425, 121.44470],
+              // 自浮洲起不隨台鐵南彎，而是繼續沿著 Google Maps 往左（正西）的高鐵鐵道圖示跨越高鐵大漢溪橋、大安路、中正路、保安街二段直入大同山區（迴龍隧道南口）
+              [25.00445, 121.44120],
+              [25.00471, 121.43668],
+              [25.00435, 121.43280],
+              [25.00390, 121.42922],
+              [25.00379, 121.42818],
+              [25.00369, 121.42330],
+              [25.00345, 121.41880],
+              [25.00325, 121.41543],
+              [25.00320, 121.41320],
+              // 進入大同山區迴龍隧道，於迴龍/龍華科大南側跨越塔寮坑溪與萬壽路一段後進入龜山隧道向西北攀升
+              [25.00850, 121.40800],
+              [25.01650, 121.40050],
+              [25.02450, 121.38800],
+              [25.03250, 121.37200],
+              [25.03950, 121.35200],
+              [25.04500, 121.33200],
+              [25.04850, 121.31466],
+              // 出桃園一號隧道跨越國道一號（羊稠坑步道旁）並續經桃園二、三號隧道往蘆竹北側攀升
+              [25.05120, 121.30290],
+              [25.05520, 121.29100],
+              [25.05880, 121.27950],
+              [25.06120, 121.27150],
+              // 達蘆竹區南青路（台31線起點）與南崁路二段口最高點（25.0618°N），形成凹面向南的大圓弧頂點
+              [25.06180, 121.26620],
+              [25.05950, 121.26150],
+              // 沿台31線（蘆竹南青路 → 大園高鐵北路三～一段）向西南平滑弧線進入高鐵桃園站
+              [25.05450, 121.25620],
+              [25.04850, 121.25050],
+              [25.04277, 121.24532],
+              [25.03880, 121.24057],
+              [25.03150, 121.23300],
+              [25.02600, 121.22750],
+              [25.02074, 121.22204],
+              [25.01680, 121.21820]
+            ]
+          },
+          {
+            id: 'thsr_taoyuan', name: '高鐵桃園', lat: 25.01288, lng: 121.21440, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'],
+            via: [
+              [25.00450, 121.20650], [24.99600, 121.19820], [24.98500, 121.18650],
+              [24.97200, 121.17250], [24.95800, 121.15750], [24.94400, 121.14200],
+              [24.92900, 121.12550], [24.91350, 121.10950], [24.89600, 121.09350],
+              [24.87800, 121.07900], [24.85900, 121.06600], [24.84100, 121.05550],
+              [24.82400, 121.04680]
+            ]
+          },
+          { id: 'thsr_hsinchu', name: '高鐵新竹(竹北)', lat: 24.80770, lng: 121.04020, hub: true, stopClasses: ['THSR_TAOYUAN_HSINCHU'] }
         ]
       },
 
-      // ==================== 桃園機場捷運 (TYMC) ====================
+      // ==================== 桃園機場捷運 (TYMC) - 貼合 Google Maps 機捷路線 ====================
       {
         id: 'tymc_main',
         system: 'TYMC',
         systemName: '桃園機場捷運 (TYMC)',
         name: '桃園機場捷運 (A1臺北車站—A22老街溪)',
         shortName: '機場捷運',
-        color: '#a855f7',
+        color: '#9333ea',
         weight: 4.2,
         dashArray: null,
         allowedClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'],
         stations: [
-          { id: 'tymc_a1', name: 'A1 臺北車站', lat: 25.0493, lng: 121.5122, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
-          { id: 'tymc_a2', name: 'A2 三重', lat: 25.0554, lng: 121.4832, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a3', name: 'A3 新北產業園區', lat: 25.0615, lng: 121.4599, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
-          { id: 'tymc_a4', name: 'A4 新莊副都心', lat: 25.0591, lng: 121.4455, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a5', name: 'A5 泰山', lat: 25.0531, lng: 121.4322, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a6', name: 'A6 泰山貴和', lat: 25.0332, lng: 121.4228, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a7', name: 'A7 體育大學', lat: 25.0409, lng: 121.3853, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a8', name: 'A8 長庚醫院', lat: 25.0605, lng: 121.3682, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
-          { id: 'tymc_a9', name: 'A9 林口', lat: 25.0659, lng: 121.3522, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a10', name: 'A10 山鼻', lat: 25.0811, lng: 121.2862, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a11', name: 'A11 坑口', lat: 25.0864, lng: 121.2665, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a12', name: 'A12 機場第一航廈', lat: 25.0815, lng: 121.2371, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
-          { id: 'tymc_a13', name: 'A13 機場第二航廈', lat: 25.0772, lng: 121.2322, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
-          { id: 'tymc_a14a', name: 'A14a 機場旅館', lat: 25.0695, lng: 121.2225, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a15', name: 'A15 大園', lat: 25.0563, lng: 121.2061, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a16', name: 'A16 橫山', lat: 25.0398, lng: 121.2155, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a17', name: 'A17 領航', lat: 25.0203, lng: 121.2191, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a18', name: 'A18 高鐵桃園站', lat: 25.0135, lng: 121.2145, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
-          { id: 'tymc_a19', name: 'A19 桃園體育園區', lat: 25.0018, lng: 121.2036, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a20', name: 'A20 興南', lat: 24.9803, lng: 121.2144, hub: false, stopClasses: ['TYMC_COMMUTER'] },
-          { id: 'tymc_a21', name: 'A21 環北', lat: 24.9672, lng: 121.2202, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'] },
-          { id: 'tymc_a22', name: 'A22 老街溪', lat: 24.9585, lng: 121.2195, hub: true, stopClasses: ['TYMC_COMMUTER'] }
+          { id: 'tymc_a1', name: 'A1 臺北車站', lat: 25.04861, lng: 121.51417, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'],
+            via: [[25.04910, 121.51050], [25.04960, 121.50650], [25.05060, 121.50200], [25.05220, 121.49700], [25.05380, 121.49200], [25.05480, 121.48820]] },
+          { id: 'tymc_a2', name: 'A2 三重', lat: 25.05583, lng: 121.48472, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[25.05780, 121.48180], [25.06080, 121.47750], [25.06220, 121.47200], [25.06210, 121.46550]] },
+          { id: 'tymc_a3', name: 'A3 新北產業園區', lat: 25.06180, lng: 121.45960, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'],
+            via: [[25.06040, 121.45260]] },
+          { id: 'tymc_a4', name: 'A4 新莊副都心', lat: 25.05890, lng: 121.44560, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[25.05610, 121.44250]] },
+          { id: 'tymc_a5', name: 'A5 泰山', lat: 25.05317, lng: 121.43942, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[25.04920, 121.43620], [25.04450, 121.43280], [25.03980, 121.42880], [25.03620, 121.42550]] },
+          { id: 'tymc_a6', name: 'A6 泰山貴和', lat: 25.03317, lng: 121.42267, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[25.02980, 121.41980], [25.02680, 121.41500], [25.02650, 121.41000], [25.02880, 121.40450], [25.03250, 121.39900], [25.03650, 121.39350], [25.03920, 121.38900]] },
+          { id: 'tymc_a7', name: 'A7 體育大學', lat: 25.04111, lng: 121.38528, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[25.04320, 121.38180], [25.04680, 121.37920], [25.05180, 121.37620], [25.05650, 121.37320]] },
+          { id: 'tymc_a8', name: 'A8 長庚醫院', lat: 25.06050, lng: 121.37075, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'],
+            via: [[25.06220, 121.36780], [25.06420, 121.36450]] },
+          { id: 'tymc_a9', name: 'A9 林口', lat: 25.06578, lng: 121.36133, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[25.06820, 121.35550], [25.07050, 121.34800], [25.07280, 121.33800], [25.07520, 121.32500], [25.07750, 121.31200], [25.07920, 121.29800], [25.08020, 121.29050]] },
+          { id: 'tymc_a10', name: 'A10 山鼻', lat: 25.08081, lng: 121.28483, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[25.08250, 121.27850], [25.08460, 121.27220]] },
+          { id: 'tymc_a11', name: 'A11 坑口', lat: 25.08653, lng: 121.26642, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[25.08750, 121.25900], [25.08680, 121.25100], [25.08450, 121.24450], [25.08220, 121.24050]] },
+          { id: 'tymc_a12', name: 'A12 機場第一航廈', lat: 25.08028, lng: 121.23806, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'],
+            via: [[25.07850, 121.23480]] },
+          { id: 'tymc_a13', name: 'A13 機場第二航廈', lat: 25.07667, lng: 121.23139, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'],
+            via: [[25.07320, 121.22620]] },
+          { id: 'tymc_a14a', name: 'A14a 機場旅館', lat: 25.06930, lng: 121.22086, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[25.06500, 121.21650], [25.06050, 121.21300]] },
+          { id: 'tymc_a15', name: 'A15 大園', lat: 25.05603, lng: 121.21050, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[25.05100, 121.20980], [25.04550, 121.21150], [25.04100, 121.21380]] },
+          { id: 'tymc_a16', name: 'A16 橫山', lat: 25.03670, lng: 121.21570, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[25.03250, 121.21780], [25.02850, 121.22020], [25.02600, 121.22120]] },
+          { id: 'tymc_a17', name: 'A17 領航', lat: 25.02420, lng: 121.22110, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[25.02100, 121.22020], [25.01750, 121.21800]] },
+          { id: 'tymc_a18', name: 'A18 高鐵桃園站', lat: 25.01288, lng: 121.21440, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'],
+            via: [[25.00750, 121.20900]] },
+          { id: 'tymc_a19', name: 'A19 桃園體育園區', lat: 25.00148, lng: 121.20316, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[24.99680, 121.20220], [24.99400, 121.20450], [24.98950, 121.20950], [24.98500, 121.21350]] },
+          { id: 'tymc_a20', name: 'A20 興南', lat: 24.98023, lng: 121.21616, hub: false, stopClasses: ['TYMC_COMMUTER'],
+            via: [[24.97400, 121.21860]] },
+          { id: 'tymc_a21', name: 'A21 環北', lat: 24.96706, lng: 121.22104, hub: true, stopClasses: ['TYMC_EXPRESS', 'TYMC_COMMUTER'],
+            via: [[24.96280, 121.22020]] },
+          { id: 'tymc_a22', name: 'A22 老街溪', lat: 24.95840, lng: 121.21950, hub: true, stopClasses: ['TYMC_COMMUTER'] }
         ]
       },
 
-      // ==================== 台北捷運 (TRTC) ====================
+      // ==================== 台北捷運 (TRTC) - 全面貼合 Google Maps 路線圖 ====================
       {
         id: 'trtc_r',
         system: 'TRTC',
         systemName: '台北捷運 (TRTC)',
-        name: '淡水信義線 (淡水—象山 / 北投—大安)',
+        name: '淡水信義線 (淡水—象山 / 北投—大安 / 新北投支線)',
         shortName: '淡水信義線',
-        color: '#ef4444',
+        color: '#dc2626',
         weight: 3.6,
         dashArray: null,
         allowedClasses: ['TRTC_METRO'],
         stations: [
-          { id: 'r28', name: '淡水', lat: 25.1678, lng: 121.4455, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'r27', name: '紅樹林', lat: 25.1541, lng: 121.4589, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'r26', name: '竹圍', lat: 25.1369, lng: 121.4595, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r25', name: '關渡', lat: 25.1256, lng: 121.4670, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r24', name: '忠義', lat: 25.1310, lng: 121.4733, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r23', name: '復興崗', lat: 25.1375, lng: 121.4854, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r22', name: '北投', lat: 25.1318, lng: 121.4986, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'r21', name: '奇岩', lat: 25.1255, lng: 121.5011, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r20', name: '唭哩岸', lat: 25.1209, lng: 121.5063, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r19', name: '石牌', lat: 25.1145, lng: 121.5156, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r18', name: '明德', lat: 25.1098, lng: 121.5188, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r17', name: '芝山', lat: 25.1027, lng: 121.5225, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r16', name: '士林', lat: 25.0935, lng: 121.5262, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r15', name: '劍潭', lat: 25.0848, lng: 121.5250, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r14', name: '圓山', lat: 25.0714, lng: 121.5201, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r13', name: '民權西路', lat: 25.0629, lng: 121.5193, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'r12', name: '雙連', lat: 25.0578, lng: 121.5207, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r11', name: '中山', lat: 25.0527, lng: 121.5204, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'r10', name: '臺北車站(捷)', lat: 25.0463, lng: 121.5175, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'r09', name: '台大醫院', lat: 25.0413, lng: 121.5160, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r08', name: '中正紀念堂', lat: 25.0327, lng: 121.5183, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'r07', name: '東門', lat: 25.0338, lng: 121.5287, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'r06', name: '大安森林公園', lat: 25.0334, lng: 121.5359, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r05', name: '大安', lat: 25.0330, lng: 121.5435, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'r04', name: '信義安和', lat: 25.0331, lng: 121.5531, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r03', name: '台北101/世貿', lat: 25.0330, lng: 121.5637, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'r02', name: '象山', lat: 25.0328, lng: 121.5707, hub: true, stopClasses: ['TRTC_METRO'] }
+          { id: 'r28', name: '淡水', lat: 25.16835, lng: 121.44545, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.16700, 121.44615],
+              [25.16585, 121.44690],
+              [25.16435, 121.44850],
+              [25.16310, 121.45080],
+              [25.16235, 121.45235],
+              [25.16110, 121.45480],
+              [25.15940, 121.45735],
+              [25.15780, 121.45865],
+              [25.15660, 121.45900]
+            ] },
+          { id: 'r27', name: '紅樹林', lat: 25.15485, lng: 121.45890, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.15220, 121.45885],
+              [25.14960, 121.45920],
+              [25.14710, 121.45965],
+              [25.14450, 121.45985],
+              [25.14180, 121.45995],
+              [25.13950, 121.45985],
+              [25.13810, 121.45965]
+            ] },
+          { id: 'r26', name: '竹圍', lat: 25.13694, lng: 121.45948, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.13420, 121.45985],
+              [25.13140, 121.46035],
+              [25.12880, 121.46145],
+              [25.12710, 121.46310],
+              [25.12565, 121.46515],
+              [25.12505, 121.46625]
+            ] },
+          { id: 'r25', name: '關渡', lat: 25.12535, lng: 121.46705, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.12720, 121.46905],
+              [25.12925, 121.47125]
+            ] },
+          { id: 'r24', name: '忠義', lat: 25.13128, lng: 121.47348, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.13320, 121.47575],
+              [25.13525, 121.47840],
+              [25.13675, 121.48150],
+              [25.13745, 121.48365]
+            ] },
+          { id: 'r23', name: '復興崗', lat: 25.13760, lng: 121.48540, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.13765, 121.48820],
+              [25.13725, 121.49150],
+              [25.13630, 121.49420],
+              [25.13480, 121.49635],
+              [25.13330, 121.49765]
+            ] },
+          { id: 'r22', name: '北投', lat: 25.13188, lng: 121.49862, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.12920, 121.49975],
+              [25.12740, 121.50045]
+            ] },
+          { id: 'r21', name: '奇岩', lat: 25.12565, lng: 121.50113, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.12410, 121.50205],
+              [25.12250, 121.50395]
+            ] },
+          { id: 'r20', name: '唭哩岸', lat: 25.12088, lng: 121.50620, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.11910, 121.50885],
+              [25.11730, 121.51155],
+              [25.11580, 121.51375]
+            ] },
+          { id: 'r19', name: '石牌', lat: 25.11442, lng: 121.51560, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.11200, 121.51720]
+            ] },
+          { id: 'r18', name: '明德', lat: 25.10950, lng: 121.51880, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.10650, 121.52055],
+              [25.10460, 121.52160]
+            ] },
+          { id: 'r17', name: '芝山', lat: 25.10290, lng: 121.52252, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.10020, 121.52365],
+              [25.09780, 121.52465],
+              [25.09550, 121.52550]
+            ] },
+          { id: 'r16', name: '士林', lat: 25.09355, lng: 121.52612, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.09100, 121.52655],
+              [25.08850, 121.52625],
+              [25.08640, 121.52565]
+            ] },
+          { id: 'r15', name: '劍潭', lat: 25.08440, lng: 121.52505, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.08200, 121.52485],
+              [25.07950, 121.52465],
+              [25.07750, 121.52435],
+              [25.07580, 121.52310],
+              [25.07420, 121.52155],
+              [25.07215, 121.52040]
+            ] },
+          { id: 'r14', name: '圓山', lat: 25.07146, lng: 121.52017, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.06880, 121.51985],
+              [25.06600, 121.51950]
+            ] },
+          { id: 'r13', name: '民權西路', lat: 25.06291, lng: 121.51935, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.06120, 121.51985],
+              [25.05920, 121.52074]
+            ] },
+          { id: 'r12', name: '雙連', lat: 25.05755, lng: 121.52074, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.05589, 121.52061]
+            ] },
+          { id: 'r11', name: '中山', lat: 25.05276, lng: 121.52042, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.05040, 121.52020],
+              [25.04880, 121.51965],
+              [25.04760, 121.51865]
+            ] },
+          { id: 'r10', name: '臺北車站(捷)', lat: 25.04628, lng: 121.51752, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.04480, 121.51635],
+              [25.04320, 121.51620]
+            ] },
+          { id: 'r09', name: '台大醫院', lat: 25.04165, lng: 121.51615, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.03920, 121.51605],
+              [25.03680, 121.51615],
+              [25.03520, 121.51655]
+            ] },
+          { id: 'r08', name: '中正紀念堂', lat: 25.03385, lng: 121.51745, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.03220, 121.51865],
+              [25.03185, 121.52020],
+              [25.03240, 121.52220],
+              [25.03340, 121.52365],
+              [25.03390, 121.52500],
+              [25.03390, 121.52680]
+            ] },
+          { id: 'r07', name: '東門', lat: 25.03389, lng: 121.52870, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.03365, 121.53200]
+            ] },
+          { id: 'r06', name: '大安森林公園', lat: 25.03345, lng: 121.53531, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.03330, 121.53950]
+            ] },
+          { id: 'r05', name: '大安', lat: 25.03320, lng: 121.54355, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.03322, 121.54820]
+            ] },
+          { id: 'r04', name: '信義安和', lat: 25.03325, lng: 121.55295, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.03315, 121.55780]
+            ] },
+          { id: 'r03', name: '台北101/世貿', lat: 25.03303, lng: 121.56276, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.03290, 121.56640]
+            ] },
+          { id: 'r02', name: '象山', lat: 25.03281, lng: 121.57008, hub: true, stopClasses: ['TRTC_METRO'] }
+        ],
+        // 新北投支線 (北投 R22 ↔ 新北投 R22A，沿大業路東側高架支線行駛)
+        extraBranches: [
+          [
+            { id: 'r22', name: '北投', lat: 25.13188, lng: 121.49862, hub: true, stopClasses: ['TRTC_METRO'],
+              via: [[25.13320, 121.49860], [25.13480, 121.49980], [25.13600, 121.50120]] },
+            { id: 'r22a', name: '新北投', lat: 25.13696, lng: 121.50237, hub: true, stopClasses: ['TRTC_METRO'],
+              timetableNote: '新北投支線（北投 R22 ↔ 新北投 R22A）：沿大業路東側高架支線行駛，尖峰 7–8 分、離峰 10–12 分' }
+          ]
         ]
       },
       {
@@ -934,34 +1329,52 @@
         systemName: '台北捷運 (TRTC)',
         name: '板南線 (頂埔/亞東醫院—南港展覽館)',
         shortName: '板南線',
-        color: '#2563eb',
+        color: '#1d4ed8',
         weight: 3.8,
         dashArray: null,
         allowedClasses: ['TRTC_METRO'],
         stations: [
-          { id: 'bl01', name: '頂埔', lat: 24.9593, lng: 121.4205, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl02', name: '永寧', lat: 24.9667, lng: 121.4361, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl03', name: '土城', lat: 24.9731, lng: 121.4443, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl04', name: '海山', lat: 24.9853, lng: 121.4488, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl05', name: '亞東醫院', lat: 24.9983, lng: 121.4525, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl06', name: '府中', lat: 25.0085, lng: 121.4594, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl07', name: '板橋(捷)', lat: 25.0138, lng: 121.4628, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl08', name: '新埔', lat: 25.0237, lng: 121.4684, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl09', name: '江子翠', lat: 25.0303, lng: 121.4724, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl10', name: '龍山寺', lat: 25.0353, lng: 121.4998, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl11', name: '西門', lat: 25.0421, lng: 121.5083, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'r10', name: '臺北車站(捷)', lat: 25.0463, lng: 121.5175, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl13', name: '善導寺', lat: 25.0448, lng: 121.5232, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl14', name: '忠孝新生', lat: 25.0424, lng: 121.5329, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl15', name: '忠孝復興', lat: 25.0416, lng: 121.5438, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl16', name: '忠孝敦化', lat: 25.0415, lng: 121.5511, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl17', name: '國父紀念館', lat: 25.0413, lng: 121.5578, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl18', name: '市政府', lat: 25.0412, lng: 121.5652, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl19', name: '永春', lat: 25.0408, lng: 121.5763, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl20', name: '後山埤', lat: 25.0445, lng: 121.5825, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl21', name: '昆陽', lat: 25.0505, lng: 121.5932, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl22', name: '南港(捷)', lat: 25.0521, lng: 121.6068, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl23', name: '南港展覽館', lat: 25.0553, lng: 121.6175, hub: true, stopClasses: ['TRTC_METRO'] }
+          { id: 'bl01', name: '頂埔', lat: 24.95970, lng: 121.41950, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[24.96120, 121.42320], [24.96310, 121.42780], [24.96500, 121.43220]] },
+          { id: 'bl02', name: '永寧', lat: 24.96660, lng: 121.43612, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[24.96820, 121.43920], [24.96980, 121.44140], [24.97120, 121.44260]] },
+          { id: 'bl03', name: '土城', lat: 24.97222, lng: 121.44389, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[24.97420, 121.44620], [24.97560, 121.44750], [24.97820, 121.44800], [24.98180, 121.44835]] },
+          { id: 'bl04', name: '海山', lat: 24.98523, lng: 121.44860, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[24.98820, 121.44850], [24.99120, 121.44920], [24.99480, 121.45080], [24.99680, 121.45175]] },
+          { id: 'bl05', name: '亞東醫院', lat: 24.99860, lng: 121.45260, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.00180, 121.45460], [25.00520, 121.45720]] },
+          { id: 'bl06', name: '府中', lat: 25.00840, lng: 121.45940, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.01100, 121.46080], [25.01320, 121.46140]] },
+          { id: 'bl07', name: '板橋(板南線)', lat: 25.01495, lng: 121.46230, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.01630, 121.46320], [25.01850, 121.46480], [25.02080, 121.46645]] },
+          { id: 'bl08', name: '新埔', lat: 25.02310, lng: 121.46810, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.02660, 121.47025]] },
+          { id: 'bl09', name: '江子翠', lat: 25.03000, lng: 121.47240, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.03240, 121.47390], [25.03410, 121.47520], [25.03500, 121.47750], [25.03525, 121.48250], [25.03530, 121.48900], [25.03525, 121.49550]] },
+          { id: 'bl10', name: '龍山寺', lat: 25.03520, lng: 121.50040, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.03540, 121.50200], [25.03610, 121.50380], [25.03730, 121.50550], [25.03880, 121.50690], [25.04050, 121.50775]] },
+          { id: 'bl11', name: '西門', lat: 25.04220, lng: 121.50830, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.04420, 121.50895], [25.04540, 121.50965], [25.04610, 121.51085], [25.04625, 121.51320], [25.04630, 121.51550]] },
+          { id: 'r10', name: '臺北車站(捷)', lat: 25.04628, lng: 121.51752, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.04575, 121.52020], [25.04520, 121.52200]] },
+          { id: 'bl13', name: '善導寺', lat: 25.04472, lng: 121.52365, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.04390, 121.52650], [25.04275, 121.53000]] },
+          { id: 'bl14', name: '忠孝新生', lat: 25.04180, lng: 121.53290, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.04170, 121.53820]] },
+          { id: 'bl15', name: '忠孝復興', lat: 25.04160, lng: 121.54380, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl16', name: '忠孝敦化', lat: 25.04150, lng: 121.55080, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl17', name: '國父紀念館', lat: 25.04140, lng: 121.55750, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl18', name: '市政府', lat: 25.04110, lng: 121.56630, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl19', name: '永春', lat: 25.04087, lng: 121.57561, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.04085, 121.57780], [25.04220, 121.57950], [25.04360, 121.58100]] },
+          { id: 'bl20', name: '後山埤', lat: 25.04486, lng: 121.58234, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.04680, 121.58550], [25.04880, 121.58950]] },
+          { id: 'bl21', name: '昆陽', lat: 25.05049, lng: 121.59328, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.05100, 121.59750], [25.05145, 121.60200]] },
+          { id: 'bl22', name: '南港(捷)', lat: 25.05210, lng: 121.60680, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.05260, 121.61050], [25.05360, 121.61350], [25.05465, 121.61580]] },
+          { id: 'bl23', name: '南港展覽館', lat: 25.05528, lng: 121.61750, hub: true, stopClasses: ['TRTC_METRO'] }
         ]
       },
       {
@@ -970,30 +1383,48 @@
         systemName: '台北捷運 (TRTC)',
         name: '松山新店線 (松山—新店 / 台電大樓)',
         shortName: '松山新店線',
-        color: '#16a34a',
+        color: '#15803d',
         weight: 3.6,
         dashArray: null,
         allowedClasses: ['TRTC_METRO'],
         stations: [
-          { id: 'g19', name: '松山(捷)', lat: 25.0501, lng: 121.5777, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'g18', name: '南京三民', lat: 25.0515, lng: 121.5647, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'g17', name: '台北小巨蛋', lat: 25.0517, lng: 121.5515, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'g16', name: '南京復興', lat: 25.0523, lng: 121.5440, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'g15', name: '松江南京', lat: 25.0520, lng: 121.5330, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'r11', name: '中山', lat: 25.0527, lng: 121.5204, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'g13', name: '北門', lat: 25.0495, lng: 121.5102, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl11', name: '西門', lat: 25.0421, lng: 121.5083, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'g11', name: '小南門', lat: 25.0355, lng: 121.5108, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r08', name: '中正紀念堂', lat: 25.0327, lng: 121.5183, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'g09', name: '古亭', lat: 25.0264, lng: 121.5229, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'g08', name: '台電大樓', lat: 25.0207, lng: 121.5282, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'g07', name: '公館', lat: 25.0149, lng: 121.5342, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'g06', name: '萬隆', lat: 25.0019, lng: 121.5391, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'g05', name: '景美', lat: 24.9929, lng: 121.5407, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'g04', name: '大坪林', lat: 24.9829, lng: 121.5413, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'g03', name: '七張', lat: 24.9752, lng: 121.5434, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'g02', name: '新店區公所', lat: 24.9674, lng: 121.5413, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'g01', name: '新店', lat: 24.9579, lng: 121.5376, hub: true, stopClasses: ['TRTC_METRO'] }
+          { id: 'g19', name: '松山(捷)', lat: 25.05006, lng: 121.57684, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.05040, 121.57350], [25.05125, 121.56980], [25.05140, 121.56680]] },
+          { id: 'g18', name: '南京三民', lat: 25.05140, lng: 121.56390, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.05155, 121.55800]] },
+          { id: 'g17', name: '台北小巨蛋', lat: 25.05170, lng: 121.55190, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.05180, 121.54800]] },
+          { id: 'g16', name: '南京復興', lat: 25.05190, lng: 121.54400, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.05200, 121.53850]] },
+          { id: 'g15', name: '松江南京', lat: 25.05210, lng: 121.53300, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.05235, 121.52680]] },
+          { id: 'r11', name: '中山', lat: 25.05276, lng: 121.52042, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.05255, 121.51620], [25.05230, 121.51420], [25.05165, 121.51240], [25.05070, 121.51080]] },
+          { id: 'g13', name: '北門', lat: 25.04944, lng: 121.51031, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.04720, 121.50980], [25.04520, 121.50920]] },
+          { id: 'bl11', name: '西門', lat: 25.04220, lng: 121.50830, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.03950, 121.50760], [25.03720, 121.50715], [25.03600, 121.50760], [25.03565, 121.50890]] },
+          { id: 'g11', name: '小南門', lat: 25.03564, lng: 121.51079, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.03530, 121.51350], [25.03495, 121.51560], [25.03430, 121.51700], [25.03355, 121.51770]] },
+          { id: 'r08', name: '中正紀念堂', lat: 25.03385, lng: 121.51745, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.03180, 121.51895], [25.02930, 121.52080]] },
+          { id: 'g09', name: '古亭', lat: 25.02660, lng: 121.52280, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.02355, 121.52555]] },
+          { id: 'g08', name: '台電大樓', lat: 25.02052, lng: 121.52833, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.01765, 121.53125]] },
+          { id: 'g07', name: '公館', lat: 25.01480, lng: 121.53420, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.01260, 121.53640], [25.01050, 121.53750], [25.00650, 121.53840]] },
+          { id: 'g06', name: '萬隆', lat: 25.00188, lng: 121.53900, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[24.99850, 121.53985], [24.99580, 121.54045]] },
+          { id: 'g05', name: '景美', lat: 24.99266, lng: 121.54062, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[24.98950, 121.54085], [24.98680, 121.54075], [24.98480, 121.54100]] },
+          { id: 'g04', name: '大坪林', lat: 24.98294, lng: 121.54136, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[24.98020, 121.54185], [24.97760, 121.54265]] },
+          { id: 'g03', name: '七張', lat: 24.97507, lng: 121.54330, hub: true, stopClasses: ['TRTC_METRO'], timetableNote: '小碧潭支線轉乘站｜往小碧潭首班 06:11、末班 00:09（尖峰班距 12–13 分、離峰約 18 分）',
+            via: [[24.97220, 121.54260], [24.96980, 121.54195]] },
+          { id: 'g02', name: '新店區公所', lat: 24.96784, lng: 121.54143, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[24.96450, 121.54040], [24.96120, 121.53915], [24.95920, 121.53820]] },
+          { id: 'g01', name: '新店', lat: 24.95797, lng: 121.53771, hub: true, stopClasses: ['TRTC_METRO'] }
         ]
       },
       {
@@ -1002,42 +1433,67 @@
         systemName: '台北捷運 (TRTC)',
         name: '中和新蘆線 (南勢角—迴龍/蘆洲)',
         shortName: '中和新蘆線',
-        color: '#f59e0b',
+        color: '#d97706',
         weight: 3.6,
         dashArray: null,
         allowedClasses: ['TRTC_METRO'],
         stations: [
-          { id: 'o01', name: '南勢角', lat: 24.9904, lng: 121.5091, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'o02', name: '景安', lat: 24.9939, lng: 121.5050, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'o03', name: '永安市場', lat: 25.0026, lng: 121.5112, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'o04', name: '頂溪', lat: 25.0138, lng: 121.5155, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'g09', name: '古亭', lat: 25.0264, lng: 121.5229, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'r07', name: '東門', lat: 25.0338, lng: 121.5287, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl14', name: '忠孝新生', lat: 25.0424, lng: 121.5329, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'g15', name: '松江南京', lat: 25.0520, lng: 121.5330, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'o09', name: '行天宮', lat: 25.0597, lng: 121.5332, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'o10', name: '中山國小', lat: 25.0627, lng: 121.5264, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r13', name: '民權西路', lat: 25.0629, lng: 121.5193, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'o12', name: '大橋頭', lat: 25.0632, lng: 121.5127, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'o13', name: '台北橋', lat: 25.0632, lng: 121.5003, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'o14', name: '菜寮', lat: 25.0603, lng: 121.4911, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'o15', name: '三重(捷)', lat: 25.0558, lng: 121.4841, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'o16', name: '先嗇宮', lat: 25.0465, lng: 121.4719, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'o17', name: '頭前庄', lat: 25.0397, lng: 121.4617, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'o18', name: '新莊', lat: 25.0361, lng: 121.4524, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'o19', name: '輔大', lat: 25.0327, lng: 121.4352, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'o20', name: '丹鳳', lat: 25.0289, lng: 121.4227, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'o21', name: '迴龍', lat: 25.0218, lng: 121.4116, hub: true, stopClasses: ['TRTC_METRO'] }
+          { id: 'o01', name: '南勢角', lat: 24.98990, lng: 121.50900, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[24.99065, 121.50825], [24.99160, 121.50720], [24.99270, 121.50595]] },
+          { id: 'o02', name: '景安', lat: 24.99389, lng: 121.50472, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[24.99490, 121.50430], [24.99610, 121.50500], [24.99780, 121.50670], [24.99980, 121.50865]] },
+          { id: 'o03', name: '永安市場', lat: 25.00222, lng: 121.51056, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.00480, 121.51250], [25.00740, 121.51410], [25.00980, 121.51475], [25.01180, 121.51515]] },
+          { id: 'o04', name: '頂溪', lat: 25.01352, lng: 121.51542, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.01560, 121.51625], [25.01680, 121.51695], [25.01850, 121.51880], [25.02050, 121.52150], [25.02220, 121.52360], [25.02380, 121.52450], [25.02520, 121.52375]] },
+          { id: 'g09', name: '古亭', lat: 25.02660, lng: 121.52280, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.02820, 121.52160], [25.02980, 121.52245], [25.03180, 121.52345], [25.03320, 121.52410], [25.03385, 121.52540], [25.03390, 121.52680]] },
+          { id: 'r07', name: '東門', lat: 25.03389, lng: 121.52870, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.03380, 121.53050], [25.03410, 121.53180], [25.03520, 121.53265], [25.03700, 121.53285], [25.03950, 121.53290]] },
+          { id: 'bl14', name: '忠孝新生', lat: 25.04180, lng: 121.53290, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.04450, 121.53295], [25.04850, 121.53305]] },
+          { id: 'g15', name: '松江南京', lat: 25.05210, lng: 121.53300, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.05600, 121.53310]] },
+          { id: 'o09', name: '行天宮', lat: 25.05970, lng: 121.53320, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.06120, 121.53320], [25.06220, 121.53270], [25.06265, 121.53150], [25.06268, 121.52900]] },
+          { id: 'o10', name: '中山國小', lat: 25.06269, lng: 121.52657, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.06280, 121.52300]] },
+          { id: 'r13', name: '民權西路', lat: 25.06291, lng: 121.51935, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.06310, 121.51620]] },
+          { id: 'o12', name: '大橋頭', lat: 25.06328, lng: 121.51298, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.06315, 121.51000], [25.06270, 121.50600], [25.06255, 121.50250]] },
+          { id: 'o13', name: '台北橋', lat: 25.06280, lng: 121.49960, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.06200, 121.49650], [25.06100, 121.49380]] },
+          { id: 'o14', name: '菜寮', lat: 25.06000, lng: 121.49170, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.05860, 121.48880], [25.05720, 121.48650]] },
+          { id: 'o15', name: '三重(捷)', lat: 25.05583, lng: 121.48472, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.05420, 121.48280], [25.05180, 121.47950], [25.04900, 121.47550]] },
+          { id: 'o16', name: '先嗇宮', lat: 25.04640, lng: 121.47170, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.04350, 121.46750], [25.04100, 121.46360]] },
+          { id: 'o17', name: '頭前庄', lat: 25.03920, lng: 121.46060, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.03780, 121.45700], [25.03680, 121.45450]] },
+          { id: 'o18', name: '新莊', lat: 25.03610, lng: 121.45230, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.03500, 121.44750], [25.03420, 121.44300], [25.03350, 121.43950]] },
+          { id: 'o19', name: '輔大', lat: 25.03280, lng: 121.43590, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.03180, 121.43100], [25.03080, 121.42680], [25.02980, 121.42420]] },
+          { id: 'o20', name: '丹鳳', lat: 25.02890, lng: 121.42270, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.02720, 121.42000], [25.02520, 121.41700], [25.02350, 121.41420]] },
+          { id: 'o21', name: '迴龍', lat: 25.02209, lng: 121.41190, hub: true, stopClasses: ['TRTC_METRO'] }
         ],
-        // 蘆洲支線段額外軌道繪製與列車支援
+        // 蘆洲支線段額外軌道繪製與列車支援 (沿三和路、蘆洲中山一路、三民路移動)
         extraBranches: [
           [
-            { id: 'o12', name: '大橋頭', lat: 25.0632, lng: 121.5127, hub: true, stopClasses: ['TRTC_METRO'] },
-            { id: 'o50', name: '三重國小', lat: 25.0703, lng: 121.4969, hub: false, stopClasses: ['TRTC_METRO'] },
-            { id: 'o51', name: '三和國中', lat: 25.0768, lng: 121.4864, hub: false, stopClasses: ['TRTC_METRO'] },
-            { id: 'o52', name: '徐匯中學', lat: 25.0807, lng: 121.4796, hub: false, stopClasses: ['TRTC_METRO'] },
-            { id: 'o53', name: '三民高中', lat: 25.0855, lng: 121.4734, hub: false, stopClasses: ['TRTC_METRO'] },
-            { id: 'o54', name: '蘆洲', lat: 25.0916, lng: 121.4644, hub: true, stopClasses: ['TRTC_METRO'] }
+            { id: 'o12', name: '大橋頭', lat: 25.06328, lng: 121.51298, hub: true, stopClasses: ['TRTC_METRO'],
+              via: [[25.06350, 121.51000], [25.06420, 121.50650], [25.06550, 121.50320], [25.06760, 121.50020]] },
+            { id: 'o50', name: '三重國小', lat: 25.07000, lng: 121.49738, hub: false, stopClasses: ['TRTC_METRO'],
+              via: [[25.07250, 121.49380], [25.07480, 121.48980]] },
+            { id: 'o51', name: '三和國中', lat: 25.07656, lng: 121.48683, hub: false, stopClasses: ['TRTC_METRO'],
+              via: [[25.07850, 121.48350]] },
+            { id: 'o52', name: '徐匯中學', lat: 25.08046, lng: 121.48010, hub: false, stopClasses: ['TRTC_METRO'],
+              via: [[25.08180, 121.47780], [25.08350, 121.47580]] },
+            { id: 'o53', name: '三民高中', lat: 25.08539, lng: 121.47343, hub: false, stopClasses: ['TRTC_METRO'],
+              via: [[25.08780, 121.46980], [25.08980, 121.46680]] },
+            { id: 'o54', name: '蘆洲', lat: 25.09153, lng: 121.46445, hub: true, stopClasses: ['TRTC_METRO'] }
           ]
         ]
       },
@@ -1047,35 +1503,143 @@
         systemName: '台北捷運 (TRTC)',
         name: '文湖線 (動物園—南港展覽館)',
         shortName: '文湖線',
-        color: '#b45309',
+        color: '#92400e',
         weight: 3.4,
         dashArray: null,
         allowedClasses: ['TRTC_METRO'],
         stations: [
-          { id: 'br01', name: '動物園', lat: 24.9983, lng: 121.5794, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'br02', name: '木柵', lat: 24.9982, lng: 121.5731, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br03', name: '萬芳社區', lat: 24.9986, lng: 121.5681, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br04', name: '萬芳醫院', lat: 24.9994, lng: 121.5581, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br05', name: '辛亥', lat: 25.0055, lng: 121.5571, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br06', name: '麟光', lat: 25.0185, lng: 121.5588, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br07', name: '六張犁', lat: 25.0237, lng: 121.5531, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br08', name: '科技大樓', lat: 25.0261, lng: 121.5435, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'r05', name: '大安', lat: 25.0330, lng: 121.5435, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl15', name: '忠孝復興', lat: 25.0416, lng: 121.5438, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'g16', name: '南京復興', lat: 25.0523, lng: 121.5440, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'br12', name: '中山國中', lat: 25.0608, lng: 121.5442, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br13', name: '松山機場', lat: 25.0630, lng: 121.5519, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'br14', name: '大直', lat: 25.0794, lng: 121.5469, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br15', name: '劍南路', lat: 25.0849, lng: 121.5556, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br16', name: '西湖', lat: 25.0821, lng: 121.5672, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br17', name: '港墘', lat: 25.0800, lng: 121.5751, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br18', name: '文德', lat: 25.0785, lng: 121.5848, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br19', name: '內湖', lat: 25.0837, lng: 121.5944, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br20', name: '大湖公園', lat: 25.0838, lng: 121.6022, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br21', name: '葫洲', lat: 25.0727, lng: 121.6072, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br22', name: '東湖', lat: 25.0672, lng: 121.6115, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'br23', name: '南港軟體園區', lat: 25.0599, lng: 121.6159, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl23', name: '南港展覽館', lat: 25.0553, lng: 121.6175, hub: true, stopClasses: ['TRTC_METRO'] }
+          { id: 'br01', name: '動物園', lat: 24.99825, lng: 121.57933, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [
+              [24.99730, 121.57800],
+              [24.99665, 121.57700],
+              [24.99675, 121.57560],
+              [24.99755, 121.57435]
+            ] },
+          { id: 'br02', name: '木柵', lat: 24.99824, lng: 121.57310, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [24.99855, 121.57140],
+              [24.99875, 121.56980]
+            ] },
+          { id: 'br03', name: '萬芳社區', lat: 24.99858, lng: 121.56800, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.00010, 121.56735],
+              [25.00180, 121.56645],
+              [25.00225, 121.56420],
+              [25.00160, 121.56120],
+              [25.00050, 121.55880]
+            ] },
+          { id: 'br04', name: '萬芳醫院', lat: 24.99941, lng: 121.55808, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.00120, 121.55865],
+              [25.00280, 121.55815],
+              [25.00425, 121.55755]
+            ] },
+          { id: 'br05', name: '辛亥', lat: 25.00555, lng: 121.55712, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.00740, 121.55735],
+              [25.00865, 121.55880],
+              [25.00986, 121.56040],
+              [25.01270, 121.56040],
+              [25.01557, 121.56040],
+              [25.01710, 121.55965]
+            ] },
+          { id: 'br06', name: '麟光', lat: 25.01855, lng: 121.55882, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.02050, 121.55680],
+              [25.02230, 121.55490]
+            ] },
+          { id: 'br07', name: '六張犁', lat: 25.02393, lng: 121.55314, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.02475, 121.54920],
+              [25.02495, 121.54500],
+              [25.02515, 121.54355]
+            ] },
+          { id: 'br08', name: '科技大樓', lat: 25.02611, lng: 121.54348, hub: false, stopClasses: ['TRTC_METRO'] },
+          { id: 'r05', name: '大安', lat: 25.03320, lng: 121.54355, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'bl15', name: '忠孝復興', lat: 25.04160, lng: 121.54380, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'g16', name: '南京復興', lat: 25.05190, lng: 121.54400, hub: true, stopClasses: ['TRTC_METRO'] },
+          { id: 'br12', name: '中山國中', lat: 25.06086, lng: 121.54418, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.06285, 121.54419],
+              [25.06480, 121.54420],
+              [25.06635, 121.54420],
+              [25.06680, 121.54495],
+              [25.06640, 121.54595],
+              [25.06476, 121.54721],
+              [25.06355, 121.54885],
+              [25.06325, 121.55025]
+            ] },
+          { id: 'br13', name: '松山機場', lat: 25.06328, lng: 121.55170, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.06332, 121.55350],
+              [25.06400, 121.55505],
+              [25.06560, 121.55585],
+              [25.06820, 121.55530],
+              [25.07100, 121.55380],
+              [25.07380, 121.55170],
+              [25.07620, 121.54940],
+              [25.07755, 121.54745],
+              [25.07855, 121.54645]
+            ] },
+          { id: 'br14', name: '大直', lat: 25.07975, lng: 121.54705, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.08150, 121.54805],
+              [25.08372, 121.54935],
+              [25.08485, 121.55015],
+              [25.08545, 121.55105],
+              [25.08535, 121.55250],
+              [25.08500, 121.55395]
+            ] },
+          { id: 'br15', name: '劍南路', lat: 25.08478, lng: 121.55540, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.08465, 121.55820],
+              [25.08415, 121.56080],
+              [25.08310, 121.56390]
+            ] },
+          { id: 'br16', name: '西湖', lat: 25.08207, lng: 121.56696, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.08110, 121.57120]
+            ] },
+          { id: 'br17', name: '港墘', lat: 25.08006, lng: 121.57520, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.07915, 121.57760],
+              [25.07855, 121.57980],
+              [25.07860, 121.58240]
+            ] },
+          { id: 'br18', name: '文德', lat: 25.07872, lng: 121.58495, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.07875, 121.58820],
+              [25.07935, 121.59010],
+              [25.08110, 121.59125],
+              [25.08275, 121.59255]
+            ] },
+          { id: 'br19', name: '內湖', lat: 25.08365, lng: 121.59450, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.08415, 121.59720],
+              [25.08425, 121.60020]
+            ] },
+          { id: 'br20', name: '大湖公園', lat: 25.08367, lng: 121.60245, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.08250, 121.60460],
+              [25.08020, 121.60610],
+              [25.07720, 121.60615],
+              [25.07480, 121.60665]
+            ] },
+          { id: 'br21', name: '葫洲', lat: 25.07281, lng: 121.60738, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.07020, 121.60945],
+              [25.06865, 121.61070]
+            ] },
+          { id: 'br22', name: '東湖', lat: 25.06742, lng: 121.61162, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.06500, 121.61335],
+              [25.06250, 121.61515]
+            ] },
+          { id: 'br23', name: '南港軟體園區', lat: 25.05995, lng: 121.61595, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [
+              [25.05760, 121.61675]
+            ] },
+          { id: 'bl23', name: '南港展覽館', lat: 25.05528, lng: 121.61750, hub: true, stopClasses: ['TRTC_METRO'] }
         ]
       },
       {
@@ -1084,58 +1648,105 @@
         systemName: '台北捷運 (TRTC)',
         name: '環狀線 (大坪林—新北產業園區)',
         shortName: '環狀線',
-        color: '#eab308',
+        color: '#ca8a04',
         weight: 3.5,
         dashArray: null,
         allowedClasses: ['TRTC_METRO'],
         stations: [
-          { id: 'g04', name: '大坪林', lat: 24.9829, lng: 121.5413, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'y08', name: '十四張', lat: 24.9844, lng: 121.5284, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'y09', name: '秀朗橋', lat: 24.9905, lng: 121.5227, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'y10', name: '景平', lat: 24.9920, lng: 121.5131, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'o02', name: '景安', lat: 24.9939, lng: 121.5050, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'y12', name: '中和', lat: 25.0019, lng: 121.4961, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'y13', name: '橋和', lat: 25.0044, lng: 121.4905, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'y14', name: '中原', lat: 25.0084, lng: 121.4842, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'y15', name: '板新', lat: 25.0145, lng: 121.4722, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'bl07', name: '板橋(捷)', lat: 25.0138, lng: 121.4628, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'y17', name: '新埔民生', lat: 25.0261, lng: 121.4668, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'o17', name: '頭前庄', lat: 25.0397, lng: 121.4617, hub: true, stopClasses: ['TRTC_METRO'] },
-          { id: 'y19', name: '幸福', lat: 25.0498, lng: 121.4602, hub: false, stopClasses: ['TRTC_METRO'] },
-          { id: 'tymc_a3', name: '新北產業園區', lat: 25.0615, lng: 121.4599, hub: true, stopClasses: ['TRTC_METRO'] }
+          { id: 'g04', name: '大坪林', lat: 24.98294, lng: 121.54136, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[24.9829, 121.5365], [24.9830, 121.5325], [24.9835, 121.5300]] },
+          { id: 'y08', name: '十四張', lat: 24.98434, lng: 121.52768, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[24.9868, 121.5268], [24.9888, 121.5258]] },
+          { id: 'y09', name: '秀朗橋', lat: 24.99033, lng: 121.52499, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[24.9912, 121.5205]] },
+          { id: 'y10', name: '景平', lat: 24.99214, lng: 121.51609, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[24.9930, 121.5105]] },
+          { id: 'o02', name: '景安', lat: 24.99389, lng: 121.50472, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[24.9958, 121.5015], [24.9985, 121.4982], [25.0008, 121.4966]] },
+          { id: 'y12', name: '中和', lat: 25.00240, lng: 121.49620, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.0035, 121.4932]] },
+          { id: 'y13', name: '橋和', lat: 25.00461, lng: 121.49024, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.0064, 121.4872]] },
+          { id: 'y14', name: '中原', lat: 25.00820, lng: 121.48430, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.0102, 121.4812], [25.0122, 121.4785], [25.0135, 121.4755]] },
+          { id: 'y15', name: '板新', lat: 25.01450, lng: 121.47250, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.01580, 121.47020], [25.01610, 121.46780], [25.01520, 121.46540]] },
+          { id: 'y16', name: '板橋(環狀線)', lat: 25.01360, lng: 121.46460, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.01550, 121.46380], [25.01750, 121.46410], [25.02050, 121.46620], [25.02310, 121.46810], [25.02460, 121.46740]] },
+          { id: 'y17', name: '新埔民生', lat: 25.02610, lng: 121.46670, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.0298, 121.4648], [25.0348, 121.4620]] },
+          { id: 'o17', name: '頭前庄', lat: 25.03920, lng: 121.46060, hub: true, stopClasses: ['TRTC_METRO'],
+            via: [[25.0445, 121.4603]] },
+          { id: 'y19', name: '幸福', lat: 25.04986, lng: 121.46005, hub: false, stopClasses: ['TRTC_METRO'],
+            via: [[25.0555, 121.4598], [25.0595, 121.4597]] },
+          { id: 'tymc_a3', name: '新北產業園區', lat: 25.06180, lng: 121.45960, hub: true, stopClasses: ['TRTC_METRO'] }
         ]
       },
 
-      // ==================== 新北捷運輕軌 (LRT) ====================
+      // ==================== 木柵貓空纜車 (GONDOLA) - 貼合 Google Maps 黃綠色纜車路線 ====================
+      {
+        id: 'trtc_maokong',
+        system: 'GONDOLA',
+        systemName: '木柵貓空纜車 (Maokong Gondola)',
+        name: '木柵貓空纜車 (動物園站—轉角一/二站—指南宮—貓空站)',
+        shortName: '木柵貓空纜車',
+        color: '#84cc16',
+        weight: 3.6,
+        dashArray: '4, 4',
+        allowedClasses: ['TRTC_GONDOLA'],
+        stations: [
+          { id: 'mk01', name: '纜車動物園站', lat: 24.99585, lng: 121.57612, hub: true, stopClasses: ['TRTC_GONDOLA'] },
+          { id: 'mk_t1', name: '轉角一站(轉向不停客)', lat: 24.99194, lng: 121.58311, hub: false, isTurnStation: true, stopClasses: [] },
+          { id: 'mk02', name: '動物園南站', lat: 24.99022, lng: 121.58736, hub: false, stopClasses: ['TRTC_GONDOLA'] },
+          { id: 'mk_t2', name: '轉角二站(轉向不停客)', lat: 24.98829, lng: 121.59216, hub: false, isTurnStation: true, stopClasses: [] },
+          { id: 'mk03', name: '指南宮站', lat: 24.97853, lng: 121.59021, hub: true, stopClasses: ['TRTC_GONDOLA'] },
+          { id: 'mk04', name: '貓空站', lat: 24.96861, lng: 121.58822, hub: true, stopClasses: ['TRTC_GONDOLA'] }
+        ]
+      },
+
+      // ==================== 新北捷運輕軌 (LRT) - 貼合 Google Maps 輕軌路線 ====================
       {
         id: 'lrt_danhai',
         system: 'LRT',
         systemName: '新北捷運輕軌 (LRT)',
         name: '淡海輕軌 (綠山線 V01-V11 & 藍海線 V26)',
         shortName: '淡海輕軌',
-        color: '#06b6d4',
-        weight: 3.4,
+        color: '#0891b2',
+        weight: 3.5,
         dashArray: '5, 3',
         allowedClasses: ['NTMC_LRT'],
         stations: [
-          { id: 'r27', name: '紅樹林(輕軌)', lat: 25.1545, lng: 121.4593, hub: true, stopClasses: ['NTMC_LRT'] },
-          { id: 'v02', name: '竿蓁林', lat: 25.1617, lng: 121.4567, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'v03', name: '淡金鄧公', lat: 25.1687, lng: 121.4608, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'v04', name: '淡江大學', lat: 25.1763, lng: 121.4581, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'v05', name: '淡金北新', lat: 25.1820, lng: 121.4542, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'v06', name: '新市一路', lat: 25.1869, lng: 121.4488, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'v07', name: '淡水行政中心', lat: 25.1892, lng: 121.4426, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'v08', name: '濱海義山', lat: 25.1950, lng: 121.4375, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'v09', name: '濱海沙崙', lat: 25.1953, lng: 121.4309, hub: true, stopClasses: ['NTMC_LRT'] },
-          { id: 'v10', name: '淡海新市鎮', lat: 25.2007, lng: 121.4310, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'v11', name: '崁頂', lat: 25.2063, lng: 121.4312, hub: true, stopClasses: ['NTMC_LRT'] }
+          { id: 'v01', name: '紅樹林(輕軌)', lat: 25.15510, lng: 121.45915, hub: true, stopClasses: ['NTMC_LRT'],
+            via: [[25.1562, 121.4578], [25.1573, 121.4573], [25.1585, 121.4573]] },
+          { id: 'v02', name: '竿蓁林', lat: 25.15972, lng: 121.45750, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[25.1618, 121.4582], [25.1645, 121.4598], [25.1668, 121.4606]] },
+          { id: 'v03', name: '淡金鄧公', lat: 25.16904, lng: 121.46084, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[25.1715, 121.4602], [25.1742, 121.4582], [25.1760, 121.4568]] },
+          { id: 'v04', name: '淡江大學', lat: 25.17748, lng: 121.45571, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[25.1805, 121.4531]] },
+          { id: 'v05', name: '淡金北新', lat: 25.18361, lng: 121.45056, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[25.1851, 121.4493]] },
+          { id: 'v06', name: '新市一路', lat: 25.18651, lng: 121.44812, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[25.18875, 121.44624]] },
+          { id: 'v07', name: '淡水行政中心', lat: 25.18895, lng: 121.44450, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[25.1893, 121.4410]] },
+          { id: 'v08', name: '濱海義山', lat: 25.18973, lng: 121.43738, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[25.1901, 121.4345]] },
+          { id: 'v09', name: '濱海沙崙', lat: 25.19050, lng: 121.43169, hub: true, stopClasses: ['NTMC_LRT'],
+            via: [[25.1906, 121.4308], [25.1930, 121.4316]] },
+          { id: 'v10', name: '淡海新市鎮', lat: 25.19567, lng: 121.43247, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[25.1983, 121.4335]] },
+          { id: 'v11', name: '崁頂', lat: 25.20094, lng: 121.43461, hub: true, stopClasses: ['NTMC_LRT'] }
         ],
         extraBranches: [
           [
-            { id: 'v09', name: '濱海沙崙', lat: 25.1953, lng: 121.4309, hub: true },
-            { id: 'v28', name: '台北海洋大學', lat: 25.1945, lng: 121.4222, hub: false },
-            { id: 'v27', name: '沙崙', lat: 25.1895, lng: 121.4162, hub: false },
-            { id: 'v26', name: '淡水漁人碼頭', lat: 25.1826, lng: 121.4148, hub: true }
+            { id: 'v09', name: '濱海沙崙', lat: 25.19050, lng: 121.43169, hub: true, stopClasses: ['NTMC_LRT'],
+              via: [[25.1908, 121.4290]] },
+            { id: 'v28', name: '台北海洋大學', lat: 25.19111, lng: 121.42639, hub: false, stopClasses: ['NTMC_LRT'],
+              via: [[25.1915, 121.4215], [25.1908, 121.4185], [25.1895, 121.4168]] },
+            { id: 'v27', name: '沙崙', lat: 25.18750, lng: 121.41730, hub: false, stopClasses: ['NTMC_LRT'],
+              via: [[25.1848, 121.4180]] },
+            { id: 'v26', name: '淡水漁人碼頭', lat: 25.18200, lng: 121.41860, hub: true, stopClasses: ['NTMC_LRT'] }
           ]
         ]
       },
@@ -1145,26 +1756,116 @@
         systemName: '新北捷運輕軌 (LRT)',
         name: '安坑輕軌 (雙城 K01—十四張 K09)',
         shortName: '安坑輕軌',
-        color: '#d97706',
-        weight: 3.4,
+        color: '#b45309',
+        weight: 3.5,
         dashArray: '5, 3',
         allowedClasses: ['NTMC_LRT'],
         stations: [
-          { id: 'k01', name: '雙城', lat: 24.9497, lng: 121.4882, hub: true, stopClasses: ['NTMC_LRT'] },
-          { id: 'k02', name: '玫瑰中國城', lat: 24.9532, lng: 121.4940, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'k03', name: '台北小城', lat: 24.9565, lng: 121.4998, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'k04', name: '耕莘安康院區', lat: 24.9592, lng: 121.5065, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'k05', name: '景文科大', lat: 24.9612, lng: 121.5122, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'k06', name: '安康', lat: 24.9634, lng: 121.5171, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'k07', name: '陽光運動公園', lat: 24.9702, lng: 121.5218, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'k08', name: '新和國小', lat: 24.9793, lng: 121.5256, hub: false, stopClasses: ['NTMC_LRT'] },
-          { id: 'y08', name: '十四張', lat: 24.9844, lng: 121.5284, hub: true, stopClasses: ['NTMC_LRT'] }
+          { id: 'k01', name: '雙城', lat: 24.94640, lng: 121.48970, hub: true, stopClasses: ['NTMC_LRT'],
+            via: [[24.9486, 121.4918]] },
+          { id: 'k02', name: '玫瑰中國城', lat: 24.95090, lng: 121.49400, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[24.9524, 121.4966]] },
+          { id: 'k03', name: '台北小城', lat: 24.95370, lng: 121.49940, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[24.9541, 121.5022]] },
+          { id: 'k04', name: '耕莘安康院區', lat: 24.95447, lng: 121.50500, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[24.9549, 121.5076]] },
+          { id: 'k05', name: '景文科大', lat: 24.95550, lng: 121.51030, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[24.9570, 121.5132], [24.9592, 121.5155], [24.9618, 121.5166], [24.9636, 121.5170]] },
+          { id: 'k06', name: '安康', lat: 24.96520, lng: 121.51730, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[24.9688, 121.5184]] },
+          { id: 'k07', name: '陽光運動公園', lat: 24.97233, lng: 121.51953, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[24.9752, 121.5200], [24.9782, 121.5195], [24.9810, 121.5189]] },
+          { id: 'k08', name: '新和國小', lat: 24.98350, lng: 121.51860, hub: false, stopClasses: ['NTMC_LRT'],
+            via: [[24.9843, 121.5190], [24.9844, 121.5222], [24.9844, 121.5252]] },
+          { id: 'k09', name: '十四張', lat: 24.98434, lng: 121.52768, hub: true, stopClasses: ['NTMC_LRT'] }
+        ]
+      },
+
+      // ==================== 台北捷運小碧潭支線 (G03 七張—G03A 小碧潭) ====================
+      {
+        id: 'trtc_xiaobitan',
+        system: 'TRTC',
+        systemName: '台北捷運 (TRTC)',
+        name: '小碧潭支線 (七張 G03—小碧潭 G03A)',
+        shortName: '小碧潭支線',
+        color: '#84cc16',
+        weight: 3.6,
+        dashArray: null,
+        allowedClasses: ['TRTC_METRO'],
+        stations: [
+          {
+            id: 'g03',
+            name: '七張',
+            lat: 24.97507,
+            lng: 121.54330,
+            hub: true,
+            stopClasses: ['TRTC_METRO'],
+            timetableNote: '小碧潭支線時刻表：首班 06:11、末班 00:09｜尖峰班距 12–13 分、離峰約 18 分（每小時 3–4 班）',
+            via: [
+              [24.97220, 121.54260],
+              [24.96960, 121.54180],
+              [24.96870, 121.54040],
+              [24.96860, 121.53860],
+              [24.96930, 121.53660],
+              [24.97030, 121.53460],
+              [24.97160, 121.53220]
+            ]
+          },
+          {
+            id: 'g03a',
+            name: '小碧潭',
+            lat: 24.97307,
+            lng: 121.52999,
+            hub: true,
+            stopClasses: ['TRTC_METRO'],
+            timetableNote: '小碧潭支線時刻表：首班 06:03、末班 23:57｜尖峰班距 12–13 分、離峰約 18 分（3 節 C371 型列車單線雙向運行）'
+          }
+        ]
+      },
+
+      // ==================== 淡水↔八里 藍色公路渡船 (FERRY, 過河時間固定10分鐘, 15 km/h) ====================
+      {
+        id: 'ferry_tamsui_bali',
+        system: 'FERRY',
+        systemName: '藍色公路渡船 (Ferry)',
+        name: '淡水↔八里渡船 (淡水渡船碼頭—八里渡船碼頭・單程過河10分鐘)',
+        shortName: '淡水八里渡船',
+        color: '#0284c7',
+        weight: 3.4,
+        dashArray: '6, 6',
+        fixedSegmentSec: 600,
+        fixedDwellSec: 0,
+        allowedClasses: ['FERRY_BOAT'],
+        stations: [
+          {
+            id: 'ferry_tamsui',
+            name: '淡水渡船碼頭',
+            lat: 25.17085,
+            lng: 121.43755,
+            hub: true,
+            stopClasses: ['FERRY_BOAT'],
+            timetableNote: '順風航業時刻表：平日 07:00–20:00 (10–15分/班)、假日 07:00–21:00 (3–5分/班)｜單程過河時間 10 分鐘（600 秒）｜船速 15 km/h',
+            via: [
+              [25.16950, 121.43660],
+              [25.16500, 121.43580],
+              [25.16100, 121.43540]
+            ]
+          },
+          {
+            id: 'ferry_bali',
+            name: '八里渡船碼頭',
+            lat: 25.15910,
+            lng: 121.43540,
+            hub: true,
+            stopClasses: ['FERRY_BOAT'],
+            timetableNote: '順風航業時刻表：每日首班 07:00 由八里開航｜單程過河時間 10 分鐘（600 秒）｜平日 10–15 分/班、假日 3–5 分/班｜全票 40 元、優待票 20 元｜船速 15 km/h'
+          }
         ]
       }
     ];
 
     // =========================================================================
-    // 2. APPLICATION STATE & MAP INITIALIZATION
+    // 2. APPLICATION STATE & GOOGLE MAPS INITIALIZATION
     // =========================================================================
 
     const state = {
@@ -1182,16 +1883,26 @@
     };
 
     const map = L.map('map', {
-      center: [25.035, 121.515],
+      center: [25.025, 121.535],
       zoom: 12,
       minZoom: 9,
-      maxZoom: 16,
+      maxZoom: 18,
       zoomControl: false
     });
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     const tileLayers = {
+      google: L.tileLayer('https://{s}.google.com/vt/lyrs=m&hl=zh-TW&x={x}&y={y}&z={z}', {
+        attribution: '&copy; Google Maps',
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        maxZoom: 20
+      }),
+      google_hybrid: L.tileLayer('https://{s}.google.com/vt/lyrs=y&hl=zh-TW&x={x}&y={y}&z={z}', {
+        attribution: '&copy; Google Maps Satellite',
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        maxZoom: 20
+      }),
       dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap &copy; CARTO',
         subdomains: 'abcd',
@@ -1204,9 +1915,8 @@
       schematic: L.layerGroup()
     };
 
-    tileLayers.dark.addTo(map);
+    tileLayers.google.addTo(map);
 
-    // Add subtle geographical grid & river/coastline guide on schematic layer covering Keelung down to Hsinchu/Neiwan
     function buildSchematicGrid() {
       const gridLines = [];
       for (let lat = 24.65; lat <= 25.25; lat += 0.05) {
@@ -1221,7 +1931,6 @@
     }
     buildSchematicGrid();
 
-    // Layer storage per route
     const routeLayerMap = {};
     const stationLabelElements = [];
 
@@ -1235,21 +1944,81 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    // Precompute segment distances for each route
+    // Build a global station-pair path lookup dictionary `SEGMENT_PATHS['st1_id->st2_id']`
+    // so that short-turn trains and branch trains (e.g., Luzhou branch, Fisherman's Wharf branch)
+    // always use the exact curved railway/street geometry!
+    const SEGMENT_PATHS = {};
+
+    function registerStationArrayPaths(stations) {
+      for (let i = 0; i < stations.length - 1; i++) {
+        const s1 = stations[i];
+        const s2 = stations[i + 1];
+        const pts = [[s1.lat, s1.lng]];
+        if (Array.isArray(s1.via) && s1.via.length > 0) {
+          s1.via.forEach(p => pts.push([p[0], p[1]]));
+        }
+        pts.push([s2.lat, s2.lng]);
+        SEGMENT_PATHS[`${s1.id}->${s2.id}`] = pts;
+        SEGMENT_PATHS[`${s2.id}->${s1.id}`] = pts.slice().reverse();
+      }
+    }
+
+    ROUTES.forEach(route => {
+      registerStationArrayPaths(route.stations);
+      if (route.extraBranches) {
+        route.extraBranches.forEach(branch => registerStationArrayPaths(branch));
+      }
+    });
+
+    function getSegmentPathPoints(stations, segIndex) {
+      const s1 = stations[segIndex];
+      const s2 = stations[segIndex + 1];
+      if (!s1 || !s2) return [];
+      const key = `${s1.id}->${s2.id}`;
+      if (SEGMENT_PATHS[key]) {
+        return SEGMENT_PATHS[key];
+      }
+      const pts = [[s1.lat, s1.lng]];
+      if (Array.isArray(s1.via) && s1.via.length > 0) {
+        s1.via.forEach(p => pts.push([p[0], p[1]]));
+      }
+      pts.push([s2.lat, s2.lng]);
+      return pts;
+    }
+
+    function computePathLengthKm(pts) {
+      let total = 0;
+      for (let i = 0; i < pts.length - 1; i++) {
+        total += haversineKm(pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1]);
+      }
+      return Math.max(0.25, total);
+    }
+
+    function buildFullRouteLatLngs(stations) {
+      const all = [];
+      for (let i = 0; i < stations.length - 1; i++) {
+        const segPts = getSegmentPathPoints(stations, i);
+        segPts.forEach((pt, idx) => {
+          if (i > 0 && idx === 0) return;
+          all.push(pt);
+        });
+      }
+      return all;
+    }
+
     ROUTES.forEach(route => {
       route.segmentKm = [];
       route.totalKm = 0;
       for (let i = 0; i < route.stations.length - 1; i++) {
-        const s1 = route.stations[i];
-        const s2 = route.stations[i + 1];
-        const d = Math.max(0.35, haversineKm(s1.lat, s1.lng, s2.lat, s2.lng));
+        const pts = getSegmentPathPoints(route.stations, i);
+        const d = computePathLengthKm(pts);
         route.segmentKm.push(d);
         route.totalKm += d;
       }
     });
 
     // =========================================================================
-    // 3. RENDER ROUTES & STATIONS ON MAP
+    // 3. RENDER ROUTES & STATIONS ON GOOGLE MAP
     // =========================================================================
 
     function renderNetworkOnMap() {
@@ -1257,42 +2026,38 @@
         const group = L.layerGroup().addTo(map);
         routeLayerMap[route.id] = group;
 
-        const latlngs = route.stations.map(s => [s.lat, s.lng]);
+        const latlngs = buildFullRouteLatLngs(route.stations);
 
-        // Outer casing glow line
         L.polyline(latlngs, {
-          color: '#020617',
-          weight: route.weight + 3,
-          opacity: 0.85,
+          color: '#ffffff',
+          weight: route.weight + 2.4,
+          opacity: 0.72,
           interactive: false
         }).addTo(group);
 
-        // Main track line
         const poly = L.polyline(latlngs, {
           color: route.color,
           weight: route.weight,
-          opacity: 0.92,
+          opacity: 0.88,
           dashArray: route.dashArray
         }).addTo(group);
 
-        poly.bindTooltip(`<b>${route.name}</b><br/><span class="text-xs">全程約 ${route.totalKm.toFixed(1)} km · 共 ${route.stations.length} 站</span>`, {
+        poly.bindTooltip(`<b>${route.name}</b><br/><span class="text-xs">全程約 ${route.totalKm.toFixed(1)} km · 共 ${route.stations.length} 場站</span>`, {
           sticky: true
         });
 
-        // Render extra branches if any (e.g., Luzhou branch, Fisherman's Wharf branch)
         if (route.extraBranches) {
           route.extraBranches.forEach(branch => {
-            const bCoords = branch.map(s => [s.lat, s.lng]);
-            L.polyline(bCoords, { color: '#020617', weight: route.weight + 2.5, opacity: 0.85, interactive: false }).addTo(group);
-            L.polyline(bCoords, { color: route.color, weight: route.weight, opacity: 0.9, dashArray: route.dashArray }).addTo(group);
+            const bCoords = buildFullRouteLatLngs(branch);
+            L.polyline(bCoords, { color: '#ffffff', weight: route.weight + 2.2, opacity: 0.72, interactive: false }).addTo(group);
+            L.polyline(bCoords, { color: route.color, weight: route.weight, opacity: 0.88, dashArray: route.dashArray }).addTo(group);
             branch.forEach((st, idx) => {
-              if (idx === 0) return; // skip junction already drawn
+              if (idx === 0) return;
               createStationMarker(st, route, group);
             });
           });
         }
 
-        // Render station nodes
         route.stations.forEach(st => {
           createStationMarker(st, route, group);
         });
@@ -1300,23 +2065,26 @@
     }
 
     function createStationMarker(st, route, group) {
-      const radius = st.hub ? 5.5 : 3.6;
+      const isTurn = Boolean(st.isTurnStation);
+      const radius = st.hub ? 5.5 : (isTurn ? 3.0 : 3.8);
       const circle = L.circleMarker([st.lat, st.lng], {
         radius: radius,
-        fillColor: st.hub ? '#ffffff' : '#0f172a',
+        fillColor: isTurn ? '#fde047' : (st.hub ? '#ffffff' : '#0f172a'),
         color: route.color,
         weight: st.hub ? 3 : 2.2,
         opacity: 1,
         fillOpacity: 1
       }).addTo(group);
 
-      // Build stopping class badges for popup
-      const classBadges = (st.stopClasses || route.allowedClasses).map(cid => {
-        const tc = TRAIN_CLASSES[cid];
-        if (!tc) return '';
-        const color = cid === 'TRTC_METRO' || cid === 'NTMC_LRT' ? route.color : tc.color;
-        return `<span style="background:${color};color:#fff;" class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded mr-1 mb-1">${tc.shortName}</span>`;
-      }).join('');
+      const stopList = st.stopClasses !== undefined ? st.stopClasses : route.allowedClasses;
+      const classBadges = stopList.length > 0
+        ? stopList.map(cid => {
+            const tc = TRAIN_CLASSES[cid];
+            if (!tc) return '';
+            const color = cid === 'TRTC_METRO' || cid === 'NTMC_LRT' ? route.color : tc.color;
+            return `<span style="background:${color};color:#fff;" class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded mr-1 mb-1">${tc.shortName}</span>`;
+          }).join('')
+        : '<span class="text-[10px] text-amber-300 font-semibold">纜車轉向角站（纜車直接轉彎通過不停客）</span>';
 
       circle.bindPopup(`
         <div class="min-w-[180px]">
@@ -1325,12 +2093,12 @@
             <span style="background:${route.color}22;color:${route.color};border:1px solid ${route.color}66" class="text-[10px] font-bold px-1.5 py-0.5 rounded">${route.shortName}</span>
           </div>
           <div class="text-[11px] text-slate-300 mb-1">座標: <span class="font-mono-clock text-slate-400">${st.lat.toFixed(4)}, ${st.lng.toFixed(4)}</span></div>
-          <div class="text-[11px] text-slate-400 mb-1">停靠列車等級:</div>
+          ${st.timetableNote ? `<div class="text-[10px] text-sky-300 bg-sky-950/60 border border-sky-700/50 rounded px-1.5 py-1 mb-1.5 leading-snug">${st.timetableNote}</div>` : ''}
+          <div class="text-[11px] text-slate-400 mb-1">停靠資訊:</div>
           <div class="flex flex-wrap">${classBadges}</div>
         </div>
       `);
 
-      // Station Name Label
       const labelClass = st.hub ? 'station-label-hub' : 'station-label';
       const labelIcon = L.divIcon({
         className: 'bg-transparent border-0',
@@ -1348,9 +2116,7 @@
     }
 
     // =========================================================================
-    // 4. TRAIN VEHICLE ICON & BIDIRECTIONAL TIMELINE SIMULATION ENGINE
-    //    Supports continuous playback, manual timeline dragging, and
-    //    authentic Taipei Metro peak/off-peak/late-night headway density!
+    // 4. TRAIN & GONDOLA VEHICLE ICON & CURVED PATH INTERPOLATION ENGINE
     // =========================================================================
 
     function getTrainEffectiveColor(train) {
@@ -1360,10 +2126,6 @@
       return TRAIN_CLASSES[train.classId].color;
     }
 
-    // Check if a train is in service at the current simulation time
-    // - 'ALL_DAY': runs all day (including late night 23:00-06:00 full-route service)
-    // - 'DAYTIME': runs 06:00 - 23:00 (e.g. overlapping short-turn trains like 亞東醫院-南港展覽館, 北投-大安, 松山-台電大樓)
-    // - 'PEAK_ONLY': runs during weekday morning peak (06:30 - 09:30) and evening peak (16:30 - 20:00)
     function isTrainInServiceAtTime(train, simSec) {
       const hr = (((simSec % 86400) + 86400) % 86400) / 3600;
       if (!train.serviceWindow || train.serviceWindow === 'ALL_DAY') return true;
@@ -1376,7 +2138,6 @@
       return true;
     }
 
-    // Generates an unmistakable SVG rail vehicle icon with headlights, windshield, directional arrow, and class color
     function buildTrainSvgIcon(train) {
       const color = getTrainEffectiveColor(train);
       const tc = TRAIN_CLASSES[train.classId];
@@ -1386,11 +2147,62 @@
         ? `<div class="train-dwell-ring" style="border: 2px solid ${color};"></div>`
         : '';
 
-      // Distinct silhouette for High-Speed / Express vs MRT/LRT
+      const shortBadgeText = train.badgeSubLabel || tc.shortName;
+
+      if (train.classId === 'TRTC_GONDOLA') {
+        return L.divIcon({
+          className: 'bg-transparent border-0',
+          iconSize: [30, 30],
+          iconAnchor: [15, 15],
+          html: `
+            <div class="train-marker-wrap" title="${train.trainNo} (${train.serviceLabel || tc.shortName})">
+              ${statusRing}
+              <div class="train-badge" style="display:${badgeVis}; background:${color};">
+                ${train.trainNo} 貓纜${dirArrow}
+              </div>
+              <svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 3px 6px rgba(0,0,0,0.85));">
+                <line x1="4" y1="3" x2="28" y2="3" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="16" cy="3" r="2.5" fill="#fbbf24" stroke="#ffffff" stroke-width="1.2"/>
+                <path d="M16 5.5 L16 10" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                <rect x="6" y="10" width="20" height="17" rx="5" fill="${color}" stroke="#ffffff" stroke-width="2"/>
+                <rect x="8.5" y="12.5" width="6.5" height="7" rx="1.5" fill="#0f172a" stroke="#f8fafc" stroke-width="0.9"/>
+                <rect x="17" y="12.5" width="6.5" height="7" rx="1.5" fill="#0f172a" stroke="#f8fafc" stroke-width="0.9"/>
+                <line x1="9" y1="23.5" x2="23" y2="23.5" stroke="#fef08a" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
+          `
+        });
+      }
+
+      if (train.classId === 'FERRY_BOAT') {
+        return L.divIcon({
+          className: 'bg-transparent border-0',
+          iconSize: [32, 32],
+          iconAnchor: [16, 16],
+          html: `
+            <div class="train-marker-wrap" title="${train.trainNo} (${train.serviceLabel || tc.shortName})">
+              ${statusRing}
+              <div class="train-badge" style="display:${badgeVis}; background:${color};">
+                ${train.trainNo} 渡船${dirArrow}
+              </div>
+              <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 3px 6px rgba(0,0,0,0.85));">
+                <path d="M11 6 H21 V11 H11 Z" fill="#f8fafc" stroke="#0284c7" stroke-width="1.5" stroke-linejoin="round"/>
+                <rect x="14.5" y="3" width="3" height="3" rx="0.8" fill="#f59e0b"/>
+                <path d="M7 11 H25 L23.5 18 H8.5 Z" fill="#ffffff" stroke="#0284c7" stroke-width="1.6" stroke-linejoin="round"/>
+                <rect x="10" y="13" width="3.2" height="3" rx="0.6" fill="#0f172a"/>
+                <rect x="14.4" y="13" width="3.2" height="3" rx="0.6" fill="#0f172a"/>
+                <rect x="18.8" y="13" width="3.2" height="3" rx="0.6" fill="#0f172a"/>
+                <path d="M4 17.5 H28 L25 24.5 H7 Z" fill="${color}" stroke="#ffffff" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M3 27 Q8 25 12 27 T20 27 T29 27" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" fill="none"/>
+              </svg>
+            </div>
+          `
+        });
+      }
+
       const isHighSpeed = train.classId === 'THSR_TAOYUAN_HSINCHU';
       const isExpress = isHighSpeed || train.classId === 'TRA_EMU3000' || train.classId === 'TRA_TZECHIANG' || train.classId === 'TYMC_EXPRESS';
       const borderStroke = isHighSpeed ? '#fef08a' : (isExpress ? '#ffffff' : '#e2e8f0');
-      const shortBadgeText = train.badgeSubLabel || tc.shortName;
 
       return L.divIcon({
         className: 'bg-transparent border-0',
@@ -1403,20 +2215,13 @@
               ${train.trainNo} ${shortBadgeText}${dirArrow}
             </div>
             <svg width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 3px 6px rgba(0,0,0,0.85));">
-              <!-- Outer Halo -->
               <rect x="4" y="3" width="24" height="24" rx="${isHighSpeed ? '10' : (isExpress ? '8' : '6')}" fill="${color}" stroke="${borderStroke}" stroke-width="2.2"/>
-              <!-- Roof Pantograph / Aerodynamic Stripe -->
               <path d="M11 3 L16 0.8 L21 3" stroke="${borderStroke}" stroke-width="1.6" stroke-linecap="round"/>
-              <!-- Windshield -->
               <rect x="7.5" y="7" width="17" height="7.5" rx="2.5" fill="#0f172a" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
-              <!-- Windshield Reflection -->
               <path d="M9.5 9.5 L14 9.5" stroke="#38bdf8" stroke-width="1.4" stroke-linecap="round"/>
-              <!-- Headlights -->
               <circle cx="9.5" cy="19.5" r="2.1" fill="#fef08a"/>
               <circle cx="22.5" cy="19.5" r="2.1" fill="#fef08a"/>
-              <!-- Center Class Indicator Grill -->
               <rect x="13" y="18.2" width="6" height="2.6" rx="1" fill="rgba(15,23,42,0.65)"/>
-              <!-- Rail Wheels / Bogie Base -->
               <path d="M8 27 L6 30.5 M24 27 L26 30.5" stroke="#cbd5e1" stroke-width="2.2" stroke-linecap="round"/>
             </svg>
           </div>
@@ -1427,13 +2232,12 @@
     function doesTrainStopAt(train, stationIndex) {
       const st = train.stations[stationIndex];
       if (!st) return true;
-      // Always stop at origin and terminal of the train's run
+      if (st.isTurnStation) return false;
       if (stationIndex === 0 || stationIndex === train.stations.length - 1) return true;
       if (!st.stopClasses) return true;
       return st.stopClasses.includes(train.classId);
     }
 
-    // Strict check for THSR requirement: 高鐵只顯示有停靠桃園跟新竹的列車
     function stopsAtBothTaoyuanAndHsinchu(train) {
       if (train.routeId !== 'thsr_north') return true;
       const taoyuanIdx = train.stations.findIndex(s => s.id === 'thsr_taoyuan');
@@ -1442,26 +2246,26 @@
              doesTrainStopAt(train, taoyuanIdx) && doesTrainStopAt(train, hsinchuIdx);
     }
 
-    // Build a complete round-trip timeline for a train so that scrubbing the timeline slider
-    // forward or backward to any second of the 24-hour day computes the exact train position!
-    function buildTrainRoundTripTimeline(train, initialPhaseRatio = null) {
+    function computeRawTimelineSteps(train, stations) {
       const tc = TRAIN_CLASSES[train.classId];
-      const n = train.stations.length;
+      const n = stations.length;
       const steps = [];
       let cursor = 0;
 
-      // Compute segment distances specifically for this train's station list (supports short-turn & branches)
-      train.segmentKm = [];
+      const segPaths = [];
+      const segKm = [];
       for (let i = 0; i < n - 1; i++) {
-        const s1 = train.stations[i];
-        const s2 = train.stations[i + 1];
-        train.segmentKm.push(Math.max(0.35, haversineKm(s1.lat, s1.lng, s2.lat, s2.lng)));
+        const pts = getSegmentPathPoints(stations, i);
+        segPaths.push(pts);
+        segKm.push(computePathLengthKm(pts));
       }
 
       // Forward pass: station 0 -> station n-1
       for (let seg = 0; seg < n - 1; seg++) {
-        const segKm = train.segmentKm[seg] || 1.1;
-        const moveDur = Math.max(18, (segKm / tc.speedKmH) * 3600);
+        const km = segKm[seg] || 1.1;
+        const moveDur = (train.route && train.route.fixedSegmentSec)
+          ? train.route.fixedSegmentSec
+          : Math.max(16, (km / tc.speedKmH) * 3600);
         steps.push({
           status: 'MOVING',
           direction: 1,
@@ -1475,19 +2279,23 @@
         const arrivedIdx = seg + 1;
         const isTerminal = arrivedIdx === n - 1;
         if (isTerminal) {
-          const dwellDur = tc.dwellSec * 1.4;
-          steps.push({
-            status: 'STOPPED',
-            direction: -1,
-            segIndex: n - 2,
-            segProgress: 0,
-            startSec: cursor,
-            duration: dwellDur,
-            endSec: cursor + dwellDur
-          });
-          cursor += dwellDur;
-        } else if (doesTrainStopAt(train, arrivedIdx)) {
-          const st = train.stations[arrivedIdx];
+          const dwellDur = (train.route && train.route.fixedDwellSec !== undefined)
+            ? train.route.fixedDwellSec
+            : tc.dwellSec * 1.4;
+          if (dwellDur > 0) {
+            steps.push({
+              status: 'STOPPED',
+              direction: -1,
+              segIndex: n - 2,
+              segProgress: 0,
+              startSec: cursor,
+              duration: dwellDur,
+              endSec: cursor + dwellDur
+            });
+            cursor += dwellDur;
+          }
+        } else if (doesTrainStopAt({ ...train, stations }, arrivedIdx)) {
+          const st = stations[arrivedIdx];
           const dwellDur = st.hub ? tc.dwellSec * 1.2 : tc.dwellSec;
           steps.push({
             status: 'STOPPED',
@@ -1504,8 +2312,10 @@
 
       // Backward pass: station n-1 -> station 0
       for (let seg = n - 2; seg >= 0; seg--) {
-        const segKm = train.segmentKm[seg] || 1.1;
-        const moveDur = Math.max(18, (segKm / tc.speedKmH) * 3600);
+        const km = segKm[seg] || 1.1;
+        const moveDur = (train.route && train.route.fixedSegmentSec)
+          ? train.route.fixedSegmentSec
+          : Math.max(16, (km / tc.speedKmH) * 3600);
         steps.push({
           status: 'MOVING',
           direction: -1,
@@ -1519,19 +2329,23 @@
         const arrivedIdx = seg;
         const isTerminal = arrivedIdx === 0;
         if (isTerminal) {
-          const dwellDur = tc.dwellSec * 1.4;
-          steps.push({
-            status: 'STOPPED',
-            direction: 1,
-            segIndex: 0,
-            segProgress: 0,
-            startSec: cursor,
-            duration: dwellDur,
-            endSec: cursor + dwellDur
-          });
-          cursor += dwellDur;
-        } else if (doesTrainStopAt(train, arrivedIdx)) {
-          const st = train.stations[arrivedIdx];
+          const dwellDur = (train.route && train.route.fixedDwellSec !== undefined)
+            ? train.route.fixedDwellSec
+            : tc.dwellSec * 1.4;
+          if (dwellDur > 0) {
+            steps.push({
+              status: 'STOPPED',
+              direction: 1,
+              segIndex: 0,
+              segProgress: 0,
+              startSec: cursor,
+              duration: dwellDur,
+              endSec: cursor + dwellDur
+            });
+            cursor += dwellDur;
+          }
+        } else if (doesTrainStopAt({ ...train, stations }, arrivedIdx)) {
+          const st = stations[arrivedIdx];
           const dwellDur = st.hub ? tc.dwellSec * 1.2 : tc.dwellSec;
           steps.push({
             status: 'STOPPED',
@@ -1546,16 +2360,63 @@
         }
       }
 
-      train.loopSteps = steps;
-      train.loopPeriodSec = Math.max(60, cursor);
+      return { steps, totalSec: Math.max(60, cursor), segPaths, segKm };
+    }
+
+    function buildTrainRoundTripTimeline(train, initialPhaseRatio = null) {
+      const raw = computeRawTimelineSteps(train, train.stations);
+      train.segmentPaths = raw.segPaths;
+      train.segmentKm = raw.segKm;
+
+      // Synchronize branch period (e.g. Luzhou branch on trtc_o, Fisherman's Wharf on lrt_danhai)
+      // with the main route so shared trunk steps never drift or overlap!
+      if (train.stations !== train.route.stations) {
+        const mainRaw = computeRawTimelineSteps(train, train.route.stations);
+        let splitIdx = 0;
+        while (splitIdx < train.stations.length &&
+               splitIdx < train.route.stations.length &&
+               train.stations[splitIdx].id === train.route.stations[splitIdx].id) {
+          splitIdx++;
+        }
+        splitIdx--;
+        if (splitIdx >= 1) {
+          const isTrunkStep = (s) => {
+            if (s.status === 'MOVING') return s.segIndex < splitIdx;
+            if (s.direction === 1) return s.segIndex <= splitIdx;
+            return s.segIndex < splitIdx;
+          };
+          let trunkSec = 0;
+          let branchSec = 0;
+          raw.steps.forEach(s => {
+            if (isTrunkStep(s)) trunkSec += s.duration;
+            else branchSec += s.duration;
+          });
+          const targetBranchSec = mainRaw.totalSec - trunkSec;
+          if (branchSec > 0 && targetBranchSec > 0) {
+            const scale = targetBranchSec / branchSec;
+            let cursor = 0;
+            raw.steps.forEach(s => {
+              s.startSec = cursor;
+              if (!isTrunkStep(s)) {
+                s.duration *= scale;
+              }
+              s.endSec = cursor + s.duration;
+              cursor = s.endSec;
+            });
+            raw.totalSec = cursor;
+          }
+        }
+      }
+
+      train.loopSteps = raw.steps;
+      train.loopPeriodSec = raw.totalSec;
 
       if (typeof initialPhaseRatio === 'number') {
         train.anchorSimSec = state.simSeconds;
         train.anchorCycleSec = ((initialPhaseRatio % 1) + 1) % 1 * train.loopPeriodSec;
       } else {
-        // Find the cycle time matching the train's initial direction, segIndex, and segProgress
         let matchedCycleSec = 0;
-        for (const step of steps) {
+        for (const step of raw.steps) {
           if (step.status === 'MOVING' && step.direction === train.direction && step.segIndex === train.segIndex) {
             matchedCycleSec = step.startSec + step.duration * train.segProgress;
             break;
@@ -1574,7 +2435,6 @@
       const prevStatus = train.status;
       const prevDir = train.direction;
 
-      // Locate step in loopSteps
       let activeStep = train.loopSteps[0];
       for (let i = 0; i < train.loopSteps.length; i++) {
         const s = train.loopSteps[i];
@@ -1605,6 +2465,50 @@
           openTrainPopup(train);
         }
       }
+    }
+
+    function getTrainCoordinates(train) {
+      const rawPts = (train.segmentPaths && train.segmentPaths[train.segIndex])
+        ? train.segmentPaths[train.segIndex]
+        : getSegmentPathPoints(train.stations, train.segIndex);
+
+      const pts = train.direction === 1 ? rawPts : rawPts.slice().reverse();
+      if (!pts || pts.length === 0) return [25.0478, 121.5171];
+      if (pts.length === 1) return [pts[0][0], pts[0][1]];
+
+      const p = Math.max(0, Math.min(1, train.segProgress));
+
+      const segLens = [];
+      let totalLen = 0;
+      for (let i = 0; i < pts.length - 1; i++) {
+        const d = Math.hypot(pts[i + 1][0] - pts[i][0], pts[i + 1][1] - pts[i][1]);
+        segLens.push(d);
+        totalLen += d;
+      }
+
+      if (totalLen <= 1e-9) return [pts[0][0], pts[0][1]];
+
+      const targetDist = p * totalLen;
+      let acc = 0;
+      let chosenIdx = 0;
+      let localT = 0;
+
+      for (let i = 0; i < segLens.length; i++) {
+        if (acc + segLens[i] >= targetDist || i === segLens.length - 1) {
+          chosenIdx = i;
+          localT = segLens[i] > 1e-9 ? (targetDist - acc) / segLens[i] : 0;
+          break;
+        }
+        acc += segLens[i];
+      }
+
+      const pA = pts[chosenIdx];
+      const pB = pts[chosenIdx + 1];
+      const lat = pA[0] + (pB[0] - pA[0]) * localT;
+      const lng = pA[1] + (pB[1] - pA[1]) * localT;
+
+      // Keep vehicle center strictly on the route centerline so trajectory 100% matches the drawn route map
+      return [lat, lng];
     }
 
     function createTrainInstance({
@@ -1643,7 +2547,6 @@
         marker: null
       };
 
-      // Enforce THSR filter rule: only allow THSR trains that stop at BOTH Taoyuan and Hsinchu
       if (!stopsAtBothTaoyuanAndHsinchu(train)) {
         return null;
       }
@@ -1668,30 +2571,11 @@
       return train;
     }
 
-    function getTrainCoordinates(train) {
-      const sA = train.direction === 1 ? train.stations[train.segIndex] : train.stations[train.segIndex + 1];
-      const sB = train.direction === 1 ? train.stations[train.segIndex + 1] : train.stations[train.segIndex];
-      const p = Math.max(0, Math.min(1, train.segProgress));
-      const lat = sA.lat + (sB.lat - sA.lat) * p;
-      const lng = sA.lng + (sB.lng - sA.lng) * p;
-
-      // Slight perpendicular offset so opposite-direction trains stay visually distinct on double tracks
-      const dLat = sB.lat - sA.lat;
-      const dLng = sB.lng - sA.lng;
-      const len = Math.hypot(dLat, dLng) || 1;
-      const offsetDeg = 0.00045;
-      const nLat = (-dLng / len) * offsetDeg;
-      const nLng = (dLat / len) * offsetDeg;
-
-      return [lat + nLat, lng + nLng];
-    }
-
     function getTrainStatusInfo(train) {
       const fromSt = train.direction === 1 ? train.stations[train.segIndex] : train.stations[train.segIndex + 1];
       const toSt = train.direction === 1 ? train.stations[train.segIndex + 1] : train.stations[train.segIndex];
       const destSt = train.direction === 1 ? train.stations[train.stations.length - 1] : train.stations[0];
 
-      // Find next scheduled stop
       let nextStopSt = toSt;
       if (train.direction === 1) {
         for (let i = train.segIndex + 1; i < train.stations.length; i++) {
@@ -1716,9 +2600,12 @@
       const tc = TRAIN_CLASSES[train.classId];
       const color = getTrainEffectiveColor(train);
       const { fromSt, toSt, destSt, nextStopSt } = getTrainStatusInfo(train);
+      const isFerry = train.classId === 'FERRY_BOAT';
+      const ferryRemSec = isFerry ? Math.max(0, Math.ceil((1 - train.segProgress) * 600)) : 0;
+      const ferryRemText = isFerry ? ` · 過河10分 (剩餘 ${Math.floor(ferryRemSec / 60)}分${String(ferryRemSec % 60).padStart(2, '0')}秒)` : '';
       const statusBadge = train.status === 'STOPPED'
         ? `<span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-400/40 text-[10px] font-bold">停靠 ${fromSt.name} (${Math.ceil(train.dwellRemaining)}s)</span>`
-        : `<span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[10px] font-bold">行駛中 (${tc.speedKmH} km/h)</span>`;
+        : `<span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[10px] font-bold">${isFerry ? '航行過河中' : '行駛中'} (${tc.speedKmH} km/h${ferryRemText})</span>`;
 
       const stopListHtml = train.stations
         .filter((_, idx) => doesTrainStopAt(train, idx))
@@ -1727,7 +2614,7 @@
 
       const windowLabel = train.serviceWindow === 'PEAK_ONLY'
         ? '尖峰加密班次 (06:30-09:30 / 16:30-20:00)'
-        : (train.serviceWindow === 'DAYTIME' ? '日間重疊區間班次 (06:00-23:00)' : '全日基本班次');
+        : (train.serviceWindow === 'DAYTIME' ? '日間營運班次 (06:00-23:00)' : '全日基本班次');
 
       const html = `
         <div class="min-w-[235px] max-w-[280px]">
@@ -1743,6 +2630,7 @@
             <div><span class="text-slate-400">營運模式：</span><span class="font-semibold text-amber-200">${windowLabel}</span></div>
             <div><span class="text-slate-400">行駛方向：</span><span class="font-semibold text-sky-300">往 ${destSt.name}</span></div>
             <div><span class="text-slate-400">目前區間：</span><span>${fromSt.name} ➔ ${toSt.name} (${Math.round(train.segProgress * 100)}%)</span></div>
+            ${isFerry ? `<div><span class="text-slate-400">過河時間：</span><span class="font-bold text-cyan-300">單程航行 10 分鐘 (已航行 ${Math.floor(train.segProgress * 600 / 60)}分${String(Math.floor((train.segProgress * 600) % 60)).padStart(2, '0')}秒 / 10分00秒)</span></div>` : ''}
             <div><span class="text-slate-400">下一停靠：</span><span class="font-bold text-amber-300">${nextStopSt.name}</span></div>
             <div class="pt-1 border-t border-slate-800">
               <div class="text-[10px] text-slate-400 mb-0.5">本班次沿途停靠站：</div>
@@ -1755,7 +2643,6 @@
       train.marker.bindPopup(html, { autoPan: false }).openPopup();
     }
 
-    // Helper to spawn evenly spaced trains along a station list with exact headway density
     function spawnCadencedFleet({
       routeId,
       classId,
@@ -1784,9 +2671,8 @@
       }
     }
 
-    // Seed initial realistic fleet across all Northern Taiwan lines
     function seedInitialFleet() {
-      // 1. 台鐵縱貫線 (基隆—新竹): 新自強、自強號、區間快、區間車
+      // 1. 台鐵縱貫線 (基隆—新竹)
       const traWestSeeds = [
         { trainNo: '111', classId: 'TRA_EMU3000', dir: 1, seg: 2, prog: 0.35 },
         { trainNo: '117', classId: 'TRA_EMU3000', dir: 1, seg: 20, prog: 0.45 },
@@ -1817,7 +2703,7 @@
         trainNo: s.trainNo, routeId: 'tra_west', classId: s.classId, direction: s.dir, startStationIndex: s.seg, initialProgress: s.prog
       }));
 
-      // 2. 台鐵宜蘭線 (八堵—牡丹): 新自強、自強號、區間快、區間車
+      // 2. 台鐵宜蘭線 (八堵—牡丹)
       const traYilanSeeds = [
         { trainNo: '410', classId: 'TRA_EMU3000', dir: 1, seg: 1, prog: 0.4 },
         { trainNo: '417', classId: 'TRA_EMU3000', dir: -1, seg: 4, prog: 0.6 },
@@ -1868,7 +2754,7 @@
         trainNo: s.trainNo, routeId: 'tra_liujia', classId: s.classId, direction: s.dir, startStationIndex: s.seg, initialProgress: s.prog
       }));
 
-      // 5. 台灣高鐵 (南港—竹北[高鐵新竹站]，僅顯示同時停靠桃園與新竹之 8xx/6xx/16xx 列車)
+      // 5. 台灣高鐵 (南港—竹北[高鐵新竹站]，僅顯示同時停靠桃園與新竹之列車)
       const thsrSeeds = [
         { trainNo: '0809', classId: 'THSR_TAOYUAN_HSINCHU', dir: 1, seg: 0, prog: 0.45 },
         { trainNo: '0615', classId: 'THSR_TAOYUAN_HSINCHU', dir: 1, seg: 2, prog: 0.55 },
@@ -1898,158 +2784,132 @@
         trainNo: s.trainNo, routeId: 'tymc_main', classId: s.classId, direction: s.dir, startStationIndex: s.seg, initialProgress: s.prog
       }));
 
-      // =====================================================================
-      // 7. 台北捷運 (TRTC) 依據官方時刻表、重疊區間與尖離峰班距配置車隊
-      // =====================================================================
-
-      // (A) BL 板南線：
-      // - 全程車【頂埔 BL01 ↔ 南港展覽館 BL23】(單程約51分)：全日基本盤 12 列 + 尖峰增開 6 列 = 18 列（全程區間尖峰 6 分鐘一班）
-      // - 區間車【亞東醫院 BL05 ↔ 南港展覽館 BL23】(單程約40分)：日間重疊區間 10 列 + 尖峰增開 4 列 = 14 列（使重疊區間達 3 分鐘一班）
-      // - 尖峰加密車【江子翠 BL09 ↔ 昆陽 BL21】：尖峰專屬 6 列（使龍山寺—昆陽早晚尖峰最密達 2 分 15 秒一班！）
-      const blRoute = ROUTES.find(r => r.id === 'trtc_bl');
-      const blYadongStations = blRoute.stations.slice(4); // BL05 亞東醫院 -> BL23 南港展覽館
-      const blPeakCoreStations = blRoute.stations.slice(8, 21); // BL09 江子翠 -> BL21 昆陽
-
+      // 7. 台北捷運 (TRTC) 等距諧波交錯排點（消除同站重疊列車，全日/日間/尖峰嚴格等距穿插）
+      // (A) 板南線：16 個等距諧波相位槽 (8班全日 + 4班日間區間 + 4班尖峰加班)，絕不重疊
       spawnCadencedFleet({
-        routeId: 'trtc_bl', classId: 'TRTC_METRO', prefix: 'BL', startNum: 101, count: 12,
+        routeId: 'trtc_bl', classId: 'TRTC_METRO', prefix: 'BL', startNum: 101, count: 8,
         phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
         serviceLabel: '板南全程車 (頂埔↔南港展覽館)', badgeSubLabel: '全程'
       });
       spawnCadencedFleet({
-        routeId: 'trtc_bl', classId: 'TRTC_METRO', prefix: 'BL', startNum: 151, count: 6,
-        phaseOffset: 0.04, serviceWindow: 'PEAK_ONLY',
-        serviceLabel: '板南尖峰全程車 (頂埔↔南港展覽館)', badgeSubLabel: '全程'
-      });
-      spawnCadencedFleet({
-        routeId: 'trtc_bl', classId: 'TRTC_METRO', prefix: 'BL', startNum: 201, count: 10,
-        phaseOffset: 0.02, customStations: blYadongStations, serviceWindow: 'DAYTIME',
+        routeId: 'trtc_bl', classId: 'TRTC_METRO', prefix: 'BL', startNum: 201, count: 4,
+        phaseOffset: 1 / 16, serviceWindow: 'DAYTIME',
         serviceLabel: '板南區間車 (亞東醫院↔南港展覽館)', badgeSubLabel: '亞東區間'
       });
       spawnCadencedFleet({
-        routeId: 'trtc_bl', classId: 'TRTC_METRO', prefix: 'BL', startNum: 251, count: 4,
-        phaseOffset: 0.06, customStations: blYadongStations, serviceWindow: 'PEAK_ONLY',
-        serviceLabel: '板南尖峰區間車 (亞東醫院↔南港展覽館)', badgeSubLabel: '亞東區間'
-      });
-      spawnCadencedFleet({
-        routeId: 'trtc_bl', classId: 'TRTC_METRO', prefix: 'BL', startNum: 301, count: 6,
-        phaseOffset: 0.015, customStations: blPeakCoreStations, serviceWindow: 'PEAK_ONLY',
+        routeId: 'trtc_bl', classId: 'TRTC_METRO', prefix: 'BL', startNum: 301, count: 4,
+        phaseOffset: 3 / 16, serviceWindow: 'PEAK_ONLY',
         serviceLabel: '板南尖峰加班車 (江子翠↔昆陽 2分15秒加密)', badgeSubLabel: '尖峰加班'
       });
 
-      // (B) R 淡水信義線：
-      // - 全程車【淡水 R28 ↔ 象山 R02】(單程約61分)：全日 12 列 + 尖峰 6 列
-      // - 區間車【北投 R22 ↔ 大安 R05】(單程約33分)：日間 8 列 + 尖峰 4 列（重疊區間尖峰約 3 分鐘一班）
+      // (B) 淡水信義線：16 個等距諧波相位槽 (8班全日 + 4班日間區間 + 4班尖峰加密) + 1班新北投支線
       const rRoute = ROUTES.find(r => r.id === 'trtc_r');
-      const rBeitouDaanStations = rRoute.stations.slice(6, 24); // R22 北投 -> R05 大安
       spawnCadencedFleet({
-        routeId: 'trtc_r', classId: 'TRTC_METRO', prefix: 'R', startNum: 101, count: 12,
+        routeId: 'trtc_r', classId: 'TRTC_METRO', prefix: 'R', startNum: 101, count: 8,
         phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
         serviceLabel: '淡水信義全程車 (淡水↔象山)', badgeSubLabel: '全程'
       });
       spawnCadencedFleet({
-        routeId: 'trtc_r', classId: 'TRTC_METRO', prefix: 'R', startNum: 151, count: 6,
-        phaseOffset: 0.04, serviceWindow: 'PEAK_ONLY',
-        serviceLabel: '淡水信義尖峰車 (淡水↔象山)', badgeSubLabel: '全程'
-      });
-      spawnCadencedFleet({
-        routeId: 'trtc_r', classId: 'TRTC_METRO', prefix: 'R', startNum: 201, count: 8,
-        phaseOffset: 0.02, customStations: rBeitouDaanStations, serviceWindow: 'DAYTIME',
+        routeId: 'trtc_r', classId: 'TRTC_METRO', prefix: 'R', startNum: 201, count: 4,
+        phaseOffset: 1 / 16, serviceWindow: 'DAYTIME',
         serviceLabel: '淡水信義區間車 (北投↔大安)', badgeSubLabel: '北投大安'
       });
       spawnCadencedFleet({
         routeId: 'trtc_r', classId: 'TRTC_METRO', prefix: 'R', startNum: 251, count: 4,
-        phaseOffset: 0.05, customStations: rBeitouDaanStations, serviceWindow: 'PEAK_ONLY',
-        serviceLabel: '淡水信義尖峰區間車 (北投↔大安)', badgeSubLabel: '北投大安'
+        phaseOffset: 3 / 16, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '淡水信義尖峰加密車 (北投↔大安)', badgeSubLabel: '尖峰加密'
       });
+      if (rRoute.extraBranches && rRoute.extraBranches[0]) {
+        spawnCadencedFleet({
+          routeId: 'trtc_r', classId: 'TRTC_METRO', prefix: 'R22A-', startNum: 1, count: 1,
+          phaseOffset: 0.25, customStations: rRoute.extraBranches[0], serviceWindow: 'ALL_DAY',
+          serviceLabel: '新北投支線區間車 (北投↔新北投)', badgeSubLabel: '新北投線'
+        });
+      }
 
-      // (C) G 松山新店線：
-      // - 全程車【松山 G19 ↔ 新店 G01】：全日 10 列 + 尖峰 4 列
-      // - 區間車【松山 G19 ↔ 台電大樓 G08】：日間 5 列 + 尖峰 3 列（重疊區間尖峰約 3 分鐘一班）
-      const gRoute = ROUTES.find(r => r.id === 'trtc_g');
-      const gTaipowerStations = gRoute.stations.slice(0, 12); // G19 松山 -> G08 台電大樓
+      // (C) 松山新店線：12 個等距諧波相位槽 (6班全日 + 3班日間區間 + 3班尖峰加密)，絕不重疊
       spawnCadencedFleet({
-        routeId: 'trtc_g', classId: 'TRTC_METRO', prefix: 'G', startNum: 101, count: 10,
+        routeId: 'trtc_g', classId: 'TRTC_METRO', prefix: 'G', startNum: 101, count: 6,
         phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
         serviceLabel: '松山新店全程車 (松山↔新店)', badgeSubLabel: '全程'
       });
       spawnCadencedFleet({
-        routeId: 'trtc_g', classId: 'TRTC_METRO', prefix: 'G', startNum: 151, count: 4,
-        phaseOffset: 0.04, serviceWindow: 'PEAK_ONLY',
-        serviceLabel: '松山新店尖峰車 (松山↔新店)', badgeSubLabel: '全程'
-      });
-      spawnCadencedFleet({
-        routeId: 'trtc_g', classId: 'TRTC_METRO', prefix: 'G', startNum: 201, count: 5,
-        phaseOffset: 0.025, customStations: gTaipowerStations, serviceWindow: 'DAYTIME',
+        routeId: 'trtc_g', classId: 'TRTC_METRO', prefix: 'G', startNum: 201, count: 3,
+        phaseOffset: 1 / 12, serviceWindow: 'DAYTIME',
         serviceLabel: '松山新店區間車 (松山↔台電大樓)', badgeSubLabel: '台電區間'
       });
       spawnCadencedFleet({
         routeId: 'trtc_g', classId: 'TRTC_METRO', prefix: 'G', startNum: 251, count: 3,
-        phaseOffset: 0.06, customStations: gTaipowerStations, serviceWindow: 'PEAK_ONLY',
-        serviceLabel: '松山新店尖峰區間車 (松山↔台電大樓)', badgeSubLabel: '台電區間'
+        phaseOffset: 3 / 12, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '松山新店尖峰加密車 (松山↔台電大樓)', badgeSubLabel: '尖峰加密'
       });
 
-      // (D) O 中和新蘆線：
-      // - 迴龍線【南勢角 O01 ↔ 大橋頭 O12 ↔ 迴龍 O21】(單程約49分)：全日 9 列 + 尖峰 5 列
-      // - 蘆洲線【南勢角 O01 ↔ 大橋頭 O12 ↔ 蘆洲 O54】(單程約38分)：全日 8 列 + 尖峰 4 列
-      // 兩線於「南勢角—大橋頭」重疊區間交錯運行，尖峰重疊區間約 3 分鐘一班！
+      // (D) 中和新蘆線：16 個等距諧波相位槽（迴龍線偶數槽、蘆洲線奇數槽，共線段南勢角—大橋頭嚴格 1:1 交錯不重疊）
       const oRoute = ROUTES.find(r => r.id === 'trtc_o');
       const oLuzhouStations = oRoute.stations.slice(0, 12).concat(oRoute.extraBranches[0].slice(1));
       spawnCadencedFleet({
-        routeId: 'trtc_o', classId: 'TRTC_METRO', prefix: 'O', startNum: 101, count: 9,
+        routeId: 'trtc_o', classId: 'TRTC_METRO', prefix: 'O', startNum: 101, count: 4,
         phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
         serviceLabel: '中和新蘆線 (南勢角↔迴龍)', badgeSubLabel: '迴龍線'
       });
       spawnCadencedFleet({
-        routeId: 'trtc_o', classId: 'TRTC_METRO', prefix: 'O', startNum: 151, count: 5,
-        phaseOffset: 0.03, serviceWindow: 'PEAK_ONLY',
-        serviceLabel: '中和新蘆尖峰車 (南勢角↔迴龍)', badgeSubLabel: '迴龍線'
+        routeId: 'trtc_o', classId: 'TRTC_METRO', prefix: 'O', startNum: 151, count: 4,
+        phaseOffset: 2 / 16, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '中和新蘆尖峰車 (南勢角↔迴龍)', badgeSubLabel: '迴龍尖峰'
       });
       spawnCadencedFleet({
-        routeId: 'trtc_o', classId: 'TRTC_METRO', prefix: 'O', startNum: 201, count: 8,
-        phaseOffset: 0.02, customStations: oLuzhouStations, serviceWindow: 'ALL_DAY',
+        routeId: 'trtc_o', classId: 'TRTC_METRO', prefix: 'O', startNum: 201, count: 4,
+        phaseOffset: 1 / 16, customStations: oLuzhouStations, serviceWindow: 'ALL_DAY',
         serviceLabel: '中和新蘆線 (南勢角↔蘆洲)', badgeSubLabel: '蘆洲線'
       });
       spawnCadencedFleet({
         routeId: 'trtc_o', classId: 'TRTC_METRO', prefix: 'O', startNum: 251, count: 4,
-        phaseOffset: 0.05, customStations: oLuzhouStations, serviceWindow: 'PEAK_ONLY',
-        serviceLabel: '中和新蘆尖峰車 (南勢角↔蘆洲)', badgeSubLabel: '蘆洲線'
+        phaseOffset: 3 / 16, customStations: oLuzhouStations, serviceWindow: 'PEAK_ONLY',
+        serviceLabel: '中和新蘆尖峰車 (南勢角↔蘆洲)', badgeSubLabel: '蘆洲尖峰'
       });
 
-      // (E) BR 文湖線 (動物園 ↔ 南港展覽館，尖峰約 2~3 分鐘超密集班距)：
+      // (E) 文湖線：16 個等距諧波相位槽 (8班全日偶數槽 + 8班尖峰奇數槽)
       spawnCadencedFleet({
-        routeId: 'trtc_br', classId: 'TRTC_METRO', prefix: 'BR', startNum: 101, count: 16,
+        routeId: 'trtc_br', classId: 'TRTC_METRO', prefix: 'BR', startNum: 101, count: 8,
         phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
         serviceLabel: '文湖線電聯車 (動物園↔南港展覽館)', badgeSubLabel: '文湖線'
       });
       spawnCadencedFleet({
-        routeId: 'trtc_br', classId: 'TRTC_METRO', prefix: 'BR', startNum: 151, count: 12,
-        phaseOffset: 0.025, serviceWindow: 'PEAK_ONLY',
+        routeId: 'trtc_br', classId: 'TRTC_METRO', prefix: 'BR', startNum: 151, count: 8,
+        phaseOffset: 1 / 16, serviceWindow: 'PEAK_ONLY',
         serviceLabel: '文湖線尖峰加密車 (動物園↔南港展覽館)', badgeSubLabel: '尖峰加密'
       });
 
-      // (F) Y 環狀線 (大坪林 ↔ 新北產業園區，尖峰約 4~5 分鐘班距)：
+      // (F) 環狀線：8 個等距諧波相位槽 (4班全日偶數槽 + 4班尖峰奇數槽)
       spawnCadencedFleet({
-        routeId: 'trtc_y', classId: 'TRTC_METRO', prefix: 'Y', startNum: 101, count: 8,
+        routeId: 'trtc_y', classId: 'TRTC_METRO', prefix: 'Y', startNum: 101, count: 4,
         phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
         serviceLabel: '環狀線電聯車 (大坪林↔新北產業園區)', badgeSubLabel: '環狀線'
       });
       spawnCadencedFleet({
-        routeId: 'trtc_y', classId: 'TRTC_METRO', prefix: 'Y', startNum: 151, count: 6,
-        phaseOffset: 0.04, serviceWindow: 'PEAK_ONLY',
+        routeId: 'trtc_y', classId: 'TRTC_METRO', prefix: 'Y', startNum: 151, count: 4,
+        phaseOffset: 1 / 8, serviceWindow: 'PEAK_ONLY',
         serviceLabel: '環狀線尖峰加密車 (大坪林↔新北產業園區)', badgeSubLabel: '尖峰加密'
       });
 
-      // (G) 淡海輕軌 & 安坑輕軌
+      // (G) 木柵貓空纜車
+      spawnCadencedFleet({
+        routeId: 'trtc_maokong', classId: 'TRTC_GONDOLA', prefix: 'MK', startNum: 1, count: 14,
+        phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
+        serviceLabel: '木柵貓空纜車 (動物園站↔貓空站)', badgeSubLabel: '貓纜'
+      });
+
+      // (H) 淡海輕軌 (6 個等距諧波槽：3班綠山線偶數槽 + 3班藍海線奇數槽) & 安坑輕軌
       const danhaiRoute = ROUTES.find(r => r.id === 'lrt_danhai');
       const danhaiBlueStations = danhaiRoute.stations.slice(0, 9).concat(danhaiRoute.extraBranches[0].slice(1));
       spawnCadencedFleet({
-        routeId: 'lrt_danhai', classId: 'NTMC_LRT', prefix: 'V', startNum: 101, count: 4,
+        routeId: 'lrt_danhai', classId: 'NTMC_LRT', prefix: 'V', startNum: 101, count: 3,
         phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
         serviceLabel: '淡海輕軌綠山線 (紅樹林↔崁頂)', badgeSubLabel: '綠山線'
       });
       spawnCadencedFleet({
         routeId: 'lrt_danhai', classId: 'NTMC_LRT', prefix: 'V', startNum: 201, count: 3,
-        phaseOffset: 0.15, customStations: danhaiBlueStations, serviceWindow: 'DAYTIME',
+        phaseOffset: 1 / 6, customStations: danhaiBlueStations, serviceWindow: 'DAYTIME',
         serviceLabel: '淡海輕軌藍海線 (紅樹林↔漁人碼頭)', badgeSubLabel: '藍海線'
       });
 
@@ -2058,10 +2918,24 @@
         phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
         serviceLabel: '安坑輕軌 (雙城↔十四張)', badgeSubLabel: '安坑線'
       });
+
+      // (I) 台北捷運小碧潭支線 (單線雙向 1 列 3 節 C371 列車往返七張↔小碧潭)
+      spawnCadencedFleet({
+        routeId: 'trtc_xiaobitan', classId: 'TRTC_METRO', prefix: 'G37', startNum: 1, count: 1,
+        phaseOffset: 0.15, serviceWindow: 'ALL_DAY',
+        serviceLabel: '小碧潭支線 3節編組區間車 (七張↔小碧潭・班距12-18分)', badgeSubLabel: '小碧潭線'
+      });
+
+      // (J) 淡水↔八里 藍色公路渡船 (順風1號自淡水整點發航、順風2號自八里對開，單程航行到對岸嚴格 10 分鐘 = 600 秒)
+      spawnCadencedFleet({
+        routeId: 'ferry_tamsui_bali', classId: 'FERRY_BOAT', prefix: '順風', startNum: 1, count: 2,
+        phaseOffset: 0.0, serviceWindow: 'ALL_DAY',
+        serviceLabel: '順風航業 淡水↔八里渡輪 (單程過河10分鐘・08:00發船➔08:10抵對岸)', badgeSubLabel: '渡船(10分)'
+      });
     }
 
     // =========================================================================
-    // 5. SIMULATION LOOP & MANUAL TIMELINE SCRUBBING (60 FPS smooth interpolation)
+    // 5. SIMULATION LOOP & MANUAL TIMELINE SCRUBBING
     // =========================================================================
 
     let lastTimestamp = performance.now();
@@ -2170,7 +3044,6 @@
     }
 
     function syncAllVisibility() {
-      // 1. Routes & stations
       ROUTES.forEach(route => {
         const group = routeLayerMap[route.id];
         if (!group) return;
@@ -2181,10 +3054,8 @@
         }
       });
 
-      // 2. Station name labels based on zoom & toggle
       syncStationLabelsVisibility();
 
-      // 3. Trains
       state.trains.forEach(t => {
         syncTrainVisibility(t);
         if (isTrainVisible(t)) {
@@ -2192,7 +3063,6 @@
         }
       });
 
-      // 4. Update counters
       updateTelemetryCounters();
       renderActiveTrainList();
     }
@@ -2221,7 +3091,9 @@
 
       const stationSet = new Set();
       visibleRouteList.forEach(r => {
-        r.stations.forEach(s => stationSet.add(s.name));
+        r.stations.forEach(s => {
+          if (!s.isTurnStation) stationSet.add(s.name);
+        });
         if (r.extraBranches) {
           r.extraBranches.forEach(b => b.forEach(s => stationSet.add(s.name)));
         }
@@ -2242,7 +3114,6 @@
       }
     }
 
-    // Dedicated Map-Only Mode (專門顯示地圖功能：保留地圖、時間)
     function toggleMapOnlyMode(forceState) {
       state.mapOnlyMode = typeof forceState === 'boolean' ? forceState : !state.mapOnlyMode;
       document.body.classList.toggle('map-only-mode', state.mapOnlyMode);
@@ -2253,7 +3124,7 @@
         txt.textContent = '退出純地圖';
         btn.classList.remove('bg-indigo-600', 'hover:bg-indigo-500');
         btn.classList.add('bg-rose-600', 'hover:bg-rose-500');
-        showToast('已開啟「純地圖模式」：僅保留地圖與時間軸控制器（按 M 或點擊按鈕可返回）');
+        showToast('已開啟「純地圖模式」：僅保留 Google 地圖與時間軸控制器（按 M 或點擊按鈕可返回）');
       } else {
         txt.textContent = '純地圖模式';
         btn.classList.remove('bg-rose-600', 'hover:bg-rose-500');
@@ -2270,11 +3141,13 @@
       container.innerHTML = '';
 
       const systems = [
-        { code: 'TRA', title: '臺灣鐵路 (TRA 六大路線：基隆—新竹、宜蘭、平溪、深澳、內灣、六家)' },
-        { code: 'THSR', title: '台灣高鐵 (南港—竹北，僅顯示停靠桃園與新竹列車)' },
-        { code: 'TYMC', title: '桃園機場捷運 (TYMC)' },
-        { code: 'TRTC', title: '台北捷運 (TRTC 六大路線 · 含尖離峰重疊區間加密)' },
-        { code: 'LRT', title: '新北捷運輕軌 (淡海 / 安坑)' }
+        { code: 'TRA', title: '臺灣鐵路 (TRA 六大路線：沿 Google 地圖軌道移動)' },
+        { code: 'THSR', title: '台灣高鐵 (南港—竹北，沿高鐵路廊移動・停靠桃竹)' },
+        { code: 'TYMC', title: '桃園機場捷運 (沿機捷高架與林口青山路曲線移動)' },
+        { code: 'TRTC', title: '台北捷運 (含小碧潭支線 · 地下段沿街道與機廠弧線移動)' },
+        { code: 'GONDOLA', title: '木柵貓空纜車 (動物園站—轉角一/二站—指南宮—貓空站)' },
+        { code: 'LRT', title: '新北捷運輕軌 (淡海 / 安坑 · 沿街道與專用軌道移動)' },
+        { code: 'FERRY', title: '淡水河藍色公路渡船 (淡水渡船碼頭↔八里渡船碼頭 · 單程過河10分鐘 · 15 km/h)' }
       ];
 
       systems.forEach(sys => {
@@ -2313,7 +3186,6 @@
         container.appendChild(card);
       });
 
-      // Attach listeners
       container.querySelectorAll('.route-chk').forEach(chk => {
         chk.addEventListener('change', e => {
           const rid = e.target.getAttribute('data-route-id');
@@ -2346,7 +3218,7 @@
           syncCheckboxStates();
           syncAllVisibility();
           const bounds = L.latLngBounds(route.stations.map(s => [s.lat, s.lng]));
-          map.fitBounds(bounds.pad(0.15));
+          map.fitBounds(bounds.pad(0.18));
         });
       });
     }
@@ -2384,7 +3256,7 @@
                 <span class="w-3 h-3 rounded-sm inline-block" style="background:${tc.color}"></span>
                 ${tc.name}
               </span>
-              <span class="text-[10px] font-mono-clock text-slate-400">${tc.speedKmH} km/h</span>
+              <span class="text-[10px] font-mono-clock text-slate-400">${tc.id === 'FERRY_BOAT' ? '單程10分鐘 · 15 km/h' : tc.speedKmH + ' km/h'}</span>
             </div>
             <p class="text-[11px] text-slate-400 mt-0.5 leading-snug">${tc.desc}</p>
           </div>
@@ -2445,7 +3317,7 @@
           const train = state.trains.find(x => x.id === tid);
           if (!train) return;
           state.followedTrainId = train.id;
-          map.flyTo(train.marker.getLatLng(), Math.max(map.getZoom(), 13), { duration: 0.6 });
+          map.flyTo(train.marker.getLatLng(), Math.max(map.getZoom(), 14), { duration: 0.6 });
           openTrainPopup(train);
         });
       });
@@ -2466,7 +3338,6 @@
     // =========================================================================
 
     function setupControls() {
-      // Play / Pause
       document.getElementById('btnPlayPause').addEventListener('click', () => {
         state.isPaused = !state.isPaused;
         document.getElementById('iconPause').classList.toggle('hidden', state.isPaused);
@@ -2476,12 +3347,10 @@
         dot.classList.toggle('bg-amber-400', state.isPaused);
       });
 
-      // Speed Multiplier
       document.getElementById('speedSelect').addEventListener('change', e => {
         state.speedMultiplier = Number(e.target.value) || 15;
       });
 
-      // Interactive Draggable Timeline Scrubber (用手拉動時間軸)
       const scrubber = document.getElementById('timeScrubber');
       scrubber.addEventListener('pointerdown', () => {
         state.isScrubbing = true;
@@ -2504,7 +3373,6 @@
         }
       });
 
-      // -15m / +15m Quick Step Buttons
       document.getElementById('btnStepBack15m').addEventListener('click', () => {
         applySimulationTime(state.simSeconds - 15 * 60);
         renderActiveTrainList();
@@ -2514,7 +3382,6 @@
         renderActiveTrainList();
       });
 
-      // Timeline Scale Hour Tick Buttons
       document.querySelectorAll('.timeline-tick-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const hr = Number(btn.getAttribute('data-scrub-hour')) || 0;
@@ -2523,7 +3390,6 @@
         });
       });
 
-      // Map-Only Mode Button & Keyboard Shortcut 'M'
       document.getElementById('btnToggleMapOnly').addEventListener('click', () => {
         toggleMapOnlyMode();
       });
@@ -2539,7 +3405,6 @@
         }
       });
 
-      // Quick Time Presets
       document.querySelectorAll('.time-preset-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const parts = btn.getAttribute('data-time').split(':').map(Number);
@@ -2550,18 +3415,15 @@
         });
       });
 
-      // Reset Camera
       document.getElementById('btnResetCamera').addEventListener('click', () => {
-        map.flyTo([24.985, 121.38], 10, { duration: 0.7 });
+        map.flyTo([25.025, 121.535], 12, { duration: 0.7 });
       });
 
-      // Sidebar Drawer Toggle
       const controlPanel = document.getElementById('controlPanel');
       document.getElementById('btnToggleSidebar').addEventListener('click', () => {
         controlPanel.classList.toggle('translate-x-[110%]');
       });
 
-      // Panel Tabs
       document.querySelectorAll('.panel-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const target = btn.getAttribute('data-tab');
@@ -2577,7 +3439,6 @@
         });
       });
 
-      // Quick System Presets
       document.querySelectorAll('.sys-preset-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const preset = btn.getAttribute('data-preset');
@@ -2592,15 +3453,28 @@
             ROUTES.filter(r => r.system === 'TYMC').forEach(r => state.visibleRoutes.add(r.id));
           } else if (preset === 'trtc') {
             ROUTES.filter(r => r.system === 'TRTC').forEach(r => state.visibleRoutes.add(r.id));
+          } else if (preset === 'gondola') {
+            ROUTES.filter(r => r.system === 'GONDOLA').forEach(r => state.visibleRoutes.add(r.id));
+            const mkRoute = ROUTES.find(r => r.id === 'trtc_maokong');
+            if (mkRoute) {
+              const bounds = L.latLngBounds(mkRoute.stations.map(s => [s.lat, s.lng]));
+              map.fitBounds(bounds.pad(0.22));
+            }
           } else if (preset === 'lrt') {
             ROUTES.filter(r => r.system === 'LRT').forEach(r => state.visibleRoutes.add(r.id));
+          } else if (preset === 'ferry') {
+            ROUTES.filter(r => r.system === 'FERRY').forEach(r => state.visibleRoutes.add(r.id));
+            const ferryRoute = ROUTES.find(r => r.id === 'ferry_tamsui_bali');
+            if (ferryRoute) {
+              const bounds = L.latLngBounds(ferryRoute.stations.map(s => [s.lat, s.lng]));
+              map.fitBounds(bounds.pad(0.35));
+            }
           }
           syncCheckboxStates();
           syncAllVisibility();
         });
       });
 
-      // Station Names & Train Badges Checkboxes
       document.getElementById('chkShowStationNames').addEventListener('change', e => {
         state.showStationNames = e.target.checked;
         syncStationLabelsVisibility();
@@ -2611,7 +3485,6 @@
         state.trains.forEach(t => t.marker.setIcon(buildTrainSvgIcon(t)));
       });
 
-      // Map Base Tile Style Switcher
       document.getElementById('mapTileSelect').addEventListener('change', e => {
         const val = e.target.value;
         Object.values(tileLayers).forEach(layer => {
@@ -2622,12 +3495,10 @@
         }
       });
 
-      // Search Input in Train Monitor
       document.getElementById('trainSearchInput').addEventListener('input', () => {
         renderActiveTrainList();
       });
 
-      // Manual Train Dispatch Modal
       const modal = document.getElementById('dispatchModal');
       const routeSel = document.getElementById('dispatchRouteSelect');
       const classSel = document.getElementById('dispatchClassSelect');
@@ -2693,7 +3564,7 @@
 
         if (newTrain) {
           state.followedTrainId = newTrain.id;
-          map.flyTo(newTrain.marker.getLatLng(), 13, { duration: 0.7 });
+          map.flyTo(newTrain.marker.getLatLng(), 14, { duration: 0.7 });
           openTrainPopup(newTrain);
           showToast(`已成功加開 ${trainNo} 次 (${TRAIN_CLASSES[classId].shortName}) 於 ${route.shortName}！`);
         }
